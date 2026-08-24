@@ -6,6 +6,14 @@
 
 ---
 
+# Software Logic
+
+*CS6501-010, Fall 2026 — intellectual control for accountability.*
+
+- [Course Page and Schedule](./SoftwareLogic/index.md)
+
+---
+
 # CS1 Overview
 
 *A one-hour tour of functional programming through the Curry-Howard correspondence.*
