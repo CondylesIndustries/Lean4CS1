@@ -1,30 +1,14 @@
--- FPCourse/Unit1/Week00_AlgebraicTypes.lean
+```lean
+-- FPCourse/Foundations/Week00_AlgebraicTypes.lean
 import Mathlib.Logic.Basic
 import Mathlib.Data.Bool.Basic
+```
 
-/-! @@@
-# Week 0: One language. Two readings.
+# Week 0: Algebraic Types — The Language of Computation and Logic
 
-When we write, we write about something. The something
-could be almost anything, real or imaginary: characters
-in a story or game, numbers in an arithmetic puzzle, the
-salinity of a parcel of ocean measured on a 10km x 10km x
-1k grid. We can call these distinct domains of discourse,
-or just domains, for short.
+## One language. Two readings.
 
-The writing itself, on the other hand, is strictly made
-up of symbolic expressions. If the writing is a novel, a
-poem, a market report, these expressions are written in
-some *natural language*, the kind of language people learn
-to speak.
-What's magical is that our mind interprets
-the symbols as *meaning*
-
-A *type* defines and classifies a collection of values. For
-our purposes, any value has exactly one type, and types thus
-strictly partition values into such classes.
-
-`Nat` classifies the natural numbers.
+A *type* classifies values.  `Nat` classifies the natural numbers.
 `Bool` classifies `true` and `false`.  When you encounter a type, ask:
 *what values of this type can exist?*
 
@@ -46,11 +30,10 @@ This is not an analogy.  It is the same language, read two ways.
 By the end of this week you will have seen all six in both readings.
 You will have one vocabulary — *types and their inhabitants* — that
 covers both.  You do not need two languages.  You are learning one.
-@@@ -/
-
+```lean
 namespace Week00
+```
 
-/-! @@@
 ## 0.1  Basic Types: the atoms of computation and logic
 
 **Why basic types?**  Before you can build anything, you need raw
@@ -59,8 +42,7 @@ types are your atoms: given to you, not derived.
 
 You encounter them by name: `Nat`, `Bool`, `String`.  Their values
 are listed explicitly and cannot be broken down further.
-@@@ -/
-
+```lean
 -- Nat: the type of natural numbers.  Values: 0, 1, 2, 3, ...
 #check (0 : Nat)
 #check (42 : Nat)
@@ -77,8 +59,8 @@ are listed explicitly and cannot be broken down further.
 #check ("hello" : String)
 #eval "hello" ++ ", world"   -- "hello, world"
 #eval "hello".length          -- 5
+```
 
-/-! @@@
 **The Lean notional machine.**  Think of Lean as a machine with one job:
 given an expression, apply reduction rules one step at a time until no
 further reduction is possible.  The irreducible result is the *normal form*.
@@ -133,8 +115,7 @@ We can ask the identical question of *propositions*:
 
 A proposition with at least one inhabitant is *true*.  A proposition
 with no inhabitant is *false*.  In Lean, propositions ARE types.
-@@@ -/
-
+```lean
 -- Proofs are terms.  `rfl` inhabits `1 + 1 = 2` the way `42` inhabits `Nat`.
 example : 1 + 1 = 2 := rfl   -- Evaluation: 1+1 ↝ 2, same as the right side
 example : True      := True.intro
@@ -147,8 +128,8 @@ example : 100 < 200         := by decide  -- Evaluation: comparison ↝ true ✓
 -- `#check` works on proofs too.
 #check (rfl : 1 + 1 = 2)    -- the type IS the proposition
 #check (True.intro : True)
+```
 
-/-! @@@
 **Evaluation.**  `rfl` proves `a = b` when `a` and `b` *evaluate to the
 same normal form*.  `1 + 1 = 2` holds by `rfl` because both sides reduce
 to `2` — the equality is *definitional*, certified by computation.
@@ -162,9 +143,6 @@ proof term would be absent, and the type would be uninhabited.
 `decide` can only handle propositions for which evaluation terminates —
 *decidable* propositions.  Concrete arithmetic is decidable; universal
 claims over all natural numbers are not.  We return to this in Week 7.
-@@@ -/
-
-/-! @@@
 ## 0.2  Function Types: `α → β`
 
 **Why function types?**  Every transformation in programming — mapping,
@@ -190,8 +168,7 @@ output of type `β`.
 Functions are the most fundamental type constructor.  Every other
 construct — recursion, type classes, proofs — ultimately reduces to
 functions.
-@@@ -/
-
+```lean
 -- Defining functions with `def`:
 def double  : Nat → Nat    := fun n => n * 2
 def isZero  : Nat → Bool   := fun n => n == 0
@@ -221,8 +198,12 @@ def max' (a b : Nat) : Nat := if a ≥ b then a else b
 
 #eval max' 5 3         -- 5
 #eval max' 2 8         -- 8
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### The logical reading: implication
 
 When `P` and `Q` are propositions, `P → Q` is the type of proofs that
@@ -236,8 +217,7 @@ literally IS a function.
 **The identity function is simultaneously**:
 - *Computational*: given any value, return it.
 - *Logical*: if P holds then P holds (reflexivity of implication).
-@@@ -/
-
+```lean
 -- Computational: identity function for data.
 def myId (a : α) : α := a
 #eval myId 42       -- 42
@@ -260,8 +240,8 @@ def compose (f : β → γ) (g : α → β) : α → γ := fun a => f (g a)
 
 -- Their structures are identical.  The only difference is that
 -- P, Q, R range over Prop instead of Type.
+```
 
-/-! @@@
 ## 0.3  Product Types: `α × β`
 
 **Why product types?**  Real programs combine data: a point has an x
@@ -287,8 +267,7 @@ type `β`.  To *build* a product you must supply BOTH components.  To
 
 Products are how data is *aggregated*: a 2D point is an x AND a y;
 a person record is a name AND an age AND a city.
-@@@ -/
-
+```lean
 -- Building and projecting products:
 def myPair : Nat × Bool := (7, true)
 #eval myPair.1    -- 7       (first component)
@@ -312,8 +291,12 @@ def swap (p : α × β) : β × α := (p.2, p.1)
 def hypotenuse (legs : Float × Float) : Float :=
   Float.sqrt (legs.1 ^ 2 + legs.2 ^ 2)
 #eval hypotenuse (3.0, 4.0)   -- 5.0
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### The logical reading: conjunction (AND)
 
 In logic, `P ∧ Q` holds when **both** P holds **and** Q holds.  A proof
@@ -328,8 +311,7 @@ type, specialized to the case where the components are proofs.
 | `(a, b) : α × β` | `⟨h₁, h₂⟩ : P ∧ Q` |
 | `p.1 : α` | `h.left : P` |
 | `p.2 : β` | `h.right : Q` |
-@@@ -/
-
+```lean
 -- Proving a conjunction: supply both halves.
 example : 2 < 3 ∧ 3 < 4 := ⟨by decide, by decide⟩
 
@@ -349,8 +331,8 @@ theorem and_comm' (h : P ∧ Q) : Q ∧ P :=
 
 -- Three-way conjunction:
 example : 1 < 2 ∧ 2 < 3 ∧ 3 < 4 := by decide
+```
 
-/-! @@@
 ## 0.4  Sum Types: `Sum α β` (written `α ⊕ β`)
 
 **Why sum types?**  Real programs handle alternatives: a network request
@@ -379,8 +361,7 @@ kind of thing or the other, and the tag `inl`/`inr` tells you which.
 Sums are how programs handle **alternatives**: a result is either a
 successful value or an error; a shape is a circle or a rectangle or a
 triangle.
-@@@ -/
-
+```lean
 -- Sum has two constructors: inl (left) and inr (right).
 def aNum  : Nat ⊕ String := Sum.inl 42
 def aStr  : Nat ⊕ String := Sum.inr "error"
@@ -411,8 +392,12 @@ def showResult (r : Option Nat) : String :=
 
 #eval showResult (safeDivide 10 2)    -- "result: 5"
 #eval showResult (safeDivide 10 0)    -- "no result"
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### The logical reading: disjunction (OR)
 
 In logic, `P ∨ Q` holds when **at least one** of P or Q holds.  A proof
@@ -430,8 +415,7 @@ of `P ∨ Q` is either a proof of P (tagged `Or.inl`) or a proof of Q
 
 To *prove* a disjunction, pick one side and prove it.
 To *use* a disjunction, case-split on which side holds (just like `match`).
-@@@ -/
-
+```lean
 -- Proving a disjunction: choose a side.
 example : 1 = 1 ∨ 1 = 2 := Or.inl rfl      -- left side
 example : 1 = 2 ∨ 1 = 1 := Or.inr rfl      -- right side
@@ -446,8 +430,8 @@ theorem or_comm' (h : P ∨ Q) : Q ∨ P :=
 
 -- Disjunction from an implication:
 theorem or_weaken (h : P) : P ∨ Q := Or.inl h
+```
 
-/-! @@@
 ## 0.5  The Empty Type: `Empty` and `False`
 
 **Why an empty type?**  Sometimes a situation is genuinely impossible:
@@ -467,8 +451,7 @@ In logic: `False` is the proposition with no proof.  A proposition that
 cannot be proved is *false*.
 
 `Empty : Type` and `False : Prop` are the same idea in two universes.
-@@@ -/
-
+```lean
 -- `Empty` has no constructors — you cannot produce a value of it.
 -- But you CAN write a function FROM Empty (with no cases to handle):
 def fromEmpty (e : Empty) : α := nomatch e
@@ -484,8 +467,8 @@ example (h : 2 + 2 = 5) : "pigs fly" = "pigs fly" :=
 -- `absurd : P → ¬P → Q`
 -- Given a proof of P and a proof of ¬P, produce anything.
 -- This is the logical short-circuit: contradiction → done.
+```
 
-/-! @@@
 The power of the empty type: every impossible case reduces to one.
 
 When your program reaches a state that "cannot happen," the right tool
@@ -495,9 +478,6 @@ because the type system certified the branch is unreachable.
 
 `nomatch e` is Lean's syntax for pattern-matching on a value of a type
 with no constructors: the match is exhaustive with zero branches.
-@@@ -/
-
-/-! @@@
 ## 0.6  Functions to Empty: `α → Empty` and `¬P`
 
 **Why functions to empty?**  Ruling out a case is as important as
@@ -524,8 +504,7 @@ function: given any proof of `P`, produce a proof of `False`.  Since
 no proofs, i.e., P is false.
 
 Negation is not a primitive.  It IS the function arrow, aimed at `False`.
-@@@ -/
-
+```lean
 -- ¬P unfolds to P → False:
 #print Not   -- def Not (a : Prop) : Prop := a → False
 
@@ -553,8 +532,8 @@ theorem not_not_intro (h : P) : ¬¬P :=
 -- Example: ¬(P ∧ ¬P) — no proposition and its negation can both hold.
 theorem not_and_not (h : P ∧ ¬P) : False :=
   h.right h.left      -- apply ¬P (= h.right) to P (= h.left)
+```
 
-/-! @@@
 ## 0.7  The Six Constructors Together
 
 Here is the complete picture.  Every type you will write in this course
@@ -579,8 +558,7 @@ the same way.  Sums tag data AND proofs the same way.  Functions
 transform data AND convert proofs the same way.  The empty type
 represents impossible data AND impossible proofs.
 
-@@@ -/
-
+```lean
 -- All six constructors demonstrated side by side:
 
 -- Product / And
@@ -600,8 +578,8 @@ def proofNeg  : ¬ (1 = 2) := by decide
 
 -- Empty type: a function from Empty returns anything
 def fromImpossible (e : Empty) : Nat × Bool × String := nomatch e
+```
 
-/-! @@@
 ## 0.8  Challenges in programming with algebraic types
 
 Understanding the six constructors is not yet fluency.  The challenge is
@@ -675,6 +653,10 @@ they are your co-programmer.
    (d) Evidence that `¬ (2 + 2 = 5)`
    (e) A value certifying that the type `Empty` is uninhabited
    Then use `decide` to verify (d).  What does Lean do to check it?
-@@@ -/
-
+```lean
 end Week00
+```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

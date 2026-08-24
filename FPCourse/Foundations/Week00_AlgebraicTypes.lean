@@ -1,4 +1,4 @@
--- FPCourse/Unit1/Week00_AlgebraicTypes.lean
+-- FPCourse/Foundations/Week00_AlgebraicTypes.lean
 import Mathlib.Logic.Basic
 import Mathlib.Data.Bool.Basic
 
