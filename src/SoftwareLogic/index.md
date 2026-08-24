@@ -70,10 +70,6 @@ introducing further chapters.
 - [Week 13: Streams](../FPCourse/Unit6/Week13_Streams.md)
 - [Week 14: The Curry-Howard Correspondence](../FPCourse/Unit6/Week14_CurryHoward.md)
 
-Also in this book: the [CS1 Overview](../Overview/OneLangTwoReadings.md), a one-hour tour of the
-whole picture, and the [CS1 Distillate](../Distillate/Unit1/Week00_TypesExpressions.md), a focused
-nine-week introduction.
-
 ---
 
 ## Notes
