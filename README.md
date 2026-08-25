@@ -36,8 +36,8 @@ FPCourse/          Lean 4 source files for the 14-week Full Course
   Unit5/           Weeks 11–12
   Unit6/           Weeks 13–14
 scripts/
-  convert.hs       Literate Lean → Markdown (Haskell, primary)
-  convert.py       Literate Lean → Markdown (Python, fallback)
+  convert.py       Literate Lean → Markdown (used by the Makefile and CI)
+  convert.hs       Haskell port of the same converter (not wired into any build)
 src/
   SUMMARY.md       mdBook table of contents
   introduction.md  Course overview page
@@ -82,7 +82,7 @@ make                # or: make all
 
 ## Continuous deployment
 
-Pushing to `main` triggers `.github/workflows/mdbook.yml`, which installs GHC, mdBook, and preprocessors, runs the converter on every `.lean` file, builds the book, and deploys to GitHub Pages.
+Pushing to `main` triggers `.github/workflows/mdbook.yml`, which installs mdBook and its preprocessors, runs the converter on every `.lean` file, builds the book, and deploys to GitHub Pages.
 
 ## Literate format
 
