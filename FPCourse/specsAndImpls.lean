@@ -14,6 +14,14 @@ import Mathlib.Data.Real.Basic
 
 -- Implementations (Data)
 
+/--
+error: don't know how to synthesize placeholder
+context:
+⊢ Empty
+-/
+#guard_msgs in
+def e : Empty := _
+
 /-
 Some code below is *meant* to fail. We keep it because the failure is the
 lesson, but a failing file breaks `lake build` and CI. `#guard_msgs` resolves
@@ -48,15 +56,6 @@ One caution: messages containing metavariables, such as the `?u.2` universe in
 the `List` guard below, embed numbers Lean assigns during elaboration. Those can
 shift when surrounding code changes, and the guard will need updating.
 -/
-
-/--
-error: don't know how to synthesize placeholder
-context:
-⊢ Empty
--/
-#guard_msgs in
-def e : Empty := _
-
 
 #check e
 #reduce e

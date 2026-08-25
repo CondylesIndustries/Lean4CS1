@@ -58,7 +58,6 @@ the `List` guard below, embed numbers Lean assigns during elaboration. Those can
 shift when surrounding code changes, and the guard will need updating.
 -/
 
-
 #check e
 #reduce e
 
