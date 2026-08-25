@@ -99,6 +99,39 @@ Explanation in **Markdown**.
 def example : Nat := 42
 ```
 
+## Course reading links
+
+The Software Logic schedule in `src/SoftwareLogic/index.md` **links** to external copies of
+its readings; it does not redistribute them. Reading PDFs are publisher-copyrighted and a
+local `Readings/` library is deliberately gitignored. Closed-access readings (Letovsky 1987,
+Hoare 1972) are cited by DOI and read through the UVA library.
+
+When a reading link rots, replace it with a copy of the *same* document where possible. If
+only a different manifestation is available (preprint, technical report), amend the citation
+to name what is actually linked rather than leaving a citation that the linked file does not
+match.
+
+Link audit, 2026-08-25:
+
+- **Perry & Wolf (Week 4)** — `www.cs.utexas.edu/~perry/...` 404'd; moved to
+  `users.ece.utexas.edu/~perry/work/papers/swa-sen.pdf`. Same document.
+- **AlphaVerus (Week 13)** — the PMLR PDF path 404'd, but volume v267 was correct and matches
+  the cited pagination (PMLR 267:587-615); only PMLR's asset path changed. Now links the
+  landing page `proceedings.mlr.press/v267/aggarwal25a.html`, which is the stable identifier,
+  preserving the ICML version of record rather than substituting the arXiv preprint.
+- **Brooks, *No Silver Bullet* (Week 2)** — CiteSeerX link dead; now
+  `cs.unc.edu/techreports/86-020.pdf`. That file is the September 1986 technical report, not
+  the 1987 *Computer* article, so the citation was amended to name TR86-020 with *Computer*
+  20(4), 1987, pp. 10-19 given as the "also published as" reference.
+- **CiteSeerX has shut down.** It now 301-redirects to a Wayback snapshot
+  (`20251230112235`) and serves an incomplete TLS chain (leaf `*.ist.psu.edu` without the
+  InCommon intermediate). Browsers recover via AIA fetching; `curl`, `wget` and CI do not.
+  The remaining CiteSeerX link — Sillito (Week 14) — still resolves to the correct PDF
+  through that redirect and was left unchanged, but it depends on both the redirect and
+  Wayback availability. Replace it if a live ACM or author copy is found.
+- **`dl.acm.org` links return 403 to scripted requests** (Cloudflare bot protection). They
+  load normally in a browser. Not broken; no action needed.
+
 ## Assessment forms
 
 Students are assessed on five competencies (no proof production required):
