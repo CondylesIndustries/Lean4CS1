@@ -5,15 +5,11 @@ package «fp-course» where
   name := "fp-course"
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git" @ "v4.28.0"
+  "https://github.com/leanprover-community/mathlib4.git" @ "v4.33.0"
 
 @[default_target]
 lean_lib «Overview» where
   globs := #[.andSubmodules `Overview]
-
-@[default_target]
-lean_lib «Distillate» where
-  globs := #[.andSubmodules `Distillate]
 
 @[default_target]
 lean_lib «FPCourse» where

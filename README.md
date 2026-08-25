@@ -2,10 +2,7 @@
 
 A literate Lean 4 curriculum introducing typed functional programming through the lens of the Curry-Howard correspondence. Every file compiles cleanly against Lean 4 / Mathlib — no `sorry`, no `by`.
 
-The book has two faces:
-
-- **CS1 Distillate** — 9-week focused introduction for first-semester undergraduates
-- **CS1 Full Course** — complete 14-week curriculum
+The book presents the **CS1 Full Course** — a complete 14-week curriculum.
 
 ## Design commitments
 
@@ -16,14 +13,6 @@ The book has two faces:
 - Proofs other than decision procedures are in term mode, not tactic mode, so the logical structure is explicit.
 - `sorry` never appears.
 - Full Mathlib notations are used throughout.
-
-## Distillate structure (9 weeks)
-
-|Unit|Weeks|Theme|
-|----|-----|-----|
-|1|0–4|The Six Type Constructors|
-|2|5–6|Recursive Types and Functions|
-|3|7–8|Specification and Certification|
 
 ## Full Course structure (14 weeks)
 
@@ -39,10 +28,6 @@ The book has two faces:
 ## Repository layout
 
 ```text
-Distillate/        Lean 4 source files for the 9-week Distillate
-  Unit1/           Weeks 0–4
-  Unit2/           Weeks 5–6
-  Unit3/           Weeks 7–8
 FPCourse/          Lean 4 source files for the 14-week Full Course
   Unit1/           Weeks 0–3
   Unit2/           Weeks 4–7
@@ -54,9 +39,8 @@ scripts/
   convert.hs       Literate Lean → Markdown (Haskell, primary)
   convert.py       Literate Lean → Markdown (Python, fallback)
 src/
-  SUMMARY.md       mdBook table of contents (both sub-books)
+  SUMMARY.md       mdBook table of contents
   introduction.md  Course overview page
-  Distillate/      Generated Markdown for Distillate
   FPCourse/        Generated Markdown for Full Course
 book.toml          mdBook configuration
 Makefile           Build automation: make → convert + mdbook build
@@ -76,7 +60,7 @@ lake build
 
 ## Building the web book
 
-Requires [mdBook](https://rust-lang.github.io/mdBook/) and its preprocessors (`mdbook-toc`, `mdbook-mermaid`, `mdbook-image-size`).
+Requires [mdBook](https://rust-lang.github.io/mdBook/) and its preprocessors (`mdbook-toc`, `mdbook-mermaid`).
 
 **Convert Lean sources to Markdown:**
 

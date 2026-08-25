@@ -18,10 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      MDBOOK_VERSION: "0.4.52"
-      MDBOOK_TOC_VERSION: "0.14.2"
-      MDBOOK_MERMAID_VERSION: "0.15.0"
-      MDBOOK_IMAGE_SIZE_VERSION: "0.2.1"
+      MDBOOK_VERSION: "0.5.4"
+      MDBOOK_TOC_VERSION: "0.15.4"
+      MDBOOK_MERMAID_VERSION: "0.17.1"
 
     steps:
       - uses: actions/checkout@v4
@@ -38,16 +37,15 @@ jobs:
         id: cache-cargo-binaries
         with:
           path: ~/.cargo/bin
-          key: cargo-preprocessors-${{ runner.os }}-toc-${{ env.MDBOOK_TOC_VERSION }}-mermaid-${{ env.MDBOOK_MERMAID_VERSION }}-imgsize-${{ env.MDBOOK_IMAGE_SIZE_VERSION }}-v1
+          key: cargo-preprocessors-${{ runner.os }}-toc-${{ env.MDBOOK_TOC_VERSION }}-mermaid-${{ env.MDBOOK_MERMAID_VERSION }}-v2
 
       - name: Install mdBook preprocessors
         if: steps.cache-cargo-binaries.outputs.cache-hit != 'true'
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
           source "$HOME/.cargo/env"
-          cargo install --version "${MDBOOK_TOC_VERSION}"       mdbook-toc       --locked
-          cargo install --version "${MDBOOK_IMAGE_SIZE_VERSION}" mdbook-image-size --locked
-          cargo install --version "${MDBOOK_MERMAID_VERSION}"   mdbook-mermaid   --locked
+          cargo install --version "${MDBOOK_TOC_VERSION}"     mdbook-toc     --locked
+          cargo install --version "${MDBOOK_MERMAID_VERSION}" mdbook-mermaid --locked
 
       - name: Add Cargo bin to PATH
         run: echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
@@ -55,7 +53,7 @@ jobs:
       # Python 3 is pre-installed on ubuntu-latest — no install needed
       - name: Convert Lean sources to Markdown
         run: |
-          find FPCourse Distillate -name '*.lean' | while read f; do
+          find FPCourse -name '*.lean' | while read f; do
             out="src/${f%.lean}.md"
             mkdir -p "$(dirname "$out")"
             python3 scripts/convert.py "$f" "$out"

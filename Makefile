@@ -1,5 +1,5 @@
 # Source and target directories
-SRC_DIRS := Overview Distillate FPCourse
+SRC_DIRS := Overview FPCourse
 
 # Find all source files recursively across all source directories
 SRC_FILES := $(shell find $(SRC_DIRS) -type f -name '*.lean')
@@ -29,10 +29,10 @@ serve:
 
 # Clean generated markdown (but keep src/SUMMARY.md and src/introduction.md)
 clean-md:
-	rm -rf src/Overview src/FPCourse src/Distillate
+	rm -rf src/Overview src/FPCourse
 
 # Clean everything including the built book
 clean:
-	rm -rf src/Overview src/FPCourse src/Distillate book/
+	rm -rf src/Overview src/FPCourse book/
 
 .PHONY: all convert build serve clean-md clean
