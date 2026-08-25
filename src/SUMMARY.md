@@ -1,8 +1,8 @@
 # CS1: Programming, Certified
 
-[Preface](./preface.md)
+[Cover](./cover.md)
 
-[Introduction](./introduction.md)
+[Setting Up Your Machine](./setup.md)
 
 ---
 

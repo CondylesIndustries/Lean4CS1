@@ -57,20 +57,6 @@ proof construction.
 | 5    | 11–12 | Abstract Types, Type Classes                    |
 | 6    | 13–14 | Streams, Curry-Howard                           |
 
-## Assessment Forms
-
-Students are assessed on five competencies:
-
-1. **Specification writing**: given a function and English description,
-   write the correct Lean type expressing its specification.
-2. **Specification reading**: given a Lean proposition, state in English
-   what it asserts; give a satisfying and falsifying example.
-3. **Type inhabitation**: write a term the compiler accepts at a given type.
-4. **Counterexample finding**: given a function and an incorrect
-   specification, find a concrete input that witnesses the mismatch.
-5. **Decidability identification**: given a proposition, state whether
-   `decide` closes it, which other term if not, and why.
-
 ## Building
 
 ```bash
