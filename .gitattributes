@@ -1,0 +1,19 @@
+# This repository is Linux-based and is developed inside a Linux dev container.
+# Text files are stored and checked out with LF endings on every platform,
+# including Windows, where Git would otherwise convert them to CRLF and break
+# shell scripts, the Makefile, and scripts/convert.py inside the container.
+# This makes correct line endings a property of the repository rather than of
+# each contributor's local Git configuration.
+* text=auto eol=lf
+
+# Formats that must never be line-ending converted or diffed as text.
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.svg   text eol=lf
+*.woff  binary
+*.woff2 binary
+*.olean binary
