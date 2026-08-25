@@ -1,0 +1,39 @@
+name: Build Lean sources
+
+# The Pages workflow only converts .lean files to Markdown with a text script —
+# it never invokes Lean, so a file that does not compile would still publish.
+# This workflow is the check that the sources actually build.
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "**/*.lean"
+      - "lean-toolchain"
+      - "lake-manifest.json"
+      - ".github/workflows/lean.yml"
+  pull_request:
+    paths:
+      - "**/*.lean"
+      - "lean-toolchain"
+      - "lake-manifest.json"
+      - ".github/workflows/lean.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: lean-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: lake build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Installs elan and the toolchain named in lean-toolchain, restores the
+      # Mathlib olean cache, then runs `lake build` on the default targets
+      # (Overview and FPCourse).
+      - uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
