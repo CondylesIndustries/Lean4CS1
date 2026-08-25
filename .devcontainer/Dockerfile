@@ -3,22 +3,17 @@ FROM python:3.14-slim-bookworm
 LABEL org.opencontainers.image.description="Lean-Enabled DEvelopment and Publication VM"
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG NODE_VERSION=22.14.0
 ARG YQ_VERSION=4.2.0
 ARG GH_VERSION=2.87.2
-ARG MDBOOK_VERSION=0.5.2
-ARG MDBOOK_TOC_VERSION=0.15.1
-ARG MDBOOK_MERMAID_VERSION=0.17.0
-ARG SAM_VERSION=1.133.0
-ARG OPENAPI_GENERATOR_VERSION=7.11.0
+ARG MDBOOK_VERSION=0.5.4
+ARG MDBOOK_TOC_VERSION=0.15.4
+ARG MDBOOK_MERMAID_VERSION=0.17.1
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
     PYTHONIOENCODING=utf-8 \
-    SHELL=/bin/bash \
-    # Pin the openapi-generator JAR version fetched at runtime by the CLI wrapper
-    OPENAPI_GENERATOR_VERSION=${OPENAPI_GENERATOR_VERSION}
+    SHELL=/bin/bash
 
 SHELL ["/bin/bash", "-c"]
 USER root
@@ -29,21 +24,12 @@ RUN apt-get update --fix-missing && \
     build-essential \
     curl \
     git \
-    git-lfs \
     openssh-client \
-    gnupg2 \
-    graphviz \
     less \
-    libconfig-dev \
     libffi-dev \
     libssl-dev \
     locales \
-    lsb-release \
-    pandoc \
     pkg-config \
-    postgresql \
-    postgresql-client \
-    software-properties-common \
     unzip \
     vim \
     wget \
@@ -53,42 +39,6 @@ RUN apt-get update --fix-missing && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# ----- LaTeX (TeX Live, system-wide) -----
-# For compiling the research paper (DocsDev/certified-or-mapping-paper.tex).
-# acmart class requires texlive-publishers; tikz-cd requires texlive-pictures;
-# stmaryrd is in texlive-science; bibtex support in texlive-bibtex-extra.
-RUN apt-get update && \
-    apt-get install --no-install-recommends --assume-yes \
-    texlive-latex-base \
-    texlive-latex-recommended \
-    texlive-latex-extra \
-    texlive-fonts-recommended \
-    texlive-fonts-extra \
-    texlive-publishers \
-    texlive-science \
-    texlive-pictures \
-    texlive-bibtex-extra \
-    texlive-plain-generic \
-    latexmk \
-    cm-super \
-    chktex && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# ----- Amazon Corretto 21 (Java LTS, system-wide) -----
-# Java is required by openapi-generator-cli at runtime.
-# Gradle and Maven are not used in this project.
-RUN curl -fsSLo /tmp/corretto.gpg https://apt.corretto.aws/corretto.key && \
-    gpg --dearmor -o /usr/share/keyrings/corretto.gpg /tmp/corretto.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/corretto.gpg] https://apt.corretto.aws stable main" \
-        > /etc/apt/sources.list.d/corretto.list && \
-    apt-get update && \
-    apt-get install --no-install-recommends --assume-yes java-21-amazon-corretto-jdk && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/corretto.gpg
-ENV JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto
-
-# ----- Claude Code CLI (system-wide) -----
-RUN curl -fsSL https://claude.ai/install.sh | bash
 
 # ----- yq (system-wide, architecture-aware) -----
 RUN ARCH=$(dpkg --print-architecture) && \
@@ -116,20 +66,23 @@ RUN ARCH=$(dpkg --print-architecture) && \
     chmod +x /usr/local/bin/gh && \
     rm -rf /tmp/gh.tar.gz /tmp/gh_${GH_VERSION}_linux_${GH_ARCH}
 
-# ----- Node.js (system-wide, architecture-aware) -----
-RUN ARCH=$(dpkg --print-architecture) && \
-    case "$ARCH" in \
-      amd64) NODE_ARCH=x64 ;; \
-      arm64) NODE_ARCH=arm64 ;; \
-      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
-    esac && \
-    mkdir -p /opt/node && \
-    curl -fsSLo /tmp/node.tar.xz "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.xz" && \
-    tar -xf /tmp/node.tar.xz -C /opt/node --strip-components=1 && \
-    ln -sf /opt/node/bin/node /usr/local/bin/node && \
-    ln -sf /opt/node/bin/npm  /usr/local/bin/npm && \
-    ln -sf /opt/node/bin/npx  /usr/local/bin/npx && \
-    rm -f /tmp/node.tar.xz
+# ----- Rust toolchain (system-wide, retained in the image) -----
+# Installed under /usr/local rather than /root so the non-root `dev` user can
+# run cargo, and deliberately KEPT (previously deleted after use) so mdBook
+# preprocessors can be added or rebuilt inside a running container.
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:${PATH}
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+        sh -s -- -y --no-modify-path --profile minimal && \
+    chmod -R a+rwX ${RUSTUP_HOME} ${CARGO_HOME} && \
+    printf '%s\n' \
+        'export RUSTUP_HOME=/usr/local/rustup' \
+        'export CARGO_HOME=/usr/local/cargo' \
+        'export PATH="/usr/local/cargo/bin:$PATH"' \
+        > /etc/profile.d/rust.sh && \
+    chmod 0644 /etc/profile.d/rust.sh && \
+    cargo --version && rustc --version
 
 # ----- mdBook + preprocessors (system-wide, architecture-aware) -----
 # mdbook has pre-built arm64+amd64 Linux binaries; preprocessors are compiled
@@ -142,12 +95,11 @@ RUN ARCH=$(dpkg --print-architecture) && \
     esac && \
     curl -fsSLo /tmp/mdbook.tar.gz "https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-${GNU_ARCH}.tar.gz" && \
     tar -xzf /tmp/mdbook.tar.gz -C /usr/local/bin && chmod +x /usr/local/bin/mdbook && rm -f /tmp/mdbook.tar.gz && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path && \
-    /root/.cargo/bin/cargo install mdbook-toc --version ${MDBOOK_TOC_VERSION} && \
-    /root/.cargo/bin/cargo install mdbook-mermaid --version ${MDBOOK_MERMAID_VERSION} && \
-    cp /root/.cargo/bin/mdbook-toc /usr/local/bin/ && \
-    cp /root/.cargo/bin/mdbook-mermaid /usr/local/bin/ && \
-    rm -rf /root/.cargo /root/.rustup
+    cargo install mdbook-toc     --version ${MDBOOK_TOC_VERSION} && \
+    cargo install mdbook-mermaid --version ${MDBOOK_MERMAID_VERSION} && \
+    cp ${CARGO_HOME}/bin/mdbook-toc \
+       ${CARGO_HOME}/bin/mdbook-mermaid /usr/local/bin/ && \
+    rm -rf ${CARGO_HOME}/registry ${CARGO_HOME}/git
 
 # ----- Create non-root user and workspace -----
 RUN useradd -m -s /bin/bash dev && \
@@ -166,40 +118,10 @@ WORKDIR /home/dev
 # Put user-local tools on PATH globally for this image
 ENV PATH="/home/dev/.elan/bin:/home/dev/.local/bin:/usr/local/bin:${PATH}"
 
-# ----- Poetry (user-local; no apt/pip/pipx) -----
-RUN curl -fsSLo /tmp/poetry.py https://install.python-poetry.org \
-    && python3 /tmp/poetry.py --yes \
-    && rm -f /tmp/poetry.py
-
-# ----- openapi-generator-cli (user-local, pinned via OPENAPI_GENERATOR_VERSION env) -----
-RUN curl -fsSLo /home/dev/.local/bin/openapi-generator-cli \
-    https://raw.githubusercontent.com/OpenAPITools/openapi-generator/v${OPENAPI_GENERATOR_VERSION}/bin/utils/openapi-generator-cli.sh && \
-    chmod +x /home/dev/.local/bin/openapi-generator-cli
-
-# ----- AWS CLI v2 (user-local, architecture-aware) -----
-RUN ARCH=$(dpkg --print-architecture) && \
-    case "$ARCH" in \
-      amd64) AWS_ARCH=x86_64 ;; \
-      arm64) AWS_ARCH=aarch64 ;; \
-      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
-    esac && \
-    curl -fsSLo /tmp/awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-${AWS_ARCH}.zip" && \
-    unzip -q /tmp/awscliv2.zip -d /tmp && \
-    /tmp/aws/install --bin-dir /home/dev/.local/bin --install-dir /home/dev/.local/lib/aws-cli && \
-    rm -rf /tmp/aws /tmp/awscliv2.zip
-ENV SAM_CLI_TELEMETRY=0
-
-# ----- AWS SAM CLI (user-local, architecture-aware) -----
-RUN ARCH=$(dpkg --print-architecture) && \
-    case "$ARCH" in \
-      amd64) SAM_ARCH=x86_64 ;; \
-      arm64) SAM_ARCH=arm64 ;; \
-      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
-    esac && \
-    curl -fsSLo /tmp/samcli.zip "https://github.com/aws/aws-sam-cli/releases/download/v${SAM_VERSION}/aws-sam-cli-linux-${SAM_ARCH}.zip" && \
-    unzip -q /tmp/samcli.zip -d /tmp/sam-installation && \
-    /tmp/sam-installation/install --bin-dir /home/dev/.local/bin --install-dir /home/dev/.local/lib/aws-sam-cli && \
-    rm -rf /tmp/sam-installation /tmp/samcli.zip
+# ----- Claude Code CLI (user-local) -----
+# Installed AFTER the USER switch: running the installer as root placed the
+# binary in /root/.local/bin, which the `dev` user cannot read.
+RUN curl -fsSL https://claude.ai/install.sh | bash
 
 # ----- elan + Lean toolchain -----
 # Not installed here — the leanprover.lean4 VS Code extension installs elan and

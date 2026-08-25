@@ -9,9 +9,7 @@
 	"updateRemoteUserUID": true,
 	// Useful inside tasks/terminals for scripts that read this var
 	"containerEnv": {
-		"WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
-		// Required for precompileModules: Lean subprocesses must find shared libs
-		"LD_LIBRARY_PATH": "/home/dev/.elan/toolchains/leanprover--lean4---v4.27.0/lib/lean"
+		"WORKSPACE_FOLDER": "${containerWorkspaceFolder}"
 	},
 	// Make elan/lean/lake available in VS Code shells & tasks.
 	// IMPORTANT: use the container's HOME, not the host's.
@@ -26,8 +24,15 @@
 		"seccomp=unconfined"
 	],
 	"forwardPorts": [
-		5432
+		5432,
+		3000
 	],
+	"portsAttributes": {
+		"3000": {
+			"label": "mdBook",
+			"onAutoForward": "notify"
+		}
+	},
 	"customizations": {
 		"vscode": {
 			"settings": {
