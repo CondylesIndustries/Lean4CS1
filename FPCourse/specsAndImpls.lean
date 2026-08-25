@@ -1,11 +1,80 @@
 import Mathlib.Data.Real.Basic
 
--- Specifications (Data)
 
-#check Empty
+/- @@@
+
+# Introduction
+
+Note: A preliminary note: The types and values we use in this file
+without defining them here are defined in implicitly imported Lean
+4 library files.
+
+## Specification ≡ Proposition ≡ Type
+@@@ -/
+
+#check Empty         -- a type with no values
+
+/- @@@
+Specification  : Absurd
+Types          : Empty, False
+@@@ -/
+
+/- @@@
+## Implementation ≡ Proof ≡ Value
+
+Values         : There are no values of this type
+Implementations: There's no way to implement this specification
+Proof          : There's no proof of this proposition (so it's false)
+@@@ -/
+
+/- @@@
+An amazing fact.*Anything* is *true of every values* of any
+*uninhabited* (empty) type. So, for example, is every pink
+elepant an Elvis fan? Yes! And is every pink elephant also
+not an Elvis fan? Yes! Each of these statements is true of
+every single pink elephant. Of course there are none, so it's
+easy to be true of every one of those! Nevertheless, people
+are generally confused about why it's true that if you have
+an object that can't exist, well, then anything goes!
+
+For example, consider the question, is every pink elephant
+nice? Of course the answer is yes. The answer is also no.
+The answer is whatever you want?  Why? Because as there are
+no pink elephants at all any statement is true of all of them!
+Ever pink elephant is nice, mean, and even ironical. Anything
+goes for nothing at all.
+@@@ -/
+
+abbrev PinkElephant := Empty
+
+theorem everyPinkElephantNice :
+   ∀  (pe : PinkElephant)              -- assumption
+      (nice : PinkElephant → Bool),    -- assumption
+    nice pe == true :=                 -- claim
+      fun pe _ => nomatch pe           -- proof of ∀ claim
+
+theorem inEmptyAnythingGoes : ∀ (e : Empty), ∀ (P : Empty → Bool), P e == true :=
+   fun e => nomatch e
+
+theorem ifFalseAnythingGoes : ∀ (f : False), ∀ (P : Empty → Prop), P e :=
+   fun e => nomatch e
+
+
+
+
 #check Unit
-#check Bool
+#check Unit.unit
+
+#check Bool          -- the type of binary truth values
+#check Bool.true     -- the Bool value representing logical truth
+#check Bool.false    -- the Bool value representing logical falsity
+
 #check Nat
+#check ℕ
+#check (0 : Nat)
+#check (1 : ℕ)
+#check 2
+
 #check Int
 #check Rat
 #check Real
@@ -14,6 +83,11 @@ import Mathlib.Data.Real.Basic
 
 -- Implementations (Data)
 
+-- some specifications have no implementations at all
+-- def e : Empty := _
+
+
+
 /--
 error: don't know how to synthesize placeholder
 context:
@@ -21,41 +95,7 @@ context:
 -/
 #guard_msgs in
 def e : Empty := _
-
-/-
-Some code below is *meant* to fail. We keep it because the failure is the
-lesson, but a failing file breaks `lake build` and CI. `#guard_msgs` resolves
-this: it runs the command that follows, compares the messages that command
-emits against the `/-- ... -/` block immediately above it, and then consumes
-them. If they match, the build succeeds and the error never escapes. If they
-stop matching -- say a future Lean version reworks the message -- the guard
-itself fails, so this stays honest rather than silently rotting.
-
-To determine the precise text to guard upon:
-
-1. Provoke the message. Build the file (`lake build FPCourse.specsAndImpls`),
-   or put the cursor on the offending line in VS Code and read the InfoView.
-2. Copy the message *verbatim*, but drop the `FPCourse/....lean:LINE:COL: `
-   location prefix -- guard blocks carry no file positions.
-3. Paste it into a `/-- ... -/` block directly above the command, prefixed by
-   its severity: `error: `, `warning: `, or `info: `. Only the first line takes
-   the prefix; continuation lines (`context:`, `⊢ ...`) are pasted as-is.
-4. Preserve leading whitespace on continuation lines exactly. Lean compares the
-   text after normalising trailing whitespace, so indentation inside the
-   message is significant.
-5. Write `#guard_msgs in` on the line between the block and the command.
-
-Shortcut: write an empty `/-- -/` block, add `#guard_msgs in`, and build. The
-mismatch report prints the actual message, which you can paste straight in.
-
-A command may emit several messages; the block must list all of them, in order.
-Use `#guard_msgs (error) in` to check only errors and ignore `info`/`warning`
-output -- useful next to `#check` and `#reduce`, which are chatty.
-
-One caution: messages containing metavariables, such as the `?u.2` universe in
-the `List` guard below, embed numbers Lean assigns during elaboration. Those can
-shift when surrounding code changes, and the guard will need updating.
--/
+-- Additional details are at the end of this lesson
 
 #check e
 #reduce e
@@ -106,10 +146,44 @@ def l : List := _
 #check String → String
 
 -- Implementations (Total Functions)
-/--
-error: don't know how to synthesize placeholder
-context:
-⊢ Empty → Empty
+
+def e2e : Empty → Empty := fun (e : Empty) => e
+
+
+
+/- @@@
+## Additional Details
+
+Some code below is *meant* to fail. We keep it because the failure is the
+lesson, but a failing file breaks `lake build` and CI. `#guard_msgs` resolves
+this: it runs the command that follows, compares the messages that command
+emits against the `/-- ... -/` block immediately above it, and then consumes
+them. If they match, the build succeeds and the error never escapes. If they
+stop matching -- say a future Lean version reworks the message -- the guard
+itself fails, so this stays honest rather than silently rotting.
+
+To determine the precise text to guard upon:
+
+1. Provoke the message. Build the file (`lake build FPCourse.specsAndImpls`),
+   or put the cursor on the offending line in VS Code and read the InfoView.
+2. Copy the message *verbatim*, but drop the `FPCourse/....lean:LINE:COL: `
+   location prefix -- guard blocks carry no file positions.
+3. Paste it into a `/-- ... -/` block directly above the command, prefixed by
+   its severity: `error: `, `warning: `, or `info: `. Only the first line takes
+   the prefix; continuation lines (`context:`, `⊢ ...`) are pasted as-is.
+4. Preserve leading whitespace on continuation lines exactly. Lean compares the
+   text after normalising trailing whitespace, so indentation inside the
+   message is significant.
+5. Write `#guard_msgs in` on the line between the block and the command.
+
+Shortcut: write an empty `/-- -/` block, add `#guard_msgs in`, and build. The
+mismatch report prints the actual message, which you can paste straight in.
+
+A command may emit several messages; the block must list all of them, in order.
+Use `#guard_msgs (error) in` to check only errors and ignore `info`/`warning`
+output -- useful next to `#check` and `#reduce`, which are chatty.
+
+One caution: messages containing metavariables, such as the `?u.2` universe in
+the `List` guard below, embed numbers Lean assigns during elaboration. Those can
+shift when surrounding code changes, and the guard will need updating.
 -/
-#guard_msgs in
-def e2e : Empty → Empty := _
