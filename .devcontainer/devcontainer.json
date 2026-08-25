@@ -24,7 +24,6 @@
 		"seccomp=unconfined"
 	],
 	"forwardPorts": [
-		5432,
 		3000
 	],
 	"portsAttributes": {
