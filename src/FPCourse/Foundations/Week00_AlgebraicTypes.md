@@ -4,11 +4,28 @@ import Mathlib.Logic.Basic
 import Mathlib.Data.Bool.Basic
 ```
 
-# Week 0: Algebraic Types — The Language of Computation and Logic
+# Week 0: One language. Two readings.
 
-## One language. Two readings.
+When we write, we write about something. The something
+could be almost anything, real or imaginary: characters
+in a story or game, numbers in an arithmetic puzzle, the
+salinity of a parcel of ocean measured on a 10km x 10km x
+1k grid. We can call these distinct domains of discourse,
+or just domains, for short.
 
-A *type* classifies values.  `Nat` classifies the natural numbers.
+The writing itself, on the other hand, is strictly made
+up of symbolic expressions. If the writing is a novel, a
+poem, a market report, these expressions are written in
+some *natural language*, the kind of language people learn
+to speak.
+What's magical is that our mind interprets
+the symbols as *meaning*
+
+A *type* defines and classifies a collection of values. For
+our purposes, any value has exactly one type, and types thus
+strictly partition values into such classes.
+
+`Nat` classifies the natural numbers.
 `Bool` classifies `true` and `false`.  When you encounter a type, ask:
 *what values of this type can exist?*
 
