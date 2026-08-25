@@ -8,3 +8,6 @@ build/
 
 # mdBook output
 book/
+
+# Local library of course reading PDFs (publisher-copyrighted; not redistributable)
+Readings/
