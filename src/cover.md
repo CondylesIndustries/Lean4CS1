@@ -71,6 +71,34 @@
   opacity: 0.6;
   overflow-wrap: anywhere;
 }
+/* Call to action. Colors come from the mdBook link variable so the button
+   follows the reader's theme like the rest of the plate. */
+.cover-cta {
+  display: inline-block;
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
+  padding: 0.72em 2em;
+  border: 1px solid var(--links);
+  border-radius: 3px;
+  color: var(--links);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.cover-cta:hover,
+.cover-cta:focus-visible {
+  background: var(--links);
+  color: var(--bg);
+  text-decoration: none;
+}
+.cover-cta:focus-visible {
+  outline: 2px solid var(--links);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover-cta { transition: none; }
+}
 .cover-status {
   margin-top: 0.9rem;
   font-size: 0.78rem;
@@ -98,6 +126,7 @@
     <div class="cover-affiliation">Department of Computer Science</div>
     <div class="cover-affiliation">CS6501-010 &middot; Fall 2026</div>
     <div class="cover-mark">theorem correct : &forall; n, f n = spec n := by decide</div>
+    <div><a class="cover-cta" href="setup.html">Let&rsquo;s Go!</a></div>
     <div class="cover-status">Living edition &middot; revised through the semester &middot; <span class="cover-commit">@GIT_COMMIT@</span></div>
   </div>
 </div>
