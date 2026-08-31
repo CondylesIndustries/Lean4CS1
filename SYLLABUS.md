@@ -46,12 +46,14 @@ generalized mathematics of the application domain, stating that theory precisely
 separate computable implementations against it. It is also required for the sustained quality of
 evolving, long-lived software systems.
 
-The resulting assurance rests on two distinct objects of trust: the validity of the statements of
-the formal theory itself and verification of the proof certificates that connect implementation to
-the abstract theories they are required to implement in some form. Lean 4 provides a practical
-language in which theories, implementations, and proofs can coexist, but it does not eliminate
-either obligation: one must understand the mathematics being formalized, and one must understand
-the trusted proof-checking base on which machine-checked assurance depends.
+What formal methods give the developer is justified confidence that they can actually uphold the
+assurances their users are paying for and then relying upon. That confidence rests on two distinct
+objects of trust: the validity of the statements of the formal theory itself and verification of
+the proof certificates that connect implementation to the abstract theories they are required to
+implement in some form. Lean 4 provides a practical language in which theories, implementations,
+and proofs can coexist, but it does not eliminate either obligation: one must understand the
+mathematics being formalized, and one must understand the trusted proof-checking base on which that
+confidence depends.
 
 This is a course for graduate students in computer science.
 
