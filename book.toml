@@ -1,8 +1,8 @@
 [book]
-title = "CS1: Programming, Certified"
+title = "CS6501, Fall 2026"
 authors = ["Kevin Sullivan"]
 language = "en"
-description = "CS1: Programming, Certified"
+description = "CS6501, Fall 2026"
 src = "src"
 
 [build]

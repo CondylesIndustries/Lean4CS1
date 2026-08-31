@@ -1,8 +1,8 @@
-# CS1: Programming, Certified
+# CS6501, Fall 2026
 
 A literate Lean 4 curriculum introducing typed functional programming through the lens of the Curry-Howard correspondence. Every file compiles cleanly against Lean 4 / Mathlib — no `sorry`, no `by`.
 
-The book presents the **CS1 Full Course** — a complete 14-week curriculum.
+The book presents the **Full Course** — a complete 14-week curriculum.
 
 ## Design commitments
 

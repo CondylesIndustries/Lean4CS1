@@ -1,4 +1,4 @@
-# CS1
+# CS6501, Fall 2026
 
 **Author:** Kevin Sullivan (<sullivan@virginia.edu>)
 
@@ -10,7 +10,7 @@ Draft For Comment
 
 ---
 
-CS1: Programming, Certified
+CS6501, Fall 2026
 
 A 14-week course in functional programming to establish foundations for proof construction
 in predicate logic, set theory and the theory of relations, and beyond. This web page is

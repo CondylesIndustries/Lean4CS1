@@ -82,8 +82,8 @@
 <div class="cover">
   <div class="cover-plate">
     <div class="cover-kicker">University of Virginia</div>
-    <div class="cover-title">CS1</div>
-    <div class="cover-subtitle">Programming, Certified</div>
+    <div class="cover-title">CS6501</div>
+    <div class="cover-subtitle">Fall 2026</div>
     <div class="cover-rule"></div>
     <p class="cover-blurb">
       A course in functional programming with Lean&nbsp;4, in which every function

@@ -1,4 +1,4 @@
-# CS1: Programming, Certified
+# CS6501, Fall 2026
 
 [Cover](./cover.md)
 
