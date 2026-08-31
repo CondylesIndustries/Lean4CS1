@@ -8,8 +8,8 @@
 - **Office hours:** Tuesdays, 1:00 – 3:00 PM · Rice 508
 - **Course book (living):** <https://github.com/kevinsullivan/Lean4CS1> · rendered: `[book URL]`
 
-> This syllabus is a draft for comment. Dates and required readings are fixed; Part II topics and
-> pacing are tentative.
+> This syllabus is subject to change. If changes are made they will be pre-announced and
+> documented here.
 
 ---
 
