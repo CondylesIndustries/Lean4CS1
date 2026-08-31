@@ -143,11 +143,12 @@ def insertionSort : List Nat → List Nat
 Proving `CorrectSort insertionSort` requires two sub-proofs.  Both
 are provided here as term-mode proofs for you to read.
 
-**Helper 1**: inserting into a sorted list produces a sorted list.
+**Helper 1**: inserting preserves the permutation relation — `insert' x xs` is a
+permutation of `x :: xs`.  Both `insert_sorted` (Helper 2) and `insertionSort_perm`
+(Helper 4) reuse this single lemma.
 @@@ -/
 
--- Local helper for insert_sorted
-private theorem insert_perm' (x : Nat) :
+theorem insert_perm (x : Nat) :
     ∀ xs : List Nat, insert' x xs ~ x :: xs
   | []      => List.Perm.refl _
   | h :: t  => by
@@ -155,8 +156,19 @@ private theorem insert_perm' (x : Nat) :
     split_ifs with hle
     · exact List.Perm.refl _
     · exact List.Perm.trans
-        (List.Perm.cons h (insert_perm' x t))
+        (List.Perm.cons h (insert_perm x t))
         (List.Perm.swap x h t)
+
+/-! @@@
+> **Checkpoint — `insert_perm`.** The provided proof guarantees: `insert' x xs` is a
+> permutation of `x :: xs` (nothing added or lost). **Predict** the Boolean below, then check.
+@@@ -/
+
+#eval decide (insert' 4 [1, 3, 5] ~ 4 :: [1, 3, 5])   -- predict first
+
+/-! @@@
+**Helper 2**: inserting into a sorted list produces a sorted list.
+@@@ -/
 
 theorem insert_sorted (x : Nat) :
     ∀ xs : List Nat, List.Sorted (· ≤ ·) xs →
@@ -179,7 +191,7 @@ theorem insert_sorted (x : Nat) :
       have hxh : h ≤ x := Nat.le_of_not_le hle
       apply List.Pairwise.cons
       · intro y hy
-        have : y ∈ x :: t := (insert_perm' x t).subset hy
+        have : y ∈ x :: t := (insert_perm x t).subset hy
         simp only [List.mem_cons] at this
         cases this with
         | inl heq => exact heq ▸ hxh
@@ -193,28 +205,6 @@ theorem insert_sorted (x : Nat) :
 @@@ -/
 
 #eval decide (List.Sorted (· ≤ ·) (insert' 4 [1, 3, 5]))   -- predict first
-
-/-! @@@
-**Helper 2**: inserting preserves the permutation relation.
-@@@ -/
-
-theorem insert_perm (x : Nat) :
-    ∀ xs : List Nat, insert' x xs ~ x :: xs
-  | []      => List.Perm.refl _
-  | h :: t  => by
-    simp only [insert']
-    split_ifs with hle
-    · exact List.Perm.refl _
-    · exact List.Perm.trans
-        (List.Perm.cons h (insert_perm x t))
-        (List.Perm.swap x h t)
-
-/-! @@@
-> **Checkpoint — `insert_perm`.** The provided proof guarantees: `insert' x xs` is a
-> permutation of `x :: xs` (nothing added or lost). **Predict** the Boolean below, then check.
-@@@ -/
-
-#eval decide (insert' 4 [1, 3, 5] ~ 4 :: [1, 3, 5])   -- predict first
 
 /-! @@@
 **Helper 3**: insertion sort produces a sorted list.
@@ -295,8 +285,8 @@ generalized.
 -- A function with a precondition in its type:
 def sortedMerge
     (xs ys : List Nat)
-    (hxs : List.Sorted (· ≤ ·) xs)
-    (hys : List.Sorted (· ≤ ·) ys) :
+    (_hxs : List.Sorted (· ≤ ·) xs)
+    (_hys : List.Sorted (· ≤ ·) ys) :
     { zs : List Nat // List.Sorted (· ≤ ·) zs ∧ zs ~ xs ++ ys } :=
   -- Implementation omitted; the TYPE is the specification.
   -- Any implementation must produce a Σ-type (subtype) carrying the proof.

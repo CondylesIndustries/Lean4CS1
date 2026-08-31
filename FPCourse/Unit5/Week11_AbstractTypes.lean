@@ -101,6 +101,43 @@ theorem alist_lookup_insert_diff [DecidableEq k] {k1 k2 : k} (val : v)
     AList.lookup k1 (AList.insert k2 val m) = AList.lookup k1 m := by
   simp [AList.lookup, AList.insert, hne]
 
+theorem alist_lookup_delete_same [DecidableEq k] (key : k) (m : AList k v) :
+    AList.lookup key (AList.delete key m) = none := by
+  induction m with
+  | nil => rfl
+  | cons hd t ih =>
+    obtain ⟨k', v'⟩ := hd
+    by_cases h : key = k'
+    · subst h; simp [AList.delete, ih]
+    · simp [AList.delete, AList.lookup, h, ih]
+
+theorem alist_lookup_delete_diff [DecidableEq k] {k1 k2 : k} (m : AList k v)
+    (hne : k1 ≠ k2) :
+    AList.lookup k1 (AList.delete k2 m) = AList.lookup k1 m := by
+  induction m with
+  | nil => rfl
+  | cons hd t ih =>
+    obtain ⟨k', v'⟩ := hd
+    by_cases h : k2 = k'
+    · subst h; simp [AList.delete, AList.lookup, ih, hne]
+    · by_cases h1 : k1 = k'
+      · subst h1; simp [AList.delete, AList.lookup, h]
+      · simp [AList.delete, AList.lookup, h, h1, ih]
+
+/-! @@@
+All five laws now hold for `AList`, so we can package the implementation together with
+its proofs as a `LawfulDict` instance — the formal claim that `AList` *satisfies the
+dictionary specification*, not merely that it type-checks against the `Dict` interface.
+@@@ -/
+
+instance {k : Type} [DecidableEq k] : LawfulDict (d := AList) (k := k) where
+  toDict := inferInstance
+  lookup_empty := alist_lookup_empty
+  lookup_insert_same := alist_lookup_insert_same
+  lookup_insert_diff := fun _ _ val m h => alist_lookup_insert_diff val m h
+  lookup_delete_same := alist_lookup_delete_same
+  lookup_delete_diff := fun _ _ m h => alist_lookup_delete_diff m h
+
 /-! @@@
 > **Checkpoint — `AList.insert` then `AList.lookup`.** `insert` conses `(key, val)` onto
 > the front; `lookup` scans front-to-back. **Predict** what looking up a just-inserted key
