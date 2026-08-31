@@ -238,7 +238,3 @@ Part II builds new theory on top of these chapters. It introduces no further boo
 - **Accommodations:** `[insert UVA SDAC accommodations statement]`
 - **Late work / attendance:** `[insert policy]`
 - **Well-being and support resources:** `[insert UVA standard statement]`
-
----
-
-*Copyright © Kevin Sullivan, 2026. Draft for comment.*
