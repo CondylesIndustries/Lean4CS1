@@ -1,13 +1,13 @@
-# Copyright © 2001 by the Rectors and Visitors of the University of Virginia.
-FROM python:3.14-slim-bookworm
-LABEL org.opencontainers.image.description="Lean-Enabled DEvelopment and Publication VM"
+# Copyright © 2026 by the Rectors and Visitors of the University of Virginia.
+
+# Base image pinned by digest for reproducible rebuilds.
+# python:3.14-slim-bookworm multi-arch index digest resolved 2026-08-31.
+# Re-pin with:
+#   docker buildx imagetools inspect python:3.14-slim-bookworm
+FROM python:3.14-slim-bookworm@sha256:416f0db2a2b561945630cef9877a7ea0581b27449eb9fd9df42f03e1b74b5b63
+LABEL org.opencontainers.image.description="Lean-Enabled Development and Publication VM"
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG YQ_VERSION=4.2.0
-ARG GH_VERSION=2.87.2
-ARG MDBOOK_VERSION=0.5.4
-ARG MDBOOK_TOC_VERSION=0.15.4
-ARG MDBOOK_MERMAID_VERSION=0.17.1
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
@@ -19,117 +19,117 @@ SHELL ["/bin/bash", "-c"]
 USER root
 
 # ----- Base tools -----
-RUN apt-get update --fix-missing && \
+RUN apt-get update && \
     apt-get install --no-install-recommends --assume-yes \
-    build-essential \
-    curl \
-    git \
-    openssh-client \
-    less \
-    libffi-dev \
-    libssl-dev \
-    locales \
-    pkg-config \
-    unzip \
-    vim \
-    wget \
-    zip \
-    sudo && \
+      build-essential \
+      curl \
+      git \
+      openssh-client \
+      less \
+      libffi-dev \
+      libssl-dev \
+      locales \
+      pkg-config \
+      unzip \
+      vim \
+      wget \
+      zip \
+      sudo && \
     sed -i '/en_US.UTF-8/s/^# //' /etc/locale.gen && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# ----- yq (system-wide, architecture-aware) -----
-RUN ARCH=$(dpkg --print-architecture) && \
+# ----- Non-root user and workspace -----
+# Created early so the Rust toolchain below can be chowned to `dev`.
+# `git config --system` writes to /etc/gitconfig so the setting actually
+# applies to dev (a prior --global as root only touched root's config).
+RUN useradd -m -s /bin/bash dev && \
+    usermod -aG sudo dev && \
+    echo 'dev ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/dev && \
+    chmod 0440 /etc/sudoers.d/dev && \
+    mkdir -p /home/dev/app && chown -R dev:dev /home/dev/app && \
+    git config --system --add safe.directory /home/dev/app
+
+# Pinned tool versions — single source of truth shared with CI. Copied after
+# apt so a version bump does not rebuild the base layer; owned by dev so the
+# elan step below (which runs as dev) can source and then remove it.
+COPY --chown=dev:dev versions.env /tmp/versions.env
+
+# ----- yq + GitHub CLI + mdBook (system-wide, architecture-aware) -----
+RUN set -a && . /tmp/versions.env && set +a && \
+    ARCH=$(dpkg --print-architecture) && \
     case "$ARCH" in \
-      amd64) YQ_ARCH=amd64 ;; \
-      arm64) YQ_ARCH=arm64 ;; \
+      amd64) YQ_ARCH=amd64; GH_ARCH=amd64; GNU_ARCH=x86_64-unknown-linux-gnu ;; \
+      arm64) YQ_ARCH=arm64; GH_ARCH=arm64; GNU_ARCH=aarch64-unknown-linux-musl ;; \
       *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
     esac && \
     curl -fsSLo /tmp/yq.tar.gz "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_${YQ_ARCH}.tar.gz" && \
-    tar -xzf /tmp/yq.tar.gz -C /tmp && \
-    mv /tmp/yq_linux_${YQ_ARCH} /usr/local/bin/yq && \
-    chmod +x /usr/local/bin/yq && \
-    rm -f /tmp/yq.tar.gz
-
-# ----- GitHub CLI (system-wide, architecture-aware) -----
-RUN ARCH=$(dpkg --print-architecture) && \
-    case "$ARCH" in \
-      amd64) GH_ARCH=amd64 ;; \
-      arm64) GH_ARCH=arm64 ;; \
-      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
-    esac && \
+    tar -xzf /tmp/yq.tar.gz -C /tmp && mv /tmp/yq_linux_${YQ_ARCH} /usr/local/bin/yq && \
     curl -fsSLo /tmp/gh.tar.gz "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${GH_ARCH}.tar.gz" && \
-    tar -xzf /tmp/gh.tar.gz -C /tmp && \
-    mv /tmp/gh_${GH_VERSION}_linux_${GH_ARCH}/bin/gh /usr/local/bin/gh && \
-    chmod +x /usr/local/bin/gh && \
-    rm -rf /tmp/gh.tar.gz /tmp/gh_${GH_VERSION}_linux_${GH_ARCH}
+    tar -xzf /tmp/gh.tar.gz -C /tmp && mv /tmp/gh_${GH_VERSION}_linux_${GH_ARCH}/bin/gh /usr/local/bin/gh && \
+    curl -fsSLo /tmp/mdbook.tar.gz "https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-${GNU_ARCH}.tar.gz" && \
+    tar -xzf /tmp/mdbook.tar.gz -C /usr/local/bin && \
+    chmod +x /usr/local/bin/yq /usr/local/bin/gh /usr/local/bin/mdbook && \
+    rm -rf /tmp/*.tar.gz /tmp/gh_*
 
-# ----- Rust toolchain (system-wide, retained in the image) -----
-# Installed under /usr/local rather than /root so the non-root `dev` user can
-# run cargo, and deliberately KEPT (previously deleted after use) so mdBook
-# preprocessors can be added or rebuilt inside a running container.
+# ----- Rust toolchain (slim, retained for in-container preprocessor rebuilds) -----
+# Installed under /usr/local with the minimal profile, then chowned to `dev`
+# (NOT chmod a+rwX) so the non-root user can run and extend cargo without the
+# toolchain being world-writable. The bulky registry/git cache produced while
+# compiling the preprocessors is dropped to keep the image slim.
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:${PATH}
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+RUN set -a && . /tmp/versions.env && set +a && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
         sh -s -- -y --no-modify-path --profile minimal && \
-    chmod -R a+rwX ${RUSTUP_HOME} ${CARGO_HOME} && \
+    cargo --version && rustc --version && \
+    cargo install --locked --version ${MDBOOK_TOC_VERSION}     mdbook-toc && \
+    cargo install --locked --version ${MDBOOK_MERMAID_VERSION} mdbook-mermaid && \
+    cp ${CARGO_HOME}/bin/mdbook-toc ${CARGO_HOME}/bin/mdbook-mermaid /usr/local/bin/ && \
+    rm -rf ${CARGO_HOME}/registry ${CARGO_HOME}/git && \
+    chown -R dev:dev ${RUSTUP_HOME} ${CARGO_HOME} && \
     printf '%s\n' \
         'export RUSTUP_HOME=/usr/local/rustup' \
         'export CARGO_HOME=/usr/local/cargo' \
         'export PATH="/usr/local/cargo/bin:$PATH"' \
         > /etc/profile.d/rust.sh && \
-    chmod 0644 /etc/profile.d/rust.sh && \
-    cargo --version && rustc --version
-
-# ----- mdBook + preprocessors (system-wide, architecture-aware) -----
-# mdbook has pre-built arm64+amd64 Linux binaries; preprocessors are compiled
-# from source via cargo because their releases lack arm64 Linux assets.
-RUN ARCH=$(dpkg --print-architecture) && \
-    case "$ARCH" in \
-      amd64) GNU_ARCH=x86_64-unknown-linux-gnu ;; \
-      arm64) GNU_ARCH=aarch64-unknown-linux-musl ;; \
-      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
-    esac && \
-    curl -fsSLo /tmp/mdbook.tar.gz "https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-${GNU_ARCH}.tar.gz" && \
-    tar -xzf /tmp/mdbook.tar.gz -C /usr/local/bin && chmod +x /usr/local/bin/mdbook && rm -f /tmp/mdbook.tar.gz && \
-    cargo install mdbook-toc     --version ${MDBOOK_TOC_VERSION} && \
-    cargo install mdbook-mermaid --version ${MDBOOK_MERMAID_VERSION} && \
-    cp ${CARGO_HOME}/bin/mdbook-toc \
-       ${CARGO_HOME}/bin/mdbook-mermaid /usr/local/bin/ && \
-    rm -rf ${CARGO_HOME}/registry ${CARGO_HOME}/git
-
-# ----- Create non-root user and workspace -----
-RUN useradd -m -s /bin/bash dev && \
-    usermod -aG sudo dev && \
-    echo 'dev ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/dev && \
-    chmod 0440 /etc/sudoers.d/dev && \
-    mkdir -p /home/dev/app && chown -R dev:dev /home/dev/app
-
-# Make the workspace path safe for Git even if mounted by host
-RUN git config --global --add safe.directory /home/dev/app
+    chmod 0644 /etc/profile.d/rust.sh
 
 # ----- Switch to dev for user-scoped installs -----
 USER dev
 WORKDIR /home/dev
 
-# Put user-local tools on PATH globally for this image
-ENV PATH="/home/dev/.elan/bin:/home/dev/.local/bin:/usr/local/bin:${PATH}"
+# Put user-local tools (elan/lean, claude, pip --user) on PATH.
+ENV PATH="/home/dev/.elan/bin:/home/dev/.local/bin:${PATH}"
+
+# ----- elan (Lean toolchain manager, user-local) -----
+# Installed WITHOUT a default toolchain: the correct Lean version is fetched
+# lazily from each package's lean-toolchain on the first `lake`/`lake build`,
+# so the image stays small and version-agnostic while making `lake` usable
+# headlessly (no VS Code extension required). After attaching, warm the
+# Mathlib build cache with:
+#   lake exe cache get
+RUN set -a && . /tmp/versions.env && set +a && \
+    ARCH=$(dpkg --print-architecture) && \
+    case "$ARCH" in \
+      amd64) ELAN_ARCH=x86_64-unknown-linux-gnu ;; \
+      arm64) ELAN_ARCH=aarch64-unknown-linux-gnu ;; \
+      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSLo /tmp/elan.tar.gz "https://github.com/leanprover/elan/releases/download/v${ELAN_VERSION}/elan-${ELAN_ARCH}.tar.gz" && \
+    tar -xzf /tmp/elan.tar.gz -C /tmp && \
+    /tmp/elan-init -y --default-toolchain none --no-modify-path && \
+    rm -f /tmp/elan.tar.gz /tmp/elan-init /tmp/versions.env
 
 # ----- Claude Code CLI (user-local) -----
-# Installed AFTER the USER switch: running the installer as root placed the
-# binary in /root/.local/bin, which the `dev` user cannot read.
+# Installed AFTER the USER switch so the binary lands in /home/dev/.local/bin
+# (readable by dev) rather than /root/.local/bin.
 RUN curl -fsSL https://claude.ai/install.sh | bash
-
-# ----- elan + Lean toolchain -----
-# Not installed here — the leanprover.lean4 VS Code extension installs elan and
-# the correct toolchain on first attach (driven by lean-toolchain files per package).
-# After Lean is available, run: ./build.sh cache
 
 # Workspace
 WORKDIR /home/dev/app
 
-# Keep the devcontainer running so VS Code can attach
+# Keep the devcontainer running so VS Code can attach.
 CMD ["sleep", "infinity"]

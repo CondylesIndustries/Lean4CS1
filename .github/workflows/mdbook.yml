@@ -17,13 +17,13 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      MDBOOK_VERSION: "0.5.4"
-      MDBOOK_TOC_VERSION: "0.15.4"
-      MDBOOK_MERMAID_VERSION: "0.17.1"
 
     steps:
       - uses: actions/checkout@v4
+
+      # Single source of truth for tool versions, shared with the devcontainer.
+      - name: Load pinned tool versions
+        run: grep -E '^[A-Z_]+=' .devcontainer/versions.env >> "$GITHUB_ENV"
 
       # Download pre-built mdBook binary (~5 seconds vs 5-10 min cargo install)
       - name: Install mdBook
