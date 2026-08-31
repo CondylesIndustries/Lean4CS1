@@ -133,19 +133,12 @@ low-stakes feedback.
 
 ### Grading
 
-Course grades have two components, weighted equally.
+Course grades will be based on periodic quizzes to test that one is keeping up to date, on
+knowledge of readings demonstrated by participation in class discussions, and on a semester-long
+course project.
 
-| Component | Weight |
-|---|---|
-| Participation, including preparation for and attendance in class | 50% |
-| Two to three project grades — details TBD | 50% |
-
-The competencies above describe what the work is assessed against. The table gives the weights used
-to compute the course grade. Weekly exercise sets are machine-checked for immediate feedback and
-count as preparation for class.
-
-These two components are the whole of the course grade. The number of projects, their scope, and
-their due dates will be announced.
+The competencies above describe what the work is assessed against. Weekly exercise sets are
+machine-checked for immediate feedback and count as preparation for class.
 
 ---
 

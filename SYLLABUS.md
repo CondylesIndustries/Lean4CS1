@@ -15,18 +15,22 @@
 
 ## Course Description
 
-This course examines human intellectual control over complex software systems as an ongoing major
-technical challenge and social imperative. Such control is required for the sustained quality of
-evolving, long-lived software systems, and it is especially so now, in the emerging era of
-generative AI. The central claim of the course is that durable intellectual control depends on
-abstract software specification: on understanding the generalized mathematics of a domain, stating
-that theory precisely, and certifying separate computable implementations against it.
+The field of software development is being transformed by AI in two profound ways. First, it is
+automating the production, based on natural language inputs, of a great deal of inherently
+unverifiable imperative code that would previously have been written by hand then subjected to
+testing and other forms of limited checking of correctness. Second, it is enabling the
+formalization of statements in abstract mathematics and automating the construction of proofs of
+such statements, including statements about programs, making the 60 year dream of formally
+specified and verified software suddenly look more achievable than ever before. However enormous
+challenges remain. Even with formal and machine-checked specifications, the rate at which
+generative AIs can produce specifications, programs, and proofs, means that one's constructions
+can easily escape one's intellectual control. This course will emphasize the development of formal
+specification architectures as a vital practice for both guiding generative AIs to produce useful
+results and for maintaining the intellectual control necessary for human beings to remain
+accountable for any consequential failures of their products resulting in unacceptable harms to
+stakeholders.
 
-The resulting assurance rests on two distinct objects of trust: the adequacy of the formal theory,
-and the validity of the proof certificates that connect an implementation to the theory. Lean 4 lets
-theories, implementations, and proofs coexist in one language. It does not remove either obligation.
-One must still understand the mathematics being formalized, and the trusted proof-checking base on
-which machine-checked assurance depends.
+This is a course for graduate students in computer science.
 
 ---
 
@@ -48,6 +52,14 @@ The course is in two parts.
 
 Lean is used from Week 1 onward. Part II changes the kind of work students do in Lean; it does not
 introduce Lean.
+
+---
+
+## Grading
+
+Course grades will be based on periodic quizzes to test that one is keeping up to date, on
+knowledge of readings demonstrated by participation in class discussions, and on a semester-long
+course project.
 
 ---
 
@@ -88,24 +100,6 @@ Correctness in this course comes in three tiers, and the assessment is built aro
 Chapter exercises include machine-checkable acceptance checks (`#guard`), so the compiler reports
 whether an answer is correct, and chapters include predict-then-check checkpoints for immediate,
 low-stakes feedback.
-
----
-
-## Grading
-
-Course grades have two components, weighted equally.
-
-| Component | Weight |
-|---|---|
-| Participation, including preparation for and attendance in class | 50% |
-| Two to three project grades — details TBD | 50% |
-
-The competencies above describe what the work is assessed against. The table gives the weights used
-to compute the course grade. Weekly exercise sets are machine-checked for immediate feedback and
-count as preparation for class.
-
-These two components are the whole of the course grade. The number of projects, their scope, and
-their due dates will be announced.
 
 ---
 
@@ -234,9 +228,109 @@ Part II builds new theory on top of these chapters. It introduces no further boo
 
 ## Course Policies
 
-- **Prerequisites:** `[graduate standing / instructor permission; programming maturity; state any Lean/PL background assumed]`
-- **Academic integrity:** `[insert UVA Honor System statement and this course's collaboration policy]`
-- **Use of AI tools:** `[state the policy — note the course itself studies autoformalization; clarify permitted vs. prohibited AI assistance on graded work]`
-- **Accommodations:** `[insert UVA SDAC accommodations statement]`
-- **Late work / attendance:** `[insert policy]`
-- **Well-being and support resources:** `[insert UVA standard statement]`
+### Use of Generative AI
+
+You are responsible for mastering the concepts, languages, tools, and methods taught in this class.
+You may use generative AI tools and search tools to assist you in doing homework assignments. If you
+do, then you must include a statement at the end of your assignment summarizing your use of such
+tools.
+
+### Recording
+
+You may not electronically record any aspect of this class—audio, visual, or otherwise—without the
+express permission of the instructor. Nor may you distribute any authorized recordings of any aspect
+of this class to anyone outside of this class. The instructor owns the copyright to all materials
+used in this class. If you have needs for special accommodations that require that you record
+aspects of this class as documented by SDAC then you have permission to make recordings to that
+extent for your own use only.
+
+### Students with disabilities or learning needs
+
+It is our goal to create a learning experience that is as accessible as possible. If you anticipate
+any issues related to the format, materials, or requirements of this course, please meet with me
+outside of class so we can explore potential options. Students with disabilities may also wish to
+work with the Student Disability Access Center (SDAC) to discuss a range of options to removing
+barriers in this course, including official accommodations. We have an SDAC advisor, Courtney
+MacMasters, located in Engineering. You may email her at <cmacmasters@virginia.edu> to schedule an
+appointment. For general questions please visit the SDAC website:
+<https://sdac.studenthealth.virginia.edu>. If you have been approved for accommodations through
+SDAC, you may contact Prof. Sullivan to develop an implementation plan together.
+
+### Religious accommodations
+
+It is the University's long-standing policy and practice to reasonably accommodate students so that
+they do not experience an adverse academic consequence when sincerely held religious beliefs or
+observances or other highly important personal matters conflict with academic requirements.
+
+Students who wish to request academic accommodation for such matters should submit their request to
+Prof. Sullivan by email as far in advance as possible. Students who have questions or concerns about
+such academic accommodations may contact the University's Office for Equal Opportunity and Civil
+Rights (EOCR) at <UVAEOCR@virginia.edu> or 434-924-3200.
+
+### Harassment, Discrimination, and Interpersonal Violence
+
+The University of Virginia is dedicated to providing a safe and equitable learning environment for
+all students. If you or someone you know has been affected by power-based personal violence, more
+information can be found on the UVA Sexual Violence website that describes reporting options and
+resources available — <https://www.virginia.edu/sexualviolence>.
+
+The same resources and options for individuals who experience sexual misconduct are available for
+discrimination, harassment, and retaliation. UVA prohibits discrimination and harassment based on
+age, color, disability, family medical or genetic information, gender identity or expression,
+marital status, military status, national or ethnic origin, political affiliation, pregnancy
+(including childbirth and related conditions), race, religion, sex, sexual orientation, or veteran
+status. UVA policy also prohibits retaliation for reporting such behavior.
+
+If you witness or are aware of someone who has experienced prohibited conduct, you are encouraged to
+submit a report to Just Report It (<https://justreportit.virginia.edu>) or contact EOCR, the office
+of Equal Opportunity and Civil Rights.
+
+If you would prefer to disclose such conduct to a confidential resource where what you share is not
+reported to the University, you can turn to Counseling & Psychological Services ("CAPS") and Women's
+Center Counseling Staff and Confidential Advocates (for students of all genders).
+
+I care about you and your well-being and am ready to provide support and resources as I can. As a
+faculty member, I am a responsible employee, which means that I am required by University policy and
+by federal law to report certain kinds of conduct that you report to me to the University's Title IX
+Coordinator. The Title IX Coordinator's job is to ensure that the reporting student receives the
+resources and support that they need, while also determining whether further action is necessary to
+ensure survivor safety and the safety of the University community.
+
+### Support for your career development
+
+Engaging in your career development is an important part of your student experience. For example,
+presenting at research conferences, attending interviews for jobs or internships, or participating
+in extern/shadowing experience are important steps on your path. I wish to encourage and support you
+in activities related to your career development. To that end, please notify me by email as far in
+advance as possible to arrange for accommodations.
+
+### Student support team
+
+You have many resources available to you when you experience academic or personal stresses. In
+addition to your professor, the School of Engineering and Applied Science has staff members located
+in Thornton Hall who you can contact to help manage academic or personal challenges. Please do not
+wait until the end of the semester to ask for help!
+
+**Learning**
+
+- Director of Student Success (search underway)
+- Courtney MacMasters, Accessibility Specialist
+
+**Health and Wellbeing**
+
+- Elizabeth Ramirez-Weaver, CAPS counselor\*
+- Katie Fowler, CAPS counselor\*
+
+\*You may schedule time with the CAPS counselors through Student Health
+(<https://www.studenthealth.virginia.edu/getting-started-caps>). When scheduling, be sure to specify
+that you are an Engineering student. You are also urged to use TimelyCare for either scheduled or
+on-demand 24/7 mental health care.
+
+**Community and Identity**
+
+The Center for Diversity in Engineering (CDE) is a student space dedicated to advocating for
+underrepresented groups in STEM. It exists to connect students with the academic, financial, health,
+and community resources they need to thrive both at UVA and in the world. The CDE includes an open
+study area, event space, and staff members on site. Through this space, we affirm and empower
+equitable participation toward intercultural fluency and provide the resources necessary for
+students to be successful during their academic journey.
