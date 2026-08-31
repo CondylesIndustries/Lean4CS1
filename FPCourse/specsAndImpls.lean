@@ -202,4 +202,4 @@ output -- useful next to `#check` and `#reduce`, which are chatty.
 One caution: messages containing metavariables, such as the `?u.2` universe in
 the `List` guard below, embed numbers Lean assigns during elaboration. Those can
 shift when surrounding code changes, and the guard will need updating.
--/
+@@@ -/

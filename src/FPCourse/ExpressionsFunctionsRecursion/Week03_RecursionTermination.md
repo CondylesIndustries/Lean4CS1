@@ -1,8 +1,9 @@
--- FPCourse/Unit1/Week03_RecursionTermination.lean
+```lean
+-- FPCourse/ExpressionsFunctionsRecursion/Week03_RecursionTermination.lean
 import Mathlib.Data.Nat.Basic
 import Mathlib.Tactic.Ring
+```
 
-/-! @@@
 # Week 3: Recursion and Termination
 
 ## Structural recursion
@@ -41,14 +42,16 @@ way of writing down these two ingredients:
 Lean can verify termination automatically for structural recursion because
 it can see that the step clause only ever asks for the answer at `n`, not at
 any larger value.
-@@@ -/
-
+```lean
 namespace Week03
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.1  Factorial — direct recursive definition
-@@@ -/
-
+```lean
 def factorial : Nat → Nat
   | 0     => 1
   | n + 1 => (n + 1) * factorial n
@@ -59,8 +62,8 @@ def factorial : Nat → Nat
 -- rfl-based tests: both sides reduce to the same normal form
 example : factorial 0 = 1   := rfl
 example : factorial 5 = 120 := rfl
+```
 
-/-! @@@
 **Reading the definition.**  Apply the two-ingredient view to `factorial`:
 
 - **Base case** (`| 0 => 1`): the answer for `0` is `1`.
@@ -83,16 +86,16 @@ Lean's evaluator runs this in the opposite order — it unfolds `factorial 3`
 toward the base case and assembles the result on the way back up.  Either
 direction produces `6`.  The inductive framing explains *why* there is
 a well-defined answer for every input, not just how to compute it.
-@@@ -/
-
-/-! @@@
 > **Checkpoint — `factorial`.** Iterate the step once more from `factorial 3 = 6`:
 > `factorial 4 = 4 * factorial 3`.  **Predict** the value below before reading it.
-@@@ -/
-
+```lean
 #eval factorial 4   -- predict first  (4 * 6)
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.2  Tail recursion and accumulators
 
 The direct definition rebuilds the product on the way *back* from the
@@ -102,8 +105,7 @@ base case.  A tail-recursive version accumulates the product on the way
 Tail-recursive functions are important in practice because they run in
 constant stack space.  They can also have different proofs of correctness,
 which is why we need to state the relationship between the two versions.
-@@@ -/
-
+```lean
 def factorialAcc : Nat → Nat → Nat
   | 0,     acc => acc
   | n + 1, acc => factorialAcc n ((n + 1) * acc)
@@ -119,16 +121,19 @@ def factorialTR (n : Nat) : Nat := factorialAcc n 1
 -- Notice: the accumulator grows on the way DOWN; no work on the way back up.
 #eval factorialTR 5   -- 120
 example : factorialTR 5 = 120 := rfl
+```
 
-/-! @@@
 > **Checkpoint — `factorialTR` accumulates on the way down.** The accumulator carries the
 > running product, so the recursive call is the last thing done.  **Predict** `factorialTR 4`
 > (trace the accumulator from `1`), then check.
-@@@ -/
-
+```lean
 #eval factorialTR 4   -- predict first
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.3  Specification: the two definitions agree
 
 The following theorem states that the accumulator version computes the
@@ -140,8 +145,7 @@ is a term — a recursive function on `n` whose type is the specification.
 
 Read the term as: "by induction on n; the base case is a calculation;
 the step uses the inductive hypothesis for n with a different accumulator."
-@@@ -/
-
+```lean
 -- Provided term-mode proof.  Read it; do not reproduce it.
 theorem factorialAcc_spec : ∀ (n acc : Nat),
     factorialAcc n acc = acc * factorial n := by
@@ -157,16 +161,19 @@ theorem factorialAcc_spec : ∀ (n acc : Nat),
 -- Corollary: factorialTR agrees with factorial
 theorem factorialTR_spec (n : Nat) : factorialTR n = factorial n :=
   Eq.trans (factorialAcc_spec n 1) (Nat.one_mul (factorial n))
+```
 
-/-! @@@
 > **Checkpoint — the two definitions agree.** `factorialTR_spec` says `factorialTR n =
 > factorial n` for every `n`.  **Predict** the Boolean below *from the spec* (not by
 > computing both sides), then check.
-@@@ -/
-
+```lean
 #eval decide (factorialTR 6 = factorial 6)   -- predict from factorialTR_spec
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.4  Non-structural termination
 
 When recursion does not follow the structure of an inductive type,
@@ -174,8 +181,7 @@ Lean requires an explicit *termination measure*: a quantity that strictly
 decreases at each recursive call with respect to some well-founded relation.
 
 The `termination_by` clause names the measure.
-@@@ -/
-
+```lean
 -- Euclidean GCD — not structurally recursive on either argument,
 -- but decreases on the second argument at each step.
 def gcd : Nat → Nat → Nat
@@ -186,14 +192,13 @@ decreasing_by apply Nat.mod_lt; omega
 
 #eval gcd 48 18   -- 6
 #eval gcd 100 75  -- 25
+```
 
-/-! @@@
 > **Checkpoint — `gcd` (non-structural termination).** `gcd` recurses on a *decreasing
 > measure* (the second argument), not on a strict subterm.  **Predict** `gcd 24 36`, then
 > check.  Because `gcd` is well-founded, only `#eval` reduces it — `rfl`/`decide` cannot,
 > as the note below explains.
-@@@ -/
-
+```lean
 #eval gcd 24 36   -- predict first
 
 -- Note: rfl-based tests do NOT work for gcd.
@@ -220,8 +225,12 @@ theorem gcd_eq_nat_gcd : ∀ a b : Nat, gcd a b = Nat.gcd a b := by
       simp only [gcd]
       have key := ih (a % (b + 1)) (Nat.mod_lt a (Nat.succ_pos b)) (b + 1)
       rw [key, Nat.gcd_comm, ← Nat.gcd_rec, Nat.gcd_comm]
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.5  The termination / totality distinction
 
 A function in Lean must be *total*: it must return a value for every input.
@@ -240,26 +249,28 @@ This is not a limitation.  It is a *feature*: if a function has a type
 in Lean, it terminates on all inputs.  This means any specification you
 write about it is asking a question that always has an answer.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## 3.6  Reading specifications about recursive functions
 
 A specification for a recursive function is almost always a ∀ proposition:
 "for all inputs, the output satisfies this condition."
 
 Practice reading these:
-@@@ -/
-
+```lean
 -- "For all n, factorial n is positive"
 -- You should be able to read and understand the proposition.
 -- The proof term is here for your curiosity; you are not expected to produce it.
 theorem factorial_pos : ∀ n : Nat, 0 < factorial n :=
   fun n => Nat.recOn n (Nat.lt_add_one 0) (fun n ih => Nat.mul_pos (Nat.succ_pos n) ih)
+```
 
-/-! @@@
 > **Checkpoint — `factorial` is positive.** `factorial_pos` says `0 < factorial n` for
 > every `n`.  **Predict** the Boolean below *from that spec* (not by computing `factorial 6`),
 > then check.
-@@@ -/
-
+```lean
 #eval decide (0 < factorial 6)   -- predict from factorial_pos
 
 -- "factorial is monotone: each value is no greater than the next"
@@ -267,23 +278,24 @@ theorem factorial_pos : ∀ n : Nat, 0 < factorial n :=
 -- The proof term is here for your curiosity; you are not expected to produce it.
 theorem factorial_mono : ∀ n : Nat, factorial n ≤ factorial (n + 1) :=
   fun n => Nat.le_mul_of_pos_left (factorial n) (Nat.succ_pos n)
+```
 
-/-! @@@
 > **Checkpoint — `factorial` is monotone.** `factorial_mono` says `factorial n ≤
 > factorial (n + 1)` for every `n`.  **Predict** the Boolean below *from that spec*, then check.
-@@@ -/
-
+```lean
 #eval decide (factorial 4 ≤ factorial 5)   -- predict from factorial_mono
+```
 
-/-
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Worked out in class
--/
-
-
+```lean
 -- Check out the induction axiom for Nat!
 #check (@Nat.rec)
+```
 
-/- @@@
 Formatted more nicely:
 
 ```lean
@@ -293,62 +305,52 @@ Formatted more nicely:
   ((n : ℕ) → motive n → motive n.succ) →
   (t : ℕ) → motive t
 ```
-@@@ -/
-
-/- @@@
 Problems worked out in class. Define some familar
 functions on ordinary data types by induction. Any
 recursive function is basically a *universal* built
 by applicaiton of the induction axiom for a given
 type to answer for base cases and step functions.
-@@@ -/
-
+```lean
 def fac0 := 1
 def facStep (n facn : Nat) : Nat := (n+1) * facn
 #check @Nat.rec (fun _ => Nat) fac0 facStep
 #eval (@Nat.rec (fun _ => Nat) fac0 facStep) 5
+```
 
-/-! @@@
 > **Checkpoint — recursion *is* the recursor.** Applying `Nat.rec` to a base value and a
 > step function rebuilds `factorial`.  **Predict** the value below (it is `factorial 4`),
 > then check.
-@@@ -/
-
+```lean
 #eval (@Nat.rec (fun _ => Nat) fac0 facStep) 4   -- predict first
+```
 
-/- @@@
 @List.rec :
   {α : Type u_2} →
   {motive : List α → Sort u_1} →
   motive [] →
   ((head : α) → (tail : List α) → motive tail → motive (head :: tail)) →
   (t : List α) → motive t
-@@@ -/
-
+```lean
 def listLenBase := 0
 def stepListLen (_ : String) (_ : List String) (ansL : Nat) := ansL + 1
 
 #check @List.rec String (fun _ => Nat) listLenBase stepListLen
 #eval (@List.rec String (fun _ => Nat) listLenBase stepListLen) ["", "", ""]
 #check (@List.rec)
+```
 
-/-! @@@
 > **Checkpoint — `length` from `List.rec`.** The same universal shape computes list length:
 > base `0`, step `+1` per element.  **Predict** the length below, then check.
-@@@ -/
-
+```lean
 #eval (@List.rec String (fun _ => Nat) listLenBase stepListLen) ["a", "b"]   -- predict first
+```
 
-
-/- @@@
 @BinTreeNat.rec :
   {motive : BinTreeNat → Sort u_1} →
   motive BinTreeNat.empty →
   ((n : ℕ) → (l r : BinTreeNat) → motive l → motive r → motive (BinTreeNat.node n l r)) →
   (t : BinTreeNat) → motive t
-@@@ -/
-
-
+```lean
 inductive BinTreeNat where
 | empty
 | node (n : Nat) (l r : BinTreeNat)
@@ -364,17 +366,20 @@ def myTree : BinTreeNat :=
   (node 5 empty empty)
 
 #reduce (@BinTreeNat.rec (fun _ => Nat) 0 (fun n _ _ al ar => n + al + ar)) myTree
+```
 
-/-! @@@
 > **Checkpoint — folding a tree with `BinTreeNat.rec`.** The recursor sums a tree: base
 > `0` at `empty`, step `n + al + ar` at each `node`.  **Predict** the sum for `myTree`
 > (its node labels are `1`, `2`, `5`), then check.  (A custom recursor has no compiled
 > code path, so this checkpoint uses `#reduce` — the kernel reducer — not `#eval`.)
-@@@ -/
-
+```lean
 #reduce (@BinTreeNat.rec (fun _ => Nat) 0 (fun n _ _ al ar => n + al + ar)) myTree   -- predict first
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ## Exercises
 
 Each exercise carries a banner — `[id] · competency · tier · level · target` — and,
@@ -486,8 +491,28 @@ Read the *provided* proof of `factorialAcc_spec` (§3.3):
 try to prove only the special case `factorialAcc n 1 = factorial n`, without the `∀ acc`?
 Then identify which line of the provided proof *applies the inductive hypothesis at a
 different accumulator*.  No code to submit.
-@@@ -/
+---
 
+**[E3.7]** · *specification writing + type-directed derivation* · tier 1 · **stretch** · target `sumToAcc`
+
+Define a tail-recursive companion to `sumTo` (E3.1): `sumToAcc : Nat → Nat → Nat`, carrying
+the running total in its second argument.  State, as a `Prop`, the relationship between the
+two — the accumulator-generalized `∀ n acc, sumToAcc n acc = acc + sumTo n` — and confirm it
+on instances.  Do **not** prove the general statement; instead say, in one or two sentences
+and reusing the reasoning of E3.6, *why* it must be stated for every `acc` rather than only
+for `acc = 0`.
+
+```lean
+#guard sumToAcc 0 0 = 0
+#guard sumToAcc 4 0 = 10          -- 0 + 1 + 2 + 3 + 4
+#guard sumToAcc 4 5 = 15          -- the incoming accumulator is added in
+#guard sumToAcc 10 0 = 55
+```
+
+*First-step hint:* recurse on the first argument; the accumulator grows on the way *down*,
+so the recursive call is the last thing done.  Effort: ~4 lines of code.
+
+```lean
 end Week03
 
 -- uncomment to see error
@@ -495,8 +520,8 @@ end Week03
 --   | 0 => 0
 --   | 1 => 1
 --   | n => if n % 2 == 0 then collatz (n / 2) else collatz (3 * n + 1)
+```
 
-/-
 ```lean
 fail to show termination for
   collatz
@@ -516,4 +541,6 @@ h✝ : (n % 2 == 0) = true
 ⊢ n / 2 < nLean 4
 collatz : ℕ → ℕ
 ```
--/
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

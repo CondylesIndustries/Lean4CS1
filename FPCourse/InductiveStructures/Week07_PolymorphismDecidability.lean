@@ -35,7 +35,91 @@ def myFlip (f : α → β → γ) : β → α → γ := fun b a => f a b
 #check @myFlip    -- (α β γ : Type u) → (α → β → γ) → β → α → γ
 
 /-! @@@
-## 7.2  Bounded polymorphism: type class constraints
+> **Checkpoint — `myConst`.** `myConst : α → β → α` returns its first argument.
+> **Predict** the value below — does the second argument affect it? — then check.
+@@@ -/
+
+#eval myConst 7 "ignored"   -- predict first
+
+/-! @@@
+> **Checkpoint — `myFlip`.** `myFlip` swaps a function's two arguments.  **Predict** the
+> value of the flipped subtraction below, then check.
+@@@ -/
+
+#eval myFlip (fun a b => a - b) 3 10   -- predict:  (fun a b => a - b) 10 3
+
+/-! @@@
+## 7.2  Free theorems: what a polymorphic type guarantees
+
+The intro claimed a polymorphic `f : List α → List α` "can only permute, drop, or
+duplicate."  That is not a remark about *some* implementation — it is forced by the
+type, for *every* inhabitant.  When a function is polymorphic in `α`, its code is handed
+a type it cannot name: it cannot test a value of `α`, compare two, or manufacture one.
+The only `α`s it can return are those it was given.  This is **parametricity**
+(Reynolds 1983); the theorems it hands you for free are Wadler's "theorems for free"
+(2015).  Read every signature below by asking:
+
+> **What does this type forbid every inhabitant from doing?**
+@@@ -/
+
+/-! @@@
+**`∀ α, α → α` has essentially one inhabitant.**  One value of an unknown type in, one
+out; the only `α` available is the input, so it must be returned.  Free theorem: for
+every `g`, `g (f x) = f (g x)`.
+@@@ -/
+
+def myId : ∀ α : Type, α → α := fun _ x => x
+#eval myId String (toString 3)   -- "3"  = g (f 3)
+#eval toString (myId Nat 3)      -- "3"  = f (g 3)
+
+/-! @@@
+**`∀ α, α → α → α` has exactly two inhabitants** — the two projections; nothing else
+can be built.
+@@@ -/
+
+def fst' : ∀ α : Type, α → α → α := fun _ x _ => x
+def snd' : ∀ α : Type, α → α → α := fun _ _ y => y
+
+/-! @@@
+**`∀ α, List α → Nat` can only measure shape.**  It cannot inspect elements, so the
+result depends only on the length.  Free theorem: `f (xs.map g) = f xs`.
+@@@ -/
+
+def len' : ∀ α : Type, List α → Nat := fun _ xs => xs.length
+#eval len' Nat ([1, 2, 3].map (· * 10))   -- 3  = f (map g xs)
+#eval len' Nat [1, 2, 3]                    -- 3  = f xs
+
+/-! @@@
+**`∀ α, List α → List α`: rearrange, drop, duplicate — never invent.**  Every output
+element came from the input; which positions are kept is chosen by shape alone.  So `f`
+commutes with `map`, and the output length depends only on the input length.  `reverse`,
+`id`, `tail`, and `fun _ => []` inhabit it; "the singleton of the largest element" does
+not — it would have to compare elements the type forbids it to inspect.
+@@@ -/
+
+def rev' : ∀ α : Type, List α → List α := fun _ xs => xs.reverse
+#eval rev' Nat ([1, 2, 3].map (· * 10))   -- [30, 20, 10]  = f (map g xs)
+#eval (rev' Nat [1, 2, 3]).map (· * 10)    -- [30, 20, 10]  = (map g) (f xs)
+
+/-! @@@
+### The boundary of free theorems
+
+A polymorphic signature can force *naturality*, *no-invention*, and *shape-only*
+behaviour — but never a property that depends on the element *values*.  No
+`∀ α, List α → List α` forces "the output is a permutation of the input" (`reverse`
+satisfies it, but `fun _ => []` inhabits the same type); "sorted" is further out of
+reach, since sorting must *compare* elements.  Those properties need a specification
+carried *in addition to* the type — the subtype/`Prop` specifications of Weeks 9 and 11.
+Free theorems tell you what you get for free; their boundary tells you where a written
+specification becomes unavoidable.
+
+This reading is the inverse of the **derivation** method of Week 2 (§2.6): where the
+derivation is forced, the free theorem is total.  Building a term from a type and
+reading what every term of a type must do are one skill in two directions.
+@@@ -/
+
+/-! @@@
+## 7.3  Bounded polymorphism: type class constraints
 
 Sometimes a polymorphic function needs *some* knowledge about the type.
 Type classes express this: `[DecidableEq α]` says "α must have a
@@ -74,7 +158,15 @@ theorem contains_spec [DecidableEq α] (x : α) (xs : List α) :
         exact ih.mpr ht
 
 /-! @@@
-## 7.3  The DecidableEq type class
+> **Checkpoint — `contains`.** `contains` needs `[DecidableEq α]` to test elements.
+> **Predict** both Booleans, then check.
+@@@ -/
+
+#eval contains 3 [1, 2, 3]   -- predict
+#eval contains 9 [1, 2, 3]   -- predict
+
+/-! @@@
+## 7.4  The DecidableEq type class
 
 `DecidableEq α` is a type class that provides, for every pair `a b : α`,
 a decision: either a proof that `a = b` or a proof that `a ≠ b`.
@@ -115,7 +207,14 @@ example : DecidableEq (List Nat) := inferInstance
 example : ([1, 2, 3] : List Nat) = [1, 2, 3] := by decide
 
 /-! @@@
-## 7.4  Float and the absence of DecidableEq
+> **Checkpoint — `DecidableEq (List Nat)`.** **Predict** the Boolean below, and say *why*
+> `List Nat` has `DecidableEq` (but `List Float` would not), before reading the result.
+@@@ -/
+
+#eval decide (([1, 2, 3] : List Nat) = [1, 2, 3])   -- predict first
+
+/-! @@@
+## 7.5  Float and the absence of DecidableEq
 
 `Float` represents IEEE 754 double-precision floating-point numbers.
 IEEE 754 specifies that `NaN ≠ NaN` — the special "not a number" value
@@ -165,7 +264,15 @@ else.  Always compare floats with a tolerance: `|x - y| < ε`.
 -- methodology (floating-point error analysis).
 
 /-! @@@
-## 7.5  Summary: the decidability boundary
+> **Checkpoint — Float has `BEq`, not `DecidableEq`.** `==` on Float is IEEE 754 `BEq`
+> (a `Bool`), *not* provable equality.  **Predict** the Boolean below — is `NaN` equal to
+> itself? — then check, and say why this is exactly what forbids `DecidableEq Float`.
+@@@ -/
+
+#eval ((0.0 / 0.0 : Float) == (0.0 / 0.0 : Float))   -- 0/0 is NaN; predict (IEEE 754)
+
+/-! @@@
+## 7.6  Summary: the decidability boundary
 
 **Reading `∀` and `∃`.**  Two quantifiers appear throughout this table
 and the rest of the course.  Read them aloud as follows:
@@ -190,28 +297,103 @@ that the claim holds for that value.
 | `∃ n : Nat, P n` (unbounded) | Not in general | Requires a witness + proof |
 
 This table is one of the most important things in the course.
+@@@ -/
 
+/-! @@@
+> **Checkpoint — the decidability boundary.** A *bounded* quantifier over a literal list
+> is decidable; an *unbounded* one over `Nat` is not.  **Predict** the Boolean below, then
+> say why the `∀ n : Nat, …` version could not be checked this way.
+@@@ -/
+
+#eval decide (∀ x ∈ ([1, 2, 3] : List Nat), x < 10)   -- predict
+
+/-! @@@
 ## Exercises
 
-1. Define a polymorphic function `myNub [DecidableEq α] : List α → List α`
-   that removes duplicate elements.  State its specification: "every
-   element of the result appears in the input, and no element appears twice."
+Banners read `[id] · competency · tier · level · target`; build exercises ship a
+`#guard` **acceptance check** (see `EXERCISE_CONVENTIONS.md`).  Do every **core**
+exercise; **stretch** is optional.
 
-2. Explain in your own words why `Float` cannot have `DecidableEq`.
-   What goes wrong if you assume it does?
+---
 
-3. Use `decide` to check: `"hello" = "hello"` as a Prop.  Then explain
-   why this works but `(1.0 : Float) = 1.0` does not.
+**[E7.1]** · *inhabitation + specification writing* · tier 1 · **core** · target `myNub`
 
-4. Give an example of a type you define yourself, add `deriving DecidableEq`,
-   and use `decide` to check an equality proposition about it.
+Define `myNub [DecidableEq α] : List α → List α` removing duplicates.  State its spec —
+*"every result element is in the input, and no element repeats"* — then confirm via
+*checkable properties* (order-independent, so any correct implementation passes):
 
-5. Define a type `Color` with constructors `Red`, `Green`, `Blue` and
-   add `deriving DecidableEq`.  Use `decide` to prove:
-   (a) `Color.Red ≠ Color.Blue`
-   (b) `∀ c ∈ [Color.Red, Color.Green, Color.Blue], c = Color.Red ∨ c ≠ Color.Red`
-   Explain why `decide` can handle this but could not handle the same
-   claim over all `Nat` values.
+```lean
+#guard (myNub [1, 1, 2, 3, 3, 3]).Nodup
+#guard (myNub [1, 1, 2, 3, 3, 3]).length = 3
+#guard decide (∀ x ∈ myNub [1, 1, 2, 3, 3, 3], x ∈ [1, 1, 2, 3, 3, 3]) = true
+```
+
+---
+
+**[E7.2]** · *decidability identification* · tier 1 · **core**
+
+For each, state whether `decide` can close it and **why**, using the §7.5 boundary
+table — *then* check only the ones that are decidable:
+
+(a) `("hello" : String) = "hello"`   (b) `(1.0 : Float) = 1.0`
+(c) `([1,2,3] : List Nat) = [1,2,3]`  (d) `∀ n : Nat, n + 0 = n`
+
+```lean
+#guard decide (("hello" : String) = "hello") = true
+#guard decide (([1, 2, 3] : List Nat) = [1, 2, 3]) = true
+-- (b) and (d) have no check on purpose: say why decide cannot close each.
+```
+
+---
+
+**[E7.3]** · *counterexample finding* · tier 1 · **core**
+
+A student claims *"`contains x xs = true` iff `x` is the head of `xs`."*  It is
+**wrong**.  Find inputs where `contains` is `true` but `x` is not the head, and encode
+the witness so the check **succeeds**:
+
+```lean
+#guard contains 3 [1, 2, 3] = true
+#guard [1, 2, 3].head? ≠ some 3
+```
+
+What is the *correct* characterization of `contains x xs = true`?  (It is
+`contains_spec`, §7.2 — read it.)
+
+---
+
+**[E7.4]** · *type-directed derivation* · tier 2 · **core** · target `second`
+
+Derive `second : α → β → β` (return the second argument).  Give a **derivation trace**
+(Week 2 §2.6) and show every step is **forced** — this type has exactly one inhabitant.  Contrast with
+`myConst : α → β → α` (§7.1): same shape, the *other* projection.  Effort: 2 trace steps.
+
+```lean
+#guard second 1 2 = 2
+#guard second "x" (5 : Nat) = 5
+```
+
+---
+
+**[E7.5]** · *type reading (free theorems)* · tier 2 · **core**
+
+The chapter intro says a polymorphic `f : List α → List α` "can only permute, drop, or
+duplicate."  Read that off the type: state two things **every** inhabitant of `∀ α, List
+α → List α` must satisfy and one thing it **cannot** do.  Then: how many inhabitants does
+`∀ α β, α → β → α` have, and why?  (Builds on §7.2 — no code to submit.)
+
+---
+
+**[E7.6]** · *inhabitation + decidability identification* · tier 1 · **stretch** · target `Color`
+
+Define `inductive Color where | Red | Green | Blue deriving DecidableEq`.  Use `decide`
+to settle both, then explain why the bounded `∀ c ∈ […]` is decidable here but the same
+shape over **all** `Nat` (§7.5) is not:
+
+```lean
+#guard decide (Color.Red ≠ Color.Blue) = true
+#guard decide (∀ c ∈ [Color.Red, Color.Green, Color.Blue], c = Color.Red ∨ c ≠ Color.Red) = true
+```
 @@@ -/
 
 end Week07

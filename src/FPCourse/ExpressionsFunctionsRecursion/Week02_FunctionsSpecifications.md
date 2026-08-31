@@ -1,8 +1,9 @@
--- FPCourse/Unit1/Week02_FunctionsSpecifications.lean
+```lean
+-- FPCourse/ExpressionsFunctionsRecursion/Week02_FunctionsSpecifications.lean
 import Mathlib.Data.Nat.Basic
 import Mathlib.Logic.Basic
+```
 
-/-! @@@
 # Week 2: Functions and Specifications
 
 ## The dual reading of →
@@ -21,26 +22,23 @@ These are not two different symbols.  They are one symbol with two
 readings.  A function *is* an implication proof; an implication proof *is*
 a function.  This identity is the beginning of the Curry-Howard
 correspondence, which we will name explicitly in Week 14.
-@@@ -/
-
+```lean
 namespace Week02
+```
 
-/-! @@@
 ## 2.1  Defining functions
-@@@ -/
-
+```lean
 -- Named function definition
 def double (n : Nat) : Nat := n * 2
 def square (n : Nat) : Nat := n * n
 
 -- Anonymous function (lambda)
 def double' : Nat → Nat := fun n => n * 2
+```
 
-/-! @@@
 > **Checkpoint — defining functions.** `double n = n * 2` and `square n = n * n`.
 > **Predict** both values below from the definitions, then check.
-@@@ -/
-
+```lean
 #eval double 7    -- predict first
 #eval square 6    -- predict first
 
@@ -56,35 +54,32 @@ def add3 (a b c : Nat) : Nat := a + b + c
 --   ↝ 6
 #eval add3 1 2 3    -- 6
 #eval (add3 1) 2 3  -- same: (add3 1) is a Nat → Nat → Nat waiting for two more args
+```
 
-/-! @@@
 > **Checkpoint — currying.** `add3 : Nat → Nat → Nat → Nat`, so `(add3 10 20)` is itself
 > a function still waiting for one `Nat`. **Predict** the value once the last argument
 > arrives, then check.
-@@@ -/
-
+```lean
 #eval (add3 10 20) 30    -- predict first
+```
 
-/-! @@@
 ## 2.2  → as implication: logical reading
 
 When `P` and `Q` are propositions, `P → Q` is the claim that P implies Q.
 A proof of `P → Q` is a function that takes any proof of P and returns a
 proof of Q.  This is indistinguishable from an ordinary function — because
 it *is* an ordinary function.
-@@@ -/
-
+```lean
 -- A proof of P → Q is a term of type P → Q.
 -- Here: "if n + 0 = n, then n = n + 0"
 theorem add_zero_comm (n : Nat) : n + 0 = n → n = n + 0 :=
   fun h => h.symm
+```
 
-/-! @@@
 > **Checkpoint — `→` as implication.** An implication between *decidable* propositions is
 > itself decidable. In `(2 + 0 = 2) → (2 = 2 + 0)` the hypothesis holds and so does the
 > conclusion. **Predict** the Boolean — and say why the implication is true — then check.
-@@@ -/
-
+```lean
 #eval decide ((2 + 0 = 2) → (2 = 2 + 0))   -- predict first
 
 -- Universal claims: ∀ n : Nat, P n
@@ -92,19 +87,18 @@ theorem add_zero_comm (n : Nat) : n + 0 = n → n = n + 0 :=
 -- A proof supplies the function.
 theorem add_zero_all : ∀ n : Nat, n + 0 = n :=
   Nat.add_zero
+```
 
-/-! @@@
 > **Checkpoint — `∀` as a function type.** A proof of `∀ n, n + 0 = n` is a *function*
 > sending each `n` to a proof. Over a *finite* list the claim is decidable. **Predict** the
 > Boolean below, then check.
-@@@ -/
-
+```lean
 #eval decide (∀ n ∈ ([0, 1, 2, 3] : List Nat), n + 0 = n)   -- predict first
 
 -- The ∀ and → are the same thing: ∀ n, P n is (n : Nat) → P n
 -- when P does not mention types not in scope.
+```
 
-/-! @@@
 ## 2.3  The design recipe
 
 Every function in this course is designed using the following steps.
@@ -125,8 +119,7 @@ in hover text.
 The description comes first so you understand *what* before *how*.
 The signature must precede the specification — the spec names the
 function, so the `def` must exist before the `theorem` can be stated.
-@@@ -/
-
+```lean
 -- Example: doubling a number.
 
 -- Step 0 — Description:
@@ -148,28 +141,25 @@ example : double'' 5 = 10 := rfl
 -- Evaluation: double'' n ↝ n + n (δ-reduction).  Both sides are identical.
 theorem double''_spec : ∀ n : Nat, double'' n = n + n :=
   fun _ => rfl
+```
 
-/-! @@@
 > **Checkpoint — `double''` and its spec.** `double''_spec` states `double'' n = n + n`.
 > **Predict** the value below *from the spec* (not by re-deriving the body), then check.
-@@@ -/
-
+```lean
 #eval double'' 7   -- predict from double''_spec
+```
 
-/-! @@@
 ## 2.4  Function composition
-@@@ -/
-
+```lean
 -- ∘ is function composition: (f ∘ g) x = f (g x)
 def double_then_square : Nat → Nat := square ∘ double
 
 #eval double_then_square 3    -- square (double 3) = square 6 = 36
+```
 
-/-! @@@
 > **Checkpoint — function composition.** `(square ∘ double) x = square (double x)` — inner
 > function first. **Predict** the value below (double `5`, then square), then check.
-@@@ -/
-
+```lean
 #eval double_then_square 5   -- predict:  square (double 5)
 
 -- Composition and identity satisfy algebraic laws.
@@ -178,8 +168,8 @@ theorem comp_id (f : α → β) : f ∘ id = f := rfl
 theorem id_comp (f : α → β) : id ∘ f = f := rfl
 theorem comp_assoc (f : γ → δ) (g : β → γ) (h : α → β) :
     (f ∘ g) ∘ h = f ∘ (g ∘ h) := rfl
+```
 
-/-! @@@
 ## 2.5  Connectives as types
 
 Logical connectives are type constructors.  A proposition built with a
@@ -192,53 +182,48 @@ connective has the same structure as a product or sum type in computation.
 | `¬P` | `P → False` | a function from P to absurdity |
 | `P ↔ Q` | `(P → Q) × (Q → P)` | `Iff.intro` |
 
-@@@ -/
-
+```lean
 -- ∧ introduction: supply proofs of both conjuncts
 example : 1 < 2 ∧ 2 < 3 :=
   And.intro (by decide) (by decide)
+```
 
-/-! @@@
 > **Checkpoint — `∧` (conjunction).** `1 < 2 ∧ 2 < 3` is true only when *both* conjuncts
 > are. **Predict** the Boolean, then check.
-@@@ -/
-
+```lean
 #eval decide (1 < 2 ∧ 2 < 3)   -- predict first
 
 -- ∨ introduction: supply a proof of one disjunct
 example : 1 = 1 ∨ 1 = 2 :=
   Or.inl rfl
+```
 
-/-! @@@
 > **Checkpoint — `∨` (disjunction).** `1 = 1 ∨ 1 = 2` is true when *at least one* disjunct
 > is — here the left. **Predict** the Boolean, then check.
-@@@ -/
-
+```lean
 #eval decide (1 = 1 ∨ 1 = 2)   -- predict first
 
 -- ¬P is P → False
 example : ¬ (1 = 2) :=
   by decide
+```
 
-/-! @@@
 > **Checkpoint — `¬` (negation).** `¬ (1 = 2)` unfolds to `(1 = 2) → False`; it holds
 > exactly when `1 = 2` is false. **Predict** the Boolean, then check.
-@@@ -/
-
+```lean
 #eval decide (¬ (1 = 2))   -- predict first
 
 -- ↔ introduction: supply both directions
 example : (1 + 1 = 2) ↔ (2 = 1 + 1) :=
   Iff.intro (fun h => h.symm) (fun h => h.symm)
+```
 
-/-! @@@
 > **Checkpoint — `↔` (biconditional).** `(1 + 1 = 2) ↔ (2 = 1 + 1)` needs *both*
 > directions to hold. **Predict** the Boolean, then check.
-@@@ -/
-
+```lean
 #eval decide ((1 + 1 = 2) ↔ (2 = 1 + 1))   -- predict first
+```
 
-/-! @@@
 ## 2.6  Deriving terms from types
 
 A term the compiler accepts is worth little if you found it by trial and error.
@@ -266,6 +251,10 @@ Read the goal, pick the move its *outermost* constructor licenses, write that mu
 the term, and read off the smaller goal(s) that remain.  Recall from §2.5 that `∧`
 behaves like `×` and `∨` like `⊕`, so the *same* moves derive proofs of logical claims.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### How Lean shows you the goal
 
 A hole `_` in a term is Lean *printing the goal*: it reports the expected type and the
@@ -274,14 +263,15 @@ is in `FPCourse/specsAndImpls.lean` (`def e : Empty := _` reports `⊢ Empty`). 
 Code, type the hole and watch the **InfoView** shrink as you fill each step.  Use the
 compiler as a *confirmer* of a step you predicted, not as a blind search engine.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### The derivation trace
 
 Record a derivation as a short trace.  The trace — not the final term — is the artifact
 you are graded on; the final term is its by-product.  `RULE` at each step is one of
 `→I`, `→E`, `×I`, `×E`, `⊕I`, `⊕E`, or "use `h`".
-@@@ -/
-
-/-! @@@
 **Worked derivation 1 — `Nat → Nat`.**
 ```text
 DERIVATION of  addSelf : Nat → Nat
@@ -290,18 +280,16 @@ DERIVATION of  addSelf : Nat → Nat
   step 2 [use a] a + a                ⟶ closed (a is the only Nat in scope)
   ∎
 ```
-@@@ -/
-
+```lean
 def addSelf : Nat → Nat := fun a => a + a
+```
 
-/-! @@@
 > **Checkpoint — `addSelf` (derived).** The derivation closed with `a + a`. **Predict**
 > `addSelf 21` — the by-product of the trace — then check.
-@@@ -/
-
+```lean
 #eval addSelf 21   -- predict first
+```
 
-/-! @@@
 **Worked derivation 2 — `(P → Q) → (Q → R) → (P → R)`.**  Composition; under the logical
 reading, transitivity of implication — one derivation certifies both.
 ```text
@@ -311,38 +299,34 @@ reading, transitivity of implication — one derivation certifies both.
   step 4 [→E]  f p : Q
   step 5 [→E]  g (f p) : R            ⟶ closed
 ```
-@@@ -/
-
+```lean
 def compose {P Q R : Type} : (P → Q) → (Q → R) → (P → R) :=
   fun f g p => g (f p)
+```
 
-/-! @@@
 > **Checkpoint — `compose` (derived).** `compose f g p = g (f p)`. With `f = (· + 1)` and
 > `g = (· * 2)`, **predict** `compose f g 3`, then check.
-@@@ -/
-
+```lean
 #eval compose (fun n => n + 1) (fun n => n * 2) 3   -- predict:  g (f 3)
+```
 
-/-! @@@
 **Worked derivation 3 — `A × B → B × A`.**
 ```text
   step 1 [→I]  fun (p : A × B) => ?   ⟶ goal: B × A, with p : A × B
   step 2 [×E]  p.1 : A,  p.2 : B
   step 3 [×I]  (p.2, p.1) : B × A     ⟶ closed
 ```
-@@@ -/
-
+```lean
 def swapProd {A B : Type} : A × B → B × A :=
   fun p => (p.2, p.1)
+```
 
-/-! @@@
 > **Checkpoint — `swapProd` (derived).** `swapProd (a, b) = (b, a)`. **Predict**
 > `swapProd (1, 2)`, then check.
-@@@ -/
-
+```lean
 #eval swapProd (1, 2)   -- predict:  (2, 1)
+```
 
-/-! @@@
 **Worked derivation 4 — `A ⊕ B → B ⊕ A`.**  The goal `B ⊕ A` would call for ⊕I, but
 which side is right depends on the input — so eliminate the hypothesis first.
 ```text
@@ -351,21 +335,23 @@ which side is right depends on the input — so eliminate the hypothesis first.
   step 3 [⊕I]  .inr a   (case inl)    ⟶ closed
   step 4 [⊕I]  .inl b   (case inr)    ⟶ closed
 ```
-@@@ -/
-
+```lean
 def swapSum {A B : Type} : A ⊕ B → B ⊕ A :=
   fun s => match s with
     | .inl a => .inr a
     | .inr b => .inl b
+```
 
-/-! @@@
 > **Checkpoint — `swapSum` (derived).** `swapSum (.inl a) = .inr a` — swapping an `inl`
 > lands in `inr`. **Predict** the Boolean below, then check.
-@@@ -/
-
+```lean
 #eval decide (swapSum (Sum.inl 1 : Nat ⊕ Nat) = Sum.inr 1)   -- predict first
+```
 
-/-! @@@
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### Grading the trace
 
 A derivation exercise is graded on the **trace**, not merely on whether the term
@@ -374,6 +360,10 @@ goal after each step; (3) close every goal by a hypothesis in scope.  A term tha
 compiles but whose trace mis-names a rule or skips a goal is *not* full credit — it may
 be correct by luck.
 
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
 ### The inverse direction
 
 Derivation *builds* a term from a type.  Its inverse *reads* a type to learn what
@@ -381,15 +371,11 @@ Derivation *builds* a term from a type.  Its inverse *reads* a type to learn wha
 type is fully polymorphic the derivation is *forced* and the free theorem is *total*:
 `∀ α, α → α` has one inhabitant; `∀ α, α → α → α` has exactly two.  Building a term from
 a type and reading what every term of a type must do are one skill in two directions.
-@@@ -/
-
-/-! @@@
 ## 2.7  Reading function specifications
 
 When a function's type contains propositions, the type IS the specification.
 The examples below show how to read proof-carrying function types.
-@@@ -/
-
+```lean
 -- The type tells you: given a proof that the list is nonempty,
 -- return the first element.  No runtime null check needed.
 #check List.head   -- (l : List α) → l ≠ [] → α
@@ -399,16 +385,15 @@ The examples below show how to read proof-carrying function types.
 -- return the element at that index.
 #check List.get    -- (l : List α) → Fin l.length → α
 -- Fin n is the type of natural numbers < n.  It IS the bounds proof.
+```
 
-/-! @@@
 > **Checkpoint — a proof-carrying type.** `List.head` demands a proof the list is
 > nonempty; `by decide` discharges it for a concrete list. **Predict** which element is
 > returned below, then check.
-@@@ -/
-
+```lean
 #eval ([10, 20, 30] : List Nat).head (by decide)   -- predict first
+```
 
-/-! @@@
 ## Exercises
 
 Each exercise carries a banner — `[id] · competency · tier · level · target` — and, where
@@ -564,6 +549,10 @@ hypothesis closes the final goal?
 (b) **Free theorem (previewing Week 7 §7.2):** reading only the type, how many inhabitants
 does it have when `A B C` are fully polymorphic, and why can the code not *invent* a `C`?
 This is the inverse of (a): where the derivation is forced, the reading is total.
-@@@ -/
-
+```lean
 end Week02
+```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+

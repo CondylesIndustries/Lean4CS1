@@ -1,4 +1,4 @@
--- FPCourse/Unit5/Week11_AbstractTypes.lean
+-- FPCourse/AbstractTypesAndTypeClasses/Week11_AbstractTypes.lean
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Option.Basic
 
@@ -448,6 +448,65 @@ inequality-to-`false` check succeed):
 ```
 
 This is a reading task: the graded artifact is your four-part explanation, not a proof.
+---
+
+**[E11.7]** · *specification writing* · tier 1 · **stretch** · target `Queue`
+
+Define a `Queue` type class in the style of §11.4's `Stack` — `empty`, `enqueue`,
+`dequeue : q α → Option (α × q α)`, and `size` — together with a `LawfulQueue` extension
+stating its laws.  The decisive law is **FIFO**: dequeuing returns the *oldest* element, not
+the most recently enqueued.  State the laws; do not prove them.  Give the `List`-backed
+instance and confirm the laws on instances:
+
+```lean
+#guard (Queue.dequeue (Queue.enqueue 2 (Queue.enqueue (1 : Nat) (Queue.empty : List Nat)))).map Prod.fst = some 1
+#guard (Queue.dequeue (Queue.empty : List Nat)).isNone
+#guard Queue.size (Queue.enqueue 2 (Queue.enqueue (1 : Nat) (Queue.empty : List Nat))) = 2
+```
+
+Compare with `LawfulStack` (§11.4): exactly one law changes.  Which one, and why does that
+single change reverse the order of every observation?
+
+---
+
+**[E11.8]** · *type-directed derivation* · tier 2 · **stretch** · target `TwoListStack`
+
+Give a second `Stack` implementation with a different representation:
+
+```lean
+structure TwoListStack (α : Type) where
+  front : List α
+  back  : List α
+```
+
+`push` conses onto `back`; `pop` takes from `front`, and when `front` is empty it first
+rebalances by reversing `back` into it.  Produce a derivation trace for `pop` — the trace is
+the graded artifact — then the `def`s, and write the `LawfulStack` law statements for this
+representation (statements only).  *First-step hint:* `pop` eliminates `front` first
+(`[]` vs `y :: ys`); only the `[]` branch touches `back`.  Effort: ~5 trace steps, ~8 lines.
+
+```lean
+#guard (TwoListStack.push 2 (TwoListStack.push (1 : Nat) TwoListStack.empty)).size = 2
+#guard ((TwoListStack.push 2 (TwoListStack.push (1 : Nat) TwoListStack.empty)).pop).map Prod.fst = some 1
+#guard (TwoListStack.pop (TwoListStack.empty : TwoListStack Nat)).isNone
+```
+
+---
+
+**[E11.9]** · *specification writing* · tier 1 (+ tier-3 reading) · **core**
+
+State the **representation-independence** theorem for `Stack`: *for any two `LawfulStack`
+instances `S1` and `S2`, any program built only from `push`, `pop`, `size`, and `empty`
+produces the same observable results in both.*  Write it as precisely as you can in Lean —
+you must first decide what "program" and "observable result" are, as types, before the
+statement can be written at all; that decision is the exercise.  Do not prove it.  Then,
+using E11.8's `TwoListStack` alongside the `List` instance of §11.4, confirm the claim on one
+concrete program by checking that both representations yield the same observation.
+
+Say in two sentences which of the `LawfulStack` laws your statement actually depends on.
+This is the exercise the unit points at: a client may rely on the laws, never on the
+representation.
+
 @@@ -/
 
 end Week11

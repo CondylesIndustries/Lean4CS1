@@ -1,4 +1,4 @@
--- FPCourse/Unit5/Week12_TypeClassesDecidable.lean
+-- FPCourse/AbstractTypesAndTypeClasses/Week12_TypeClassesDecidable.lean
 import Mathlib.Data.List.Basic
 import Mathlib.Logic.Basic
 
@@ -381,6 +381,30 @@ trivially provable, because deciding it would require checking infinitely many `
 What *does* settle the proposition — a **proof** such as `fun n => rfl` (or `Nat.add_zero`),
 not a decision procedure?  Why is "every case is provable" strictly weaker than "the whole
 `∀` is decidable"?  Contrast with the false `∀ n : Nat, n = n + 1`.
+---
+
+**[E12.7]** · *type-directed derivation + decidability identification* · tier 1 · **stretch** · target `mapDecide`
+
+Write
+
+```lean
+def mapDecide [DecidableEq α] (xs ys : List α) : List (α ⊕ α) := ...
+```
+
+tagging each element of `xs` with `Sum.inl` when it also occurs in `ys`, and with `Sum.inr`
+when it does not.  Say *first* why the `[DecidableEq α]` constraint is exactly what makes
+this definable — which step of the computation consumes it, and what could you not write
+without it?
+
+```lean
+#guard mapDecide [1, 2, 3] [2, 3, 4] = [Sum.inr 1, Sum.inl 2, Sum.inl 3]
+#guard mapDecide ([] : List Nat) [1] = []
+#guard mapDecide [5] ([] : List Nat) = [Sum.inr 5]
+```
+
+*First-step hint:* the shape is a `map` over `xs`; the decision inside is `x ∈ ys`, decidable
+exactly because of the instance.  Effort: 2 lines of code.
+
 @@@ -/
 
 end Week12

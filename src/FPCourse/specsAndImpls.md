@@ -1,12 +1,44 @@
 ```lean
 import Mathlib.Data.Real.Basic
+```
 
--- Specifications (Data)
 
-#check Empty
+# Introduction
+
+Note: A preliminary note: The types and values we use in this file
+without defining them here are defined in implicitly imported Lean
+4 library files.
+
+## Specification ≡ Proposition ≡ Type
+```lean
+#check Empty         -- a type with no values
+```
+
+Specification  : Absurd
+Types          : Empty, False
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+## Implementation ≡ Proof ≡ Value
+
+Values         : There are no values of this type
+Implementations: There's no way to implement this specification
+Proof          : There's no proof of this proposition (so it's false)
+```lean
 #check Unit
-#check Bool
+#check Unit.unit
+
+#check Bool          -- the type of binary truth values
+#check Bool.true     -- the Bool value representing logical truth
+#check Bool.false    -- the Bool value representing logical falsity
+
 #check Nat
+#check ℕ
+#check (0 : Nat)
+#check (1 : ℕ)
+#check 2
+
 #check Int
 #check Rat
 #check Real
@@ -17,6 +49,8 @@ import Mathlib.Data.Real.Basic
 
 -- some specifications have no implementations at all
 -- def e : Empty := _
+
+
 
 /--
 error: don't know how to synthesize placeholder
@@ -76,14 +110,60 @@ def l : List := _
 #check String → String
 
 -- Implementations (Total Functions)
-/--
-error: don't know how to synthesize placeholder
-context:
-⊢ Empty → Empty
--/
-#guard_msgs in
-def e2e : Empty → Empty := _
+
+def e2e : Empty → Empty := fun (e : Empty) => e
 ```
+
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
+
+## If You Assume the Impossible then Anything Goes
+
+An amazing fact.*Anything* is *true of every values* of any
+empty (*uninhabited*) type. So, for example, is every pink
+elepant an Elvis fan? Yes! And is every pink elephant also
+not an Elvis fan? Yes! Each of these statements is true of
+every single pink elephant. Of course there are none, so it's
+easy for anything to be, and everything actually is, true
+of every value of any empty type!
+```lean
+abbrev PinkElephant := Empty
+
+theorem everyPinkElephantNice :
+   ∀  (pe : PinkElephant)              -- assumption
+      (nice : PinkElephant → Bool),    -- assumption
+    nice pe == true :=                 -- claim
+      fun pe _ => nomatch pe           -- proof of ∀ claim
+
+theorem inEmptyAnythingGoes : ∀ (e : Empty), ∀ (P : Empty → Bool), P e == true :=
+   fun e => nomatch e
+```
+
+There is a special kind of type call Prop. We conventionally
+define mathematical specifications as *Prop* types whereas we
+define data and function types as inhabiting the type universe,
+*Type*. What distinguishes *Prop* most crucially is that all
+values of any propositional type are considered to be equal.
+After all, these values are intended to be interpreted as proofs
+of mathematical statements, the latter expressed as new type
+definitions, and for purposes of certifying the *validity* of a
+given proposition, any proof will do. The *Prop* type universe
+automates the notion that any proof will do, the principle of
+so-called *proof irrelevance*.
+```lean
+theorem ifFalseAnythingGoes :
+   ∀  (e : False)
+      (p : False → Prop),
+   p e :=
+      fun e => nomatch e
+```
+
+Read this as follows. We show for any proof, *f*, of *False*, and any
+predicate
+
+<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+
 
 ## Additional Details
 
@@ -119,7 +199,6 @@ output -- useful next to `#check` and `#reduce`, which are chatty.
 One caution: messages containing metavariables, such as the `?u.2` universe in
 the `List` guard below, embed numbers Lean assigns during elaboration. Those can
 shift when surrounding code changes, and the guard will need updating.
--/
 
 <div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

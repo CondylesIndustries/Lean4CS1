@@ -49,6 +49,12 @@ example : ¬ List.Sorted (· ≤ ·) ([1, 3, 2] : List Nat) := by decide
 example : List.Sorted (· ≤ ·) ([] : List Nat) := by decide   -- vacuously
 ```
 
+> **Checkpoint — `Sorted`.** `List.Sorted (· ≤ ·)` holds iff every adjacent pair is
+> non-decreasing. **Predict** the Boolean below — is `[1, 2, 3, 4]` in order? — then check.
+```lean
+#eval decide (List.Sorted (· ≤ ·) ([1, 2, 3, 4] : List Nat))   -- predict first
+```
+
 
 <div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 
@@ -71,6 +77,13 @@ theorem perm_symm (xs ys : List α) : xs ~ ys → ys ~ xs :=
   List.Perm.symm
 ```
 
+> **Checkpoint — `Perm`.** `xs ~ ys` holds iff the two lists have the same elements with
+> the same multiplicities (order aside). **Predict** the Boolean below — is `[1, 2, 3]` a
+> rearrangement of `[3, 1, 2]`? — then check.
+```lean
+#eval decide (([1, 2, 3] : List Nat) ~ [3, 1, 2])   -- predict first
+```
+
 
 <div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 
@@ -90,6 +103,13 @@ def CorrectSort (sort : List Nat → List Nat) : Prop :=
     sort xs ~ xs                        -- output is a permutation of input
 ```
 
+> **Checkpoint — `CorrectSort` needs BOTH conjuncts.** The constant-empty function
+> `fun _ => []` returns a sorted list but *loses* elements. **Predict** the Boolean below
+> — which of the two conjuncts fails on input `[1]`? — then check that the bundle is `false`.
+```lean
+#eval decide (List.Sorted (· ≤ ·) ([] : List Nat) ∧ (([] : List Nat) ~ [1]))   -- predict first
+```
+
 
 <div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 
@@ -102,6 +122,13 @@ position in an already-sorted list.
 def insert' (x : Nat) : List Nat → List Nat
   | []      => [x]
   | h :: t  => if x ≤ h then x :: h :: t else h :: insert' x t
+```
+
+> **Checkpoint — `insert'`.** `insert'` drops `x` into an already-sorted list at the first
+> position where `x ≤ h`. **Predict** the result of inserting `4` into `[1, 3, 5]` before
+> reading it.
+```lean
+#eval insert' 4 [1, 3, 5]   -- predict first
 
 def insertionSort : List Nat → List Nat
   | []      => []
@@ -109,6 +136,13 @@ def insertionSort : List Nat → List Nat
 
 #eval insertionSort [5, 3, 1, 4, 2]    -- [1, 2, 3, 4, 5]
 #eval insertionSort []                  -- []
+```
+
+> **Checkpoint — `insertionSort`.** `insertionSort` folds `insert'` over the input, one
+> element at a time. **Predict** its output on `[3, 1, 2]` — what does insertion sort always
+> return? — then check.
+```lean
+#eval insertionSort [3, 1, 2]   -- predict first
 ```
 
 
@@ -120,10 +154,11 @@ def insertionSort : List Nat → List Nat
 Proving `CorrectSort insertionSort` requires two sub-proofs.  Both
 are provided here as term-mode proofs for you to read.
 
-**Helper 1**: inserting into a sorted list produces a sorted list.
+**Helper 1**: inserting preserves the permutation relation — `insert' x xs` is a
+permutation of `x :: xs`.  Both `insert_sorted` (Helper 2) and `insertionSort_perm`
+(Helper 4) reuse this single lemma.
 ```lean
--- Local helper for insert_sorted
-private theorem insert_perm' (x : Nat) :
+theorem insert_perm (x : Nat) :
     ∀ xs : List Nat, insert' x xs ~ x :: xs
   | []      => List.Perm.refl _
   | h :: t  => by
@@ -131,9 +166,18 @@ private theorem insert_perm' (x : Nat) :
     split_ifs with hle
     · exact List.Perm.refl _
     · exact List.Perm.trans
-        (List.Perm.cons h (insert_perm' x t))
+        (List.Perm.cons h (insert_perm x t))
         (List.Perm.swap x h t)
+```
 
+> **Checkpoint — `insert_perm`.** The provided proof guarantees: `insert' x xs` is a
+> permutation of `x :: xs` (nothing added or lost). **Predict** the Boolean below, then check.
+```lean
+#eval decide (insert' 4 [1, 3, 5] ~ 4 :: [1, 3, 5])   -- predict first
+```
+
+**Helper 2**: inserting into a sorted list produces a sorted list.
+```lean
 theorem insert_sorted (x : Nat) :
     ∀ xs : List Nat, List.Sorted (· ≤ ·) xs →
       List.Sorted (· ≤ ·) (insert' x xs)
@@ -155,7 +199,7 @@ theorem insert_sorted (x : Nat) :
       have hxh : h ≤ x := Nat.le_of_not_le hle
       apply List.Pairwise.cons
       · intro y hy
-        have : y ∈ x :: t := (insert_perm' x t).subset hy
+        have : y ∈ x :: t := (insert_perm x t).subset hy
         simp only [List.mem_cons] at this
         cases this with
         | inl heq => exact heq ▸ hxh
@@ -163,18 +207,11 @@ theorem insert_sorted (x : Nat) :
       · exact insert_sorted x t (List.pairwise_cons.mp hst).2
 ```
 
-**Helper 2**: inserting preserves the permutation relation.
+> **Checkpoint — `insert_sorted`.** The provided proof guarantees: insert into a sorted
+> list, stay sorted. **Predict** the Boolean below — is `insert' 4 [1, 3, 5]` sorted? — then
+> check that the theorem's conclusion holds on this instance.
 ```lean
-theorem insert_perm (x : Nat) :
-    ∀ xs : List Nat, insert' x xs ~ x :: xs
-  | []      => List.Perm.refl _
-  | h :: t  => by
-    simp only [insert']
-    split_ifs with hle
-    · exact List.Perm.refl _
-    · exact List.Perm.trans
-        (List.Perm.cons h (insert_perm x t))
-        (List.Perm.swap x h t)
+#eval decide (List.Sorted (· ≤ ·) (insert' 4 [1, 3, 5]))   -- predict first
 ```
 
 **Helper 3**: insertion sort produces a sorted list.
@@ -183,6 +220,12 @@ theorem insertionSort_sorted :
     ∀ xs : List Nat, List.Sorted (· ≤ ·) (insertionSort xs)
   | []      => List.Pairwise.nil
   | h :: t  => insert_sorted h (insertionSort t) (insertionSort_sorted t)
+```
+
+> **Checkpoint — `insertionSort_sorted`.** This chains `insert_sorted` down the recursion,
+> so every output is sorted. **Predict** the Boolean below, then check.
+```lean
+#eval decide (List.Sorted (· ≤ ·) (insertionSort [5, 3, 1, 4, 2]))   -- predict first
 ```
 
 **Helper 4**: insertion sort is a permutation.
@@ -196,10 +239,23 @@ theorem insertionSort_perm :
       (List.Perm.cons h (insertionSort_perm t))
 ```
 
+> **Checkpoint — `insertionSort_perm`.** This chains `insert_perm` down the recursion, so
+> the output always has exactly the input's elements. **Predict** the Boolean below, then check.
+```lean
+#eval decide (insertionSort [5, 3, 1, 4, 2] ~ [5, 3, 1, 4, 2])   -- predict first
+```
+
 **Main theorem**: insertion sort is correct.
 ```lean
 theorem insertionSort_correct : CorrectSort insertionSort :=
   fun xs => ⟨insertionSort_sorted xs, insertionSort_perm xs⟩
+```
+
+> **Checkpoint — `insertionSort_correct`.** The main theorem simply *pairs* the two helpers
+> `⟨sorted, perm⟩`. **Predict** the Boolean below — both conjuncts hold on `[4, 2, 3, 1]` —
+> then check.
+```lean
+#eval decide (List.Sorted (· ≤ ·) (insertionSort [4, 2, 3, 1]) ∧ insertionSort [4, 2, 3, 1] ~ [4, 2, 3, 1])   -- predict first
 ```
 
 
@@ -215,6 +271,13 @@ example : List.Sorted (· ≤ ·) (insertionSort [3, 1, 4, 1, 5, 9]) := by decid
 example : insertionSort [3, 1, 4, 1, 5] ~ [3, 1, 4, 1, 5] := by decide
 ```
 
+> **Checkpoint — decidable verification on instances.** `Perm` on `List Nat` is decidable,
+> so `decide` settles it — and it tracks *multiplicity*, not just membership. **Predict** the
+> Boolean below (note the repeated `1`), then check.
+```lean
+#eval decide (insertionSort [3, 1, 4, 1, 5, 9] ~ [3, 1, 4, 1, 5, 9])   -- predict first
+```
+
 
 <div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 
@@ -228,8 +291,8 @@ generalized.
 -- A function with a precondition in its type:
 def sortedMerge
     (xs ys : List Nat)
-    (hxs : List.Sorted (· ≤ ·) xs)
-    (hys : List.Sorted (· ≤ ·) ys) :
+    (_hxs : List.Sorted (· ≤ ·) xs)
+    (_hys : List.Sorted (· ≤ ·) ys) :
     { zs : List Nat // List.Sorted (· ≤ ·) zs ∧ zs ~ xs ++ ys } :=
   -- Implementation omitted; the TYPE is the specification.
   -- Any implementation must produce a Σ-type (subtype) carrying the proof.
@@ -238,27 +301,130 @@ def sortedMerge
     List.mergeSort_perm (xs ++ ys) (· ≤ ·)⟩⟩
 ```
 
+> **Checkpoint — the postcondition value.** `sortedMerge`'s subtype `{ zs // Sorted zs ∧ zs
+> ~ xs ++ ys }` is *carried by the value* `(xs ++ ys).mergeSort (· ≤ ·)`. **Predict** what
+> that value computes for `[1, 3] ++ [2, 4]`, then check.
+```lean
+#eval (([1, 3] ++ [2, 4] : List Nat)).mergeSort (· ≤ ·)   -- predict first
+```
+
 
 <div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 
 
 ## Exercises
 
-1. Use `decide` to check that `insertionSort [9, 1, 3, 7, 2, 6]` produces
-   a sorted list.
+Each exercise carries a banner — `[id] · competency · tier · level · target` — and,
+where it asks you to build something, an **acceptance check**: paste it beneath your
+definition in your own file and it must succeed.  `#guard` is silent on success and
+errors on failure, so the compiler is your grader.  See `EXERCISE_CONVENTIONS.md` for
+the schema.  Do every **core** exercise; **stretch** exercises go deeper and are
+optional.
 
-2. State the specification for a `dedup : List Nat → List Nat` function
-   that removes duplicate elements.  What two properties must it satisfy?
+---
 
-3. Define `CorrectSort'` for descending order and show `insertionSort`
-   does NOT satisfy it by giving a counterexample with `decide`.
+**[E9.1]** · *specification reading* · tier 1 · **core**
 
-4. State (as a Prop) the specification: "if xs is already sorted,
-   then insertionSort xs = xs."  (You need not prove it.)
+`CorrectSort` (§9.3) demands **both** `Sorted` *and* `Perm`; §9.3 argued each is needed
+because a bogus sorter can satisfy one alone.  Make that concrete.  For the two bogus
+sorters below, say **which single conjunct each violates**, then encode the witnesses so
+every check **succeeds** (each is decidable on `List Nat`):
 
-5. Write the type of a hypothetical `mergeSort : List Nat → List Nat`
-   such that its type INCLUDES the proof that it satisfies `CorrectSort`.
-   Use a subtype `{ f : List Nat → List Nat // CorrectSort f }`.
+```lean
+-- `fun _ => []` : sorted, but NOT a permutation of a non-empty input →
+#guard List.Sorted (· ≤ ·) ([] : List Nat)
+#guard decide (¬ (([] : List Nat) ~ [1, 2])) = true
+-- `id` : a permutation, but NOT always sorted →
+#guard ([3, 1, 2] : List Nat) ~ [3, 1, 2]
+#guard decide (¬ List.Sorted (· ≤ ·) ([3, 1, 2] : List Nat)) = true
+```
+
+In one line: which conjunct fails for `fun _ => []`, and which for `id`?
+
+---
+
+**[E9.2]** · *specification writing* · tier 1 · **core** · target `dedup`
+
+Define `dedup : List Nat → List Nat` that removes duplicate elements, and state its
+specification `DedupSpec : Prop` — *"the result has no duplicates, and it has exactly the
+elements of the input."*  You need not prove `DedupSpec`; confirm it on instances with
+decidable, order-independent checks (any correct implementation passes):
+
+```lean
+#guard (dedup [1, 1, 2, 3, 3, 3]).Nodup
+#guard decide (∀ x ∈ ([1, 1, 2, 3, 3, 3] : List Nat), x ∈ dedup [1, 1, 2, 3, 3, 3]) = true
+#guard dedup ([] : List Nat) = []
+```
+
+*First-step hint:* recurse on the list; on `h :: t`, test `h ∈ t` (decidable, `Nat` has
+`DecidableEq`) to decide whether to keep `h`.  Effort: ~4 lines.
+
+---
+
+**[E9.3]** · *counterexample finding* · tier 1 · **core** · target `CorrectSortDesc`
+
+Define `CorrectSortDesc` — `CorrectSort` but for **descending** order, i.e.
+`List.Sorted (· ≥ ·)` in place of `(· ≤ ·)`.  Insertion sort does **not** satisfy it.
+Find an input on which the output is not `(· ≥ ·)`-sorted, and encode the witness so the
+check **succeeds** (a correct counterexample makes the negation `true`):
+
+```lean
+#guard decide (¬ List.Sorted (· ≥ ·) (insertionSort [2, 1, 3])) = true
+#guard List.Sorted (· ≥ ·) ([3, 2, 1] : List Nat)   -- what a descending-sorted list looks like
+```
+
+In one line: which conjunct of `CorrectSortDesc` does `insertionSort` break, and which
+does it still satisfy?
+
+---
+
+**[E9.4]** · *specification reading* · tier 3 · **core**
+
+Read the **provided** proof of `insertionSort_correct` (§9.5) — do **not** write a proof.
+In prose, answer: (a) `insertionSort_correct` is `fun xs => ⟨_, _⟩`; what are the two
+components, and which conjunct of `CorrectSort` does each discharge?  (b) `insertionSort_sorted`
+depends on `insert_sorted`, and `insertionSort_perm` on `insert_perm`; explain in one
+sentence each what property of `insert'` the two helpers establish, and why the recursion
+needs them.  (c) The `[]` case of `insertionSort_sorted` is `List.Pairwise.nil`; why is the
+empty list vacuously sorted?  No code to submit.
+
+---
+
+**[E9.5]** · *decidability identification* · tier 1 · **stretch**
+
+For each proposition, say **whether `decide` can close it and why** (finite domain?
+decidable predicate?) *before* checking — the judgment is the point, not the tool-use:
+
+(a) `List.Sorted (· ≤ ·) (insertionSort [9, 1, 3, 7, 2, 6])`
+(b) `insertionSort [3, 1, 2] ~ [3, 1, 2]`
+(c) `CorrectSort insertionSort`
+
+```lean
+#guard decide (List.Sorted (· ≤ ·) (insertionSort [9, 1, 3, 7, 2, 6])) = true
+#guard decide (insertionSort [3, 1, 2] ~ [3, 1, 2]) = true
+-- (c) has no check on purpose: say why `decide` cannot close `CorrectSort insertionSort`,
+--     and name the term that settles it instead (hint: it is in §9.5).
+```
+
+---
+
+**[E9.6]** · *type-directed derivation* · tier 2 (+ tier-3 reading) · **stretch** · target `correctSorter`
+
+The subtype `{ f : List Nat → List Nat // CorrectSort f }` is a *proof-carrying* type: an
+inhabitant bundles a sorting function **with** a proof it is correct.  Build one inhabitant,
+`correctSorter`, by **reusing** the provided term `insertionSort_correct` (§9.5) as the
+proof component — you author no proof:
+
+```lean
+-- def correctSorter : { f : List Nat → List Nat // CorrectSort f } :=
+--   ⟨insertionSort, insertionSort_correct⟩
+#guard (correctSorter.val [4, 2, 3, 1] : List Nat) = [1, 2, 3, 4]
+#guard (correctSorter.val ([] : List Nat)) = []
+```
+
+*First-step hint:* the anonymous constructor `⟨_, _⟩` for a subtype takes the value then
+its proof; the value is `insertionSort`, the proof is already proved for you.  In one line:
+what does `.val` project out, and what guarantee did the second component add to the type?
 ```lean
 end Week09
 ```

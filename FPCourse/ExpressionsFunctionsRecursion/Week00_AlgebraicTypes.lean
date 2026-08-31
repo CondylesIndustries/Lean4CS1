@@ -1,9 +1,8 @@
-```lean
--- FPCourse/Foundations/Week00_AlgebraicTypes.lean
+-- FPCourse/ExpressionsFunctionsRecursion/Week00_AlgebraicTypes.lean
 import Mathlib.Logic.Basic
 import Mathlib.Data.Bool.Basic
-```
 
+/-! @@@
 # Week 0: One language. Two readings.
 
 When we write, we write about something. The something
@@ -47,10 +46,11 @@ This is not an analogy.  It is the same language, read two ways.
 By the end of this week you will have seen all six in both readings.
 You will have one vocabulary — *types and their inhabitants* — that
 covers both.  You do not need two languages.  You are learning one.
-```lean
-namespace Week00
-```
+@@@ -/
 
+namespace Week00
+
+/-! @@@
 ## 0.1  Basic Types: the atoms of computation and logic
 
 **Why basic types?**  Before you can build anything, you need raw
@@ -59,7 +59,8 @@ types are your atoms: given to you, not derived.
 
 You encounter them by name: `Nat`, `Bool`, `String`.  Their values
 are listed explicitly and cannot be broken down further.
-```lean
+@@@ -/
+
 -- Nat: the type of natural numbers.  Values: 0, 1, 2, 3, ...
 #check (0 : Nat)
 #check (42 : Nat)
@@ -76,8 +77,31 @@ are listed explicitly and cannot be broken down further.
 #check ("hello" : String)
 #eval "hello" ++ ", world"   -- "hello, world"
 #eval "hello".length          -- 5
-```
 
+/-! @@@
+> **Checkpoint — `Nat` subtraction floors at 0.** Subtraction on `Nat` is *truncated*: it
+> never produces a negative number.  **Predict** the value of `3 - 10` — it is not `-7` —
+> before reading it.
+@@@ -/
+
+#eval 3 - 10   -- predict first (truncated subtraction)
+
+/-! @@@
+> **Checkpoint — `Bool` connectives.** `&&`, `||`, and `!` are ordinary computations on
+> `Bool` values.  **Predict** the result of `(false || true) && !false`, then check.
+@@@ -/
+
+#eval (false || true) && !false   -- predict first
+
+/-! @@@
+> **Checkpoint — `String` length after concatenation.** `++` joins two strings and
+> `.length` counts characters.  **Predict** the length of `"hello" ++ ", world"` — remember
+> to count the comma and the space — before reading it.
+@@@ -/
+
+#eval ("hello" ++ ", world").length   -- predict first
+
+/-! @@@
 **The Lean notional machine.**  Think of Lean as a machine with one job:
 given an expression, apply reduction rules one step at a time until no
 further reduction is possible.  The irreducible result is the *normal form*.
@@ -132,7 +156,8 @@ We can ask the identical question of *propositions*:
 
 A proposition with at least one inhabitant is *true*.  A proposition
 with no inhabitant is *false*.  In Lean, propositions ARE types.
-```lean
+@@@ -/
+
 -- Proofs are terms.  `rfl` inhabits `1 + 1 = 2` the way `42` inhabits `Nat`.
 example : 1 + 1 = 2 := rfl   -- Evaluation: 1+1 ↝ 2, same as the right side
 example : True      := True.intro
@@ -145,8 +170,8 @@ example : 100 < 200         := by decide  -- Evaluation: comparison ↝ true ✓
 -- `#check` works on proofs too.
 #check (rfl : 1 + 1 = 2)    -- the type IS the proposition
 #check (True.intro : True)
-```
 
+/-! @@@
 **Evaluation.**  `rfl` proves `a = b` when `a` and `b` *evaluate to the
 same normal form*.  `1 + 1 = 2` holds by `rfl` because both sides reduce
 to `2` — the equality is *definitional*, certified by computation.
@@ -160,6 +185,25 @@ proof term would be absent, and the type would be uninhabited.
 `decide` can only handle propositions for which evaluation terminates —
 *decidable* propositions.  Concrete arithmetic is decidable; universal
 claims over all natural numbers are not.  We return to this in Week 7.
+@@@ -/
+
+/-! @@@
+> **Checkpoint — `decide` evaluates a decision procedure.** For a decidable proposition,
+> `decide` runs its decision procedure and returns a `Bool`.  **Predict** `decide (7 * 6 = 42)`
+> — does `7 * 6` reach the same normal form as `42`? — then check.
+@@@ -/
+
+#eval decide (7 * 6 = 42)   -- predict first
+
+/-! @@@
+> **Checkpoint — a false proposition has no proof.** `2 + 2 = 5` is uninhabited, so its
+> decision procedure returns `false` (and the file would not compile if you tried to prove
+> it).  **Predict** `decide (2 + 2 = 5)` before reading it.
+@@@ -/
+
+#eval decide (2 + 2 = 5)   -- predict first (an uninhabited proposition)
+
+/-! @@@
 ## 0.2  Function Types: `α → β`
 
 **Why function types?**  Every transformation in programming — mapping,
@@ -185,7 +229,8 @@ output of type `β`.
 Functions are the most fundamental type constructor.  Every other
 construct — recursion, type classes, proofs — ultimately reduces to
 functions.
-```lean
+@@@ -/
+
 -- Defining functions with `def`:
 def double  : Nat → Nat    := fun n => n * 2
 def isZero  : Nat → Bool   := fun n => n == 0
@@ -202,6 +247,14 @@ def greet   : String → String := fun name => "Hello, " ++ name
 #eval isZero 5         -- false
 #eval greet "Alice"    -- "Hello, Alice"
 
+/-! @@@
+> **Checkpoint — β-reduction (`double`).** `double n ↝ n * 2`: applying the function
+> substitutes the argument for the parameter, then arithmetic fires.  **Predict** `double 21`
+> from that rule, then check.
+@@@ -/
+
+#eval double 21   -- predict first
+
 -- Multi-argument functions are *curried*:
 -- `Nat → Nat → Nat` means `Nat → (Nat → Nat)`.
 -- Applying one argument returns a function waiting for the second.
@@ -210,17 +263,29 @@ def add : Nat → Nat → Nat := fun a b => a + b
 #eval add 3 4          -- 7   (apply both arguments)
 #eval (add 3) 4        -- 7   (same: add 3 is itself a Nat → Nat)
 
+/-! @@@
+> **Checkpoint — currying and partial application (`add`).** `add : Nat → Nat → Nat` is
+> `Nat → (Nat → Nat)`, so `add 40` is itself a function awaiting one more argument.
+> **Predict** `(add 40) 2`, then check.
+@@@ -/
+
+#eval (add 40) 2   -- predict first
+
 -- Named argument style (equivalent, more readable for multi-arg):
 def max' (a b : Nat) : Nat := if a ≥ b then a else b
 
 #eval max' 5 3         -- 5
 #eval max' 2 8         -- 8
-```
 
+/-! @@@
+> **Checkpoint — `max'` at the tie boundary.** `max'` is `if a ≥ b then a else b`, and `≥`
+> includes equality.  **Predict** `max' 7 7` — which branch fires when the arguments are
+> equal? — then check.
+@@@ -/
 
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+#eval max' 7 7   -- predict first (the a = b boundary)
 
-
+/-! @@@
 ### The logical reading: implication
 
 When `P` and `Q` are propositions, `P → Q` is the type of proofs that
@@ -234,7 +299,8 @@ literally IS a function.
 **The identity function is simultaneously**:
 - *Computational*: given any value, return it.
 - *Logical*: if P holds then P holds (reflexivity of implication).
-```lean
+@@@ -/
+
 -- Computational: identity function for data.
 def myId (a : α) : α := a
 #eval myId 42       -- 42
@@ -257,8 +323,8 @@ def compose (f : β → γ) (g : α → β) : α → γ := fun a => f (g a)
 
 -- Their structures are identical.  The only difference is that
 -- P, Q, R range over Prop instead of Type.
-```
 
+/-! @@@
 ## 0.3  Product Types: `α × β`
 
 **Why product types?**  Real programs combine data: a point has an x
@@ -284,7 +350,8 @@ type `β`.  To *build* a product you must supply BOTH components.  To
 
 Products are how data is *aggregated*: a 2D point is an x AND a y;
 a person record is a name AND an age AND a city.
-```lean
+@@@ -/
+
 -- Building and projecting products:
 def myPair : Nat × Bool := (7, true)
 #eval myPair.1    -- 7       (first component)
@@ -299,21 +366,33 @@ def myTriple : Nat × String × Bool := (42, "hello", false)
 #eval myTriple.2.1      -- "hello"
 #eval myTriple.2.2      -- false
 
+/-! @@@
+> **Checkpoint — projecting a nested product.** In `(1, "two", true) : Nat × String × Bool`
+> the middle field is reached with `.2.1` (products are right-associative).  **Predict**
+> `(1, "two", true).2.1`, then check.
+@@@ -/
+
+#eval (1, "two", true).2.1   -- predict first
+
 -- A function that takes a product and swaps its components:
 def swap (p : α × β) : β × α := (p.2, p.1)
 #eval swap (1, "one")    -- ("one", 1)
 #eval swap (true, 42)    -- (42, true)
 
+/-! @@@
+> **Checkpoint — `swap` exchanges the components.** `swap (p : α × β) : β × α` returns
+> `(p.2, p.1)` — the component *types* swap along with the values.  **Predict** `swap (99, "z")`,
+> then check.
+@@@ -/
+
+#eval swap (99, "z")   -- predict first
+
 -- Products in function signatures (named arguments are sugar for products):
 def hypotenuse (legs : Float × Float) : Float :=
   Float.sqrt (legs.1 ^ 2 + legs.2 ^ 2)
 #eval hypotenuse (3.0, 4.0)   -- 5.0
-```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
+/-! @@@
 ### The logical reading: conjunction (AND)
 
 In logic, `P ∧ Q` holds when **both** P holds **and** Q holds.  A proof
@@ -328,7 +407,8 @@ type, specialized to the case where the components are proofs.
 | `(a, b) : α × β` | `⟨h₁, h₂⟩ : P ∧ Q` |
 | `p.1 : α` | `h.left : P` |
 | `p.2 : β` | `h.right : Q` |
-```lean
+@@@ -/
+
 -- Proving a conjunction: supply both halves.
 example : 2 < 3 ∧ 3 < 4 := ⟨by decide, by decide⟩
 
@@ -348,8 +428,16 @@ theorem and_comm' (h : P ∧ Q) : Q ∧ P :=
 
 -- Three-way conjunction:
 example : 1 < 2 ∧ 2 < 3 ∧ 3 < 4 := by decide
-```
 
+/-! @@@
+> **Checkpoint — conjunction is a product, and it is decidable.** A proof of `P ∧ Q` is a
+> pair of proofs; when `P` and `Q` are each decidable, so is `P ∧ Q`.  **Predict**
+> `decide (2 < 3 ∧ 3 < 4)`, then check.
+@@@ -/
+
+#eval decide (2 < 3 ∧ 3 < 4)   -- predict first
+
+/-! @@@
 ## 0.4  Sum Types: `Sum α β` (written `α ⊕ β`)
 
 **Why sum types?**  Real programs handle alternatives: a network request
@@ -378,7 +466,8 @@ kind of thing or the other, and the tag `inl`/`inr` tells you which.
 Sums are how programs handle **alternatives**: a result is either a
 successful value or an error; a shape is a circle or a rectangle or a
 triangle.
-```lean
+@@@ -/
+
 -- Sum has two constructors: inl (left) and inr (right).
 def aNum  : Nat ⊕ String := Sum.inl 42
 def aStr  : Nat ⊕ String := Sum.inr "error"
@@ -391,6 +480,14 @@ def describeNatOrStr (s : Nat ⊕ String) : String :=
 
 #eval describeNatOrStr aNum    -- "a number: 42"
 #eval describeNatOrStr aStr    -- "a string: error"
+
+/-! @@@
+> **Checkpoint — eliminating a sum (`describeNatOrStr`).** `match` must handle both `inl`
+> and `inr`; the tag chooses the branch.  **Predict** `describeNatOrStr (Sum.inr "oops")`,
+> then check.
+@@@ -/
+
+#eval describeNatOrStr (Sum.inr "oops")   -- predict first
 
 -- The canonical programming sum: Option.
 -- Option α represents either a value (some a) or absence (none).
@@ -409,12 +506,17 @@ def showResult (r : Option Nat) : String :=
 
 #eval showResult (safeDivide 10 2)    -- "result: 5"
 #eval showResult (safeDivide 10 0)    -- "no result"
-```
 
+/-! @@@
+> **Checkpoint — `Option` guards a partial operation (`safeDivide`).** `safeDivide` returns
+> `none` exactly when the divisor is `0`, and `some` otherwise — the two arms of a sum.
+> **Predict** both values below (which one is `none`?), then check.
+@@@ -/
 
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+#eval safeDivide 20 4   -- predict first
+#eval safeDivide 7 0    -- predict first
 
-
+/-! @@@
 ### The logical reading: disjunction (OR)
 
 In logic, `P ∨ Q` holds when **at least one** of P or Q holds.  A proof
@@ -432,7 +534,8 @@ of `P ∨ Q` is either a proof of P (tagged `Or.inl`) or a proof of Q
 
 To *prove* a disjunction, pick one side and prove it.
 To *use* a disjunction, case-split on which side holds (just like `match`).
-```lean
+@@@ -/
+
 -- Proving a disjunction: choose a side.
 example : 1 = 1 ∨ 1 = 2 := Or.inl rfl      -- left side
 example : 1 = 2 ∨ 1 = 1 := Or.inr rfl      -- right side
@@ -447,8 +550,16 @@ theorem or_comm' (h : P ∨ Q) : Q ∨ P :=
 
 -- Disjunction from an implication:
 theorem or_weaken (h : P) : P ∨ Q := Or.inl h
-```
 
+/-! @@@
+> **Checkpoint — disjunction is a sum, and it is decidable.** A proof of `P ∨ Q` tags one
+> side; `decide` finds a true side when one exists.  **Predict** `decide (3 < 4 ∨ 4 < 3)` —
+> which disjunct holds? — then check.
+@@@ -/
+
+#eval decide (3 < 4 ∨ 4 < 3)   -- predict first
+
+/-! @@@
 ## 0.5  The Empty Type: `Empty` and `False`
 
 **Why an empty type?**  Sometimes a situation is genuinely impossible:
@@ -468,7 +579,8 @@ In logic: `False` is the proposition with no proof.  A proposition that
 cannot be proved is *false*.
 
 `Empty : Type` and `False : Prop` are the same idea in two universes.
-```lean
+@@@ -/
+
 -- `Empty` has no constructors — you cannot produce a value of it.
 -- But you CAN write a function FROM Empty (with no cases to handle):
 def fromEmpty (e : Empty) : α := nomatch e
@@ -484,8 +596,8 @@ example (h : 2 + 2 = 5) : "pigs fly" = "pigs fly" :=
 -- `absurd : P → ¬P → Q`
 -- Given a proof of P and a proof of ¬P, produce anything.
 -- This is the logical short-circuit: contradiction → done.
-```
 
+/-! @@@
 The power of the empty type: every impossible case reduces to one.
 
 When your program reaches a state that "cannot happen," the right tool
@@ -495,6 +607,17 @@ because the type system certified the branch is unreachable.
 
 `nomatch e` is Lean's syntax for pattern-matching on a value of a type
 with no constructors: the match is exhaustive with zero branches.
+@@@ -/
+
+/-! @@@
+> **Checkpoint — `False` has no proof.** `False` (like `Empty`) is uninhabited, so its
+> decision procedure returns `false`.  **Predict** `decide False`, and say why no `#eval`
+> could ever print a *proof* of it.
+@@@ -/
+
+#eval decide False   -- predict first
+
+/-! @@@
 ## 0.6  Functions to Empty: `α → Empty` and `¬P`
 
 **Why functions to empty?**  Ruling out a case is as important as
@@ -521,7 +644,8 @@ function: given any proof of `P`, produce a proof of `False`.  Since
 no proofs, i.e., P is false.
 
 Negation is not a primitive.  It IS the function arrow, aimed at `False`.
-```lean
+@@@ -/
+
 -- ¬P unfolds to P → False:
 #print Not   -- def Not (a : Prop) : Prop := a → False
 
@@ -530,6 +654,13 @@ Negation is not a primitive.  It IS the function arrow, aimed at `False`.
 example : ¬ (1 = 2)  := by decide
 example : ¬ (3 > 5)  := by decide
 example : ¬ (0 = 1)  := by decide
+
+/-! @@@
+> **Checkpoint — `¬P` is `P → False`.** `decide` builds the function `¬(1 = 2)` automatically
+> because the equality is decidably false.  **Predict** `decide (¬ (1 = 2))`, then check.
+@@@ -/
+
+#eval decide (¬ (1 = 2))   -- predict first
 
 -- Negation from definitions:
 -- ¬(1 = 2) means (1 = 2) → False.
@@ -549,8 +680,16 @@ theorem not_not_intro (h : P) : ¬¬P :=
 -- Example: ¬(P ∧ ¬P) — no proposition and its negation can both hold.
 theorem not_and_not (h : P ∧ ¬P) : False :=
   h.right h.left      -- apply ¬P (= h.right) to P (= h.left)
-```
 
+/-! @@@
+> **Checkpoint — no `P` and `¬P` together.** `not_and_not` says `P ∧ ¬P` is contradictory;
+> on a concrete decidable `P` the whole negation is checkable.  **Predict**
+> `decide (¬ ((3 < 4) ∧ ¬(3 < 4)))`, then check.
+@@@ -/
+
+#eval decide (¬ ((3 < 4) ∧ ¬(3 < 4)))   -- predict first
+
+/-! @@@
 ## 0.7  The Six Constructors Together
 
 Here is the complete picture.  Every type you will write in this course
@@ -575,28 +714,37 @@ the same way.  Sums tag data AND proofs the same way.  Functions
 transform data AND convert proofs the same way.  The empty type
 represents impossible data AND impossible proofs.
 
-```lean
+@@@ -/
+
 -- All six constructors demonstrated side by side:
 
--- Product / And
-def dataPair  : Nat × Bool := ⟨5, true⟩
-def proofPair : 2 < 3 ∧ 3 < 4 := ⟨by decide, by decide⟩
+-- Product / And        (data is built with `def`; a proof of a Prop uses `theorem`)
+def dataPair      : Nat × Bool := ⟨5, true⟩
+theorem proofPair : 2 < 3 ∧ 3 < 4 := ⟨by decide, by decide⟩
 
 -- Sum / Or
-def dataSum    : Nat ⊕ Bool  := Sum.inl 7
-def proofDisj  : 2 < 3 ∨ 3 < 2 := Or.inl (by decide)
+def dataSum       : Nat ⊕ Bool  := Sum.inl 7
+theorem proofDisj : 2 < 3 ∨ 3 < 2 := Or.inl (by decide)
 
 -- Function / Implication
-def dataFun   : Nat → Nat   := fun n => n + 1
-def proofImpl : 2 < 3 → 2 ≤ 3 := fun h => Nat.le_of_lt h
+def dataFun       : Nat → Nat   := fun n => n + 1
+theorem proofImpl : 2 < 3 → 2 ≤ 3 := fun h => Nat.le_of_lt h
 
 -- Negation / Uninhabited
-def proofNeg  : ¬ (1 = 2) := by decide
+theorem proofNeg  : ¬ (1 = 2) := by decide
 
 -- Empty type: a function from Empty returns anything
 def fromImpossible (e : Empty) : Nat × Bool × String := nomatch e
-```
 
+/-! @@@
+> **Checkpoint — the six constructors, combined and decidable.** This proposition wires
+> together `∧`, `∨`, and `¬` over decidable atoms.  **Predict**
+> `decide ((2 < 3 ∧ 3 < 4) ∨ ¬(1 = 1))` — is the left disjunct already enough? — then check.
+@@@ -/
+
+#eval decide ((2 < 3 ∧ 3 < 4) ∨ ¬(1 = 1))   -- predict first
+
+/-! @@@
 ## 0.8  Challenges in programming with algebraic types
 
 Understanding the six constructors is not yet fluency.  The challenge is
@@ -630,50 +778,109 @@ they are your co-programmer.
 
 ## Exercises
 
-1. Use `decide` to verify each claim.  For each, identify which type
-   constructor(s) from the six-constructor table the proposition uses:
-   (a) `2 < 3 ∧ 3 < 4`
-   (b) `2 < 3 ∨ 3 < 2`
-   (c) `¬ (2 = 3)`
-   (d) `¬ (2 < 3 ∧ 3 < 2)`
-   (e) `(2 < 3 ∧ ¬(3 < 2)) ∨ (3 < 2 ∧ ¬(2 < 3))`
+Each exercise carries a banner — `[id] · competency · tier · level · target` — and,
+where it asks you to build something, an **acceptance check**: paste it beneath your
+definition in your own file and it must succeed.  `#guard` is silent on success and
+errors on failure, so the compiler is your grader.  See `EXERCISE_CONVENTIONS.md` for
+the schema.  Do every **core** exercise; **stretch** exercises go deeper and are
+optional.
 
-2. Explain in your own words why a function of type `α → Empty` certifies
-   that `α` has no values.  Then write a term of type `False → Nat × Bool × String`
-   and explain what it means in both the computational and logical readings.
+---
 
-3. Write `twice : (α → α) → α → α` that applies a function twice —
-   `twice f x = f (f x)`.  Test it with `#eval`:
-   ```
-   #eval twice double 3        -- 12
-   #eval twice negate false    -- false
-   ```
-   When `α` is a Prop, what does `twice` say logically?
-   Write the type `(P → P) → P → P` in Lean and read it aloud.
+**[E0.1]** · *decidability identification* · tier 1 · **core**
 
-4. Write `mapOption : (α → β) → Option α → Option β` using `match`.
-   It should apply `f` to the wrapped value if `some`, return `none` otherwise.
-   Test it:
-   ```
-   #eval mapOption double (some 5)     -- some 10
-   #eval mapOption double none         -- none
-   #eval mapOption negate (some true)  -- some false
-   ```
-   Which two type constructors from the six-constructor table does the
-   type of `mapOption` use?
+For each claim, say **whether `decide` can close it and why** (finite domain? decidable
+predicate?) and **which of the six constructors** (§0.7) the proposition uses — *then*
+check it.  The judgment is the point, not the tool-use:
 
-5. For each description, write the Lean type using only the six constructors
-   from §0.7.  Write just the type — not a term inhabiting it.
-   (a) A person's name (String) paired with their score (Nat)
-   (b) A result that is either a computed Nat or an error String
-   (c) A function that takes any proof of `P ∧ Q` and returns a proof of `Q`
-   (d) Evidence that `¬ (2 + 2 = 5)`
-   (e) A value certifying that the type `Empty` is uninhabited
-   Then use `decide` to verify (d).  What does Lean do to check it?
+(a) `2 < 3 ∧ 3 < 4`   (b) `2 < 3 ∨ 3 < 2`   (c) `¬ (2 = 3)`   (d) `¬ (2 < 3 ∧ 3 < 2)`
+
 ```lean
-end Week00
+#guard decide (2 < 3 ∧ 3 < 4) = true
+#guard decide (2 < 3 ∨ 3 < 2) = true
+#guard decide (¬ (2 = 3)) = true
+#guard decide (¬ (2 < 3 ∧ 3 < 2)) = true
 ```
 
+Every atom here is a decidable comparison over concrete `Nat`s, so each connective stays
+decidable.
 
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+---
 
+**[E0.2]** · *type-directed derivation* · tier 2 · **core** · target `twice`
+
+Derive `twice : (α → α) → α → α` that applies its function twice (`twice f x = f (f x)`).
+Produce a **derivation trace** in the Week 2 §2.6 format — the trace is the graded
+artifact — then the `def`.  *First-step hint:* the type is two nested arrows, so `→I`
+twice introduces `f : α → α` and `x : α`; the only way to reach the goal `α` is to apply
+`f`, and applying it once leaves another `α` to feed back in.  Effort: ~3 trace steps,
+2 lines of code.
+
+```lean
+#guard twice (· * 2) 3 = 12
+#guard twice (fun b => !b) false = false
+#guard twice (· + 1) 0 = 2
+```
+
+When `α` is a `Prop`, read `(P → P) → P → P` aloud: what does `twice` say logically?
+
+---
+
+**[E0.3]** · *specification writing (+ type reading)* · tier 1 · **core** · target `mapOption`
+
+Build `mapOption : (α → β) → Option α → Option β` with a `match`: apply `f` under `some`,
+pass `none` through.  State its spec in one line — *"`some a ↦ some (f a)`, and `none ↦ none`"* —
+then confirm on instances.  Which **two** of the six constructors does the *type* of
+`mapOption` use?  Effort: one `match`, ~3 lines.
+
+```lean
+#guard mapOption (· * 2) (some 5) = some 10
+#guard mapOption (· * 2) (none : Option Nat) = none
+#guard mapOption (fun b => !b) (some true) = some false
+```
+
+---
+
+**[E0.4]** · *counterexample finding* · tier 1 · **core**
+
+A student claims *"`Nat` subtraction is invertible: `(a - b) + b = a` for all `a b : Nat`."*
+It is **wrong** — subtraction on `Nat` is truncated (§0.1).  Find concrete inputs
+witnessing the failure and encode the witness so the check **succeeds** (it confirms the
+two sides differ):
+
+```lean
+#guard (3 - 10) + 10 ≠ 3
+```
+
+Then state, in one line, the *side condition* on `a` and `b` under which `(a - b) + b = a`
+does hold.
+
+---
+
+**[E0.5]** · *specification reading* · tier 3 (+ tier-1 check) · **stretch**
+
+Read the **provided** proof of `not_and_not` (§0.6): `fun h => h.right h.left`.  It shows
+that `P ∧ ¬P` is contradictory.  In one or two sentences, name the *type* of `h.left`, the
+*type* of `h.right`, and explain why applying `h.right` to `h.left` produces `False` — do
+**not** author a new proof.  As a decidable by-product on a concrete `P`, confirm:
+
+```lean
+#guard decide (¬ ((3 < 4) ∧ ¬(3 < 4))) = true
+```
+
+In one line: which tier does the *general* statement `not_and_not` live in, and which does
+the concrete check?
+
+---
+
+**[E0.6]** · *type reading (free theorems)* · tier 2 · **stretch**
+
+Look **only** at the type `Empty → α`, polymorphic in `α`.  Without running anything, state
+what every inhabitant does with its input and why it needs **zero** match cases; then say
+one thing no *total* function `α → Empty` can do when `α` is inhabited (§0.5–0.6).  Finally,
+read the provided term `fromImpossible : Empty → Nat × Bool × String := nomatch e` (§0.7) in
+both registers — the computational one (an unreachable branch) and the logical one (*ex
+falso quodlibet*).  No code to submit.
+@@@ -/
+
+end Week00

@@ -29,12 +29,12 @@ The book presents **Part I** — a complete 14-week curriculum. **Part II shifts
 
 ```text
 FPCourse/          Lean 4 source files for the 14-week Full Course
-  Unit1/           Weeks 0–3
-  Unit2/           Weeks 4–7
-  Unit3/           Weeks 8–9
-  Unit4/           Week 10
-  Unit5/           Weeks 11–12
-  Unit6/           Weeks 13–14
+  ExpressionsFunctionsRecursion/   Unit 1 — Weeks 0–3
+  InductiveStructures/             Unit 2 — Weeks 4–7
+  HigherOrderAndSpecification/     Unit 3 — Weeks 8–9
+  SetsAndRelations/                Unit 4 — Week 10
+  AbstractTypesAndTypeClasses/     Unit 5 — Weeks 11–12
+  StreamsAndCurryHoward/           Unit 6 — Weeks 13–14
 scripts/
   convert.py       Literate Lean → Markdown (used by the Makefile and CI)
   convert.hs       Haskell port of the same converter (not wired into any build)
