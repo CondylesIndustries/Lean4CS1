@@ -8,8 +8,8 @@
 - **Office hours:** Tuesdays, 1:00 – 3:00 PM · Rice 508
 - **Course book (living):** <https://kevinsullivan.github.io/Lean4CS1> · source: <https://github.com/kevinsullivan/Lean4CS1>
 
-> This syllabus is subject to change. If changes are made they will be pre-announced and
-> documented here.
+> This syllabus is subject to change. Any such changes will be pre-announced and documented
+> here.
 
 ---
 
