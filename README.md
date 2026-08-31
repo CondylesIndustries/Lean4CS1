@@ -1,6 +1,6 @@
 # CS6501, Fall 2026
 
-A literate Lean 4 curriculum introducing typed functional programming through the lens of the Curry-Howard correspondence. Every file compiles cleanly against Lean 4 / Mathlib — no `sorry`, no `by`.
+A literate Lean 4 curriculum introducing typed functional programming through the lens of the Curry-Howard correspondence. Every file compiles cleanly against Lean 4 / Mathlib, with no `sorry`.
 
 The book presents **Part I** — a complete 14-week curriculum. **Part II shifts to proof construction**, building directly on the foundations Part I establishes.
 
@@ -10,7 +10,7 @@ The book presents **Part I** — a complete 14-week curriculum. **Part II shifts
 
 - Propositions are types from Week 1.
 - `decide` is the primary proof producer for decidable propositions.
-- Proofs other than decision procedures are in term mode, not tactic mode, so the logical structure is explicit.
+- Proofs are shown, increasingly as the course progresses. Where the logical structure is the point they are in term mode, so that structure stays explicit. Part I does not require a student to write one.
 - `sorry` never appears.
 - Full Mathlib notations are used throughout.
 

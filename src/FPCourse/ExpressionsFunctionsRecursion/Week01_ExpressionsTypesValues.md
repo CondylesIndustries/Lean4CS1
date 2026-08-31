@@ -206,7 +206,7 @@ of the second argument includes a condition: a proof that the divisor
 is nonzero must be supplied by the caller.
 
 ```lean
-def safeDiv (a : Nat) (b : Nat) (h : b ≠ 0) : Nat := a / b
+def safeDiv (a : Nat) (b : Nat) (_h : b ≠ 0) : Nat := a / b
 ```
 
 The type `b ≠ 0` is a proposition — a logical type.  Calling
@@ -217,7 +217,10 @@ This pattern — conditions embedded in types, enforced at compile time —
 is what we mean by *proof-carrying types*.  You will see it everywhere
 from Week 2 onward.
 ```lean
-def safeDiv (a : Nat) (b : Nat) (h : b ≠ 0) : Nat := a / b
+-- `_h` is never used in the body: the proof is a *precondition* the caller must
+-- supply, not data the computation consumes.  A leading underscore is how Lean
+-- marks a binder as deliberately unused.
+def safeDiv (a : Nat) (b : Nat) (_h : b ≠ 0) : Nat := a / b
 
 -- To call safeDiv we must supply a proof that the divisor ≠ 0.
 -- For a concrete nonzero literal, `decide` produces the proof.
@@ -225,7 +228,7 @@ def safeDiv (a : Nat) (b : Nat) (h : b ≠ 0) : Nat := a / b
 #eval safeDiv 17 3 (by decide)   -- 5
 ```
 
-> **Checkpoint — proof-carrying `safeDiv`.** The third argument `h : b ≠ 0` is a *proof*
+> **Checkpoint — proof-carrying `safeDiv`.** The third argument `_h : b ≠ 0` is a *proof*
 > the caller must supply; `by decide` manufactures it for a concrete nonzero divisor.
 > **Predict** `safeDiv 20 4 (by decide)`, then check.  (`by decide` is allowed here — it only
 > builds the nonzero proof.)
@@ -350,7 +353,7 @@ previews it.)
 
 **[E1.6]** · *specification reading* · tier 3 (reading) · **stretch**
 
-Read the proof-carrying type of `safeDiv` (§1.5): `(a b : Nat) → (h : b ≠ 0) → Nat`.  Do
+Read the proof-carrying type of `safeDiv` (§1.5): `(a b : Nat) → (_h : b ≠ 0) → Nat`.  Do
 **not** author any proof.  Explain (a) what the caller must supply beyond two numbers, and
 (b) why `safeDiv 10 0 (by decide)` fails to compile — trace the failure to the proof
 obligation `0 ≠ 0` that has no inhabitant.  Then confirm the two working calls:

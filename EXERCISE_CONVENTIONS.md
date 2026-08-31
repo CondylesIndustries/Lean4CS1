@@ -39,7 +39,8 @@ of `#guard` checks the student pastes beneath their definition:
 
 `#guard` is silent on success and errors on failure, needs no `by` and no proof term,
 and evaluates only decidable propositions — so it stays inside "the compiler is the
-grader" and the course's no-`sorry`, no-tactic-proof constraints. The checks live in
+grader" and the course's no-`sorry` constraint and Part I's rule that a student is
+never required to write a proof. The checks live in
 the exercise *prose* (a fenced block), never as live code in the instructor file, so
 the file keeps compiling and no answer is given away.
 

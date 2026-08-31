@@ -41,8 +41,8 @@ the tier the course currently under-exploits. The free-theorems material in Week
 `{ f : List Nat → List Nat // CorrectSort f }` looks like "just a type," but to
 *construct* an inhabitant you must supply the proof component — and that proof is
 exactly the object SF would make you write. Week 9's `insertionSort_correct` is
-this tier, and its helpers are full inductive proofs (in `by`-mode, which the
-course otherwise forbids), handed to the student **to read, not to produce**. That
+this tier, and its helpers are full inductive proofs in `by`-mode, handed to the
+student **to read, not to produce**. That
 is a legitimate pedagogical choice, but it must be *labelled* tier 3, or the
 student who reaches the subtype exercise hits a cliff the earlier weeks disowned.
 
@@ -65,7 +65,8 @@ oracle is least necessary.
 ## Where assessment sits
 
 **Assessment sits in tiers 1 and 2.** Both are things a student can *produce* under
-the course's own constraints (no `by`, no `sorry`, compiler-as-grader):
+the course's own constraints (no `sorry`, compiler-as-grader, and no requirement
+to write a proof in Part I):
 
 - Tier 1 → the existing competencies "decidability identification" and
   "counterexample finding."

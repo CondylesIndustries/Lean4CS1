@@ -151,9 +151,9 @@ theorem contains_spec [DecidableEq α] (x : α) (xs : List α) :
         exact ih.mp this
     · intro hm
       cases hm with
-      | inl heq => simp [contains, heq]
+      | inl heq => simp [heq]
       | inr ht  =>
-        simp [contains]
+        simp
         right
         exact ih.mpr ht
 

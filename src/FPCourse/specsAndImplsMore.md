@@ -41,7 +41,7 @@ def hw : String := "Hello, World!"
 #check hw
 #reduce hw
 
-#check (fun (s : String) => true)
+#check (fun (_ : String) => true)
 #reduce (fun (_ : String) => true) hw
 #check (fun _ => true) hw
 
