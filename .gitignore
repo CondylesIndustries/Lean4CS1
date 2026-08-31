@@ -11,3 +11,7 @@ book/
 
 # Local library of course reading PDFs (publisher-copyrighted; not redistributable)
 Readings/
+
+# Python bytecode
+__pycache__/
+*.pyc
