@@ -159,6 +159,22 @@ That is exactly why `CorrectSort` in Week 9 is a **Tier 3** obligation:
 alone cannot.  Tier 2 tells you what you get for free; its boundary tells you
 where a proof becomes unavoidable.
 
+## Reading is the inverse of building
+
+The *Deriving Terms from Types* interlude (`FPCourse/Unit1/Derivation.lean`) taught
+the forward direction: given a type, *build* an inhabitant by type-directed steps.
+Free-theorem reading is the same skill run backwards: given a type, say what *every*
+inhabitant must do — without building one.  Parametricity is the hinge.  When a
+derivation is **forced**, the free theorem is **total**:
+
+- `∀ α, α → α` — the derivation has one outcome (`fun _ x => x`), so the reading is
+  absolute: every inhabitant is the identity.
+- `∀ α, α → α → α` — the derivation has two outcomes (return the first / the
+  second), so the reading is: every inhabitant is one of the two projections.
+
+Do a *matched pair* on the same type and the correspondence becomes concrete — one
+trace that builds, one paragraph that reads, meeting in the middle.
+
 ## Exercises
 
 These are *reading* exercises: no proofs, no `decide`.  For each signature, answer
@@ -184,6 +200,13 @@ in English — what does the type forbid, and what must every inhabitant satisfy
 5. `∀ α, (α → α) → α → α`.  Describe the inhabitants informally.  (Hint: how many
    times can the function apply its argument?)  This type is the Church encoding of
    a number — a preview of Week 14's Curry-Howard correspondence.
+
+6. **Matched pair.**  Take the type `∀ α β, (α → β) → α → β`.
+   (a) *Build:* give a derivation trace (as in the Derivation interlude) for an
+       inhabitant, and show every step is forced.
+   (b) *Read:* in one paragraph, state what the free theorem guarantees about the
+       single inhabitant — i.e. what it must do to its arguments and what it cannot
+       do.  Confirm that (a) and (b) describe the same function.
 @@@ -/
 
 end FreeTheorems

@@ -13,12 +13,13 @@ us where assessment can legitimately sit.
 ## The three tiers
 
 | Tier | Name | Lean mechanism | What the student produces | Evidence is… | Reading anchor |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | 1 | **decide-checkable** | `decide` on a decidable `Prop` | a proposition + the word `decide` | a *computation* | Claessen & Hughes 2000 (W12); Week 7 |
 | 2 | **type-guaranteed** | a parametrically polymorphic type | a *type*, and a reading of what it forbids | *nothing* — parametricity | Reynolds 1983, Wadler 2015 (W6) |
 | 3 | **proof-carrying** | a refinement type `{ x // P x }` | a term *containing a proof of `P`* | a *proof object* | Hoare 1972 (W11); Hoare 1969 (W5) |
 
 ### Tier 1 — decide-checkable
+
 `decide` runs a decision procedure and the accepted term *is* the evidence. Real,
 but bounded: it only closes decidable propositions over enumerable domains. On an
 infinite domain, `decide` on a *concrete instance* is QuickCheck-grade evidence
@@ -26,6 +27,7 @@ infinite domain, `decide` on a *concrete instance* is QuickCheck-grade evidence
 quantified theorem. Say this out loud whenever `decide` appears next to a `∀`.
 
 ### Tier 2 — type-guaranteed
+
 Some properties hold of **every** inhabitant of a type, forced by Reynolds'
 abstraction theorem, with **no proof written at all**. `∀ α, List α → List α`
 cannot invent elements; `∀ α, List α → Nat` can only measure shape. This is the
@@ -35,6 +37,7 @@ the tier the course currently under-exploits. The new *Free Theorems* interlude
 (`FPCourse/Unit3/FreeTheorems.lean`) is tier 2 in pure form.
 
 ### Tier 3 — proof-carrying
+
 `{ f : List Nat → List Nat // CorrectSort f }` looks like "just a type," but to
 *construct* an inhabitant you must supply the proof component — and that proof is
 exactly the object SF would make you write. Week 9's `insertionSort_correct` is
@@ -42,6 +45,22 @@ this tier, and its helpers are full inductive proofs (in `by`-mode, which the
 course otherwise forbids), handed to the student **to read, not to produce**. That
 is a legitimate pedagogical choice, but it must be *labelled* tier 3, or the
 student who reaches the subtype exercise hits a cliff the earlier weeks disowned.
+
+## Producing an inhabitant: derivation, not search
+
+All three tiers require *producing* a term, and the course teaches one method for
+doing so across all of them: **type-directed derivation** (the *Deriving Terms from
+Types* interlude). The goal type's outermost constructor licenses the next
+introduction/elimination step; the term is built top-down, each step predicted and
+then *confirmed* by the compiler rather than discovered by poking it. The graded
+artifact is the **derivation trace**, not merely the accepted term — a term that
+compiles by luck is not evidence the student can construct.
+
+This is what keeps "the compiler is the grader" from degenerating into "the compiler
+is the search engine." It also links the tiers to their inverse: free-theorem
+*reading* (Tier 2) is derivation run backwards, and parametricity is what makes the
+forward derivation deterministic — so the method bites hardest exactly where the
+oracle is least necessary.
 
 ## Where assessment sits
 

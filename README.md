@@ -134,10 +134,11 @@ Link audit, 2026-08-25:
 
 ## Assessment forms
 
-Students are assessed on five competencies (no proof production required):
+Students are assessed on six competencies (no proof production required):
 
 1. **Specification writing** — given a function and English description, write the correct Lean type expressing its specification.
 2. **Specification reading** — given a Lean proposition, state in English what it asserts; give a satisfying and a falsifying example.
-3. **Type inhabitation** — write a term the compiler accepts at a given type. The compiler is the primary grader.
+3. **Type-directed derivation** — given a target type, derive an inhabiting term by type-directed steps and *narrate the derivation*: name each introduction/elimination step, the hypothesis or constructor used, and the goal that remains. The narrated trace is the graded artifact; the term the compiler accepts is its by-product. A companion form gives a target type and asks *which introduction- or elimination-step must come first, and why* — un-fakeable by poking the compiler. The compiler is a confirmer of a predicted step, not a search engine. (See the *Deriving Terms from Types* interlude.)
 4. **Counterexample finding** — given a function and an incorrect specification, find a concrete input that witnesses the mismatch.
 5. **Decidability identification** — given a proposition, state whether `decide` closes it, which other term if not, and why.
+6. **Type reading (free theorems)** — given a (polymorphic) signature, state what *every* inhabitant must satisfy and what the type forbids, with no term written. The inverse of #3 — reading a type rather than building for it; parametricity makes the strongest of these deterministic. (Reynolds 1983, Wadler 2015; see the *Free Theorems* interlude.)
