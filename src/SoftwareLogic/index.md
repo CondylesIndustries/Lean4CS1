@@ -44,10 +44,10 @@ vital practice for both guiding generative AIs to produce useful results and to 
 the intellectual control necessary for human beings to be held accountable for the harmful
 failures their systems produce.
 
-Durable intellectual control depends on abstract software specification and proofs rooted in
-understanding the generalized mathematics of the application domain, stating that theory precisely,
-and certifying separate computable implementations against it. It is also required for the sustained
-quality of evolving, long-lived software systems.
+Durable intellectual control depends on abstract software specification and proofs rooted in the
+generalized mathematics of the application domain, stating that theory precisely, and certifying
+separate computable implementations against it. It is also required for the sustained quality of
+evolving, long-lived software systems.
 
 The resulting assurance rests on two distinct objects of trust: the validity of the statements of
 the formal theory itself and verification of the proof certificates that connect implementation to
