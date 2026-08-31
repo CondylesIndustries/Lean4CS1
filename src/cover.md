@@ -1,6 +1,4 @@
 <style>
-/* Cover page. Colors come from mdBook theme variables so the plate follows
-   light / rust / coal / navy / ayu without per-theme overrides. */
 .cover {
   display: flex;
   align-items: center;
@@ -71,8 +69,6 @@
   opacity: 0.6;
   overflow-wrap: anywhere;
 }
-/* Call to action. Colors come from the mdBook link variable so the button
-   follows the reader's theme like the rest of the plate. */
 .cover-cta {
   display: inline-block;
   margin-top: clamp(1.5rem, 4vw, 2.25rem);
@@ -106,8 +102,6 @@
   text-transform: uppercase;
   opacity: 0.6;
 }
-/* The build stamps the commit here.  Opt out of the uppercase/letterspacing of
-   .cover-status so the hash stays readable and copy-pastable. */
 .cover-commit {
   font-family: var(--mono-font, monospace);
   text-transform: none;
