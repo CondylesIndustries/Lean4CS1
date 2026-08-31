@@ -147,7 +147,7 @@ example : double'' 5 = 10 := rfl
 -- Step 6 — Check (provided proof):
 -- Evaluation: double'' n ↝ n + n (δ-reduction).  Both sides are identical.
 theorem double''_spec : ∀ n : Nat, double'' n = n + n :=
-  fun n => rfl
+  fun _ => rfl
 
 /-! @@@
 > **Checkpoint — `double''` and its spec.** `double''_spec` states `double'' n = n + n`.

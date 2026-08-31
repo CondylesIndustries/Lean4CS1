@@ -98,7 +98,7 @@ theorem mapViaFoldr_eq_map (f : α → β) (xs : List α) :
     mapViaFoldr f xs = xs.map f :=
   List.recOn xs
     rfl
-    (fun h t ih => congrArg (f h :: ·) ih)
+    (fun h _t ih => congrArg (f h :: ·) ih)
 
 /-! @@@
 > **Checkpoint — `mapViaFoldr` agrees with `map`.** `mapViaFoldr` rebuilds the list,
@@ -247,7 +247,7 @@ theorem map_foldr_fusion (f : β → γ → γ) (z : γ) (g : α → β) (xs : L
     (xs.map g).foldr f z = xs.foldr (f ∘ g) z :=
   List.recOn xs
     rfl
-    (fun h t ih => congrArg (f (g h) ·) ih)
+    (fun h _t ih => congrArg (f (g h) ·) ih)
 
 /-! @@@
 > **Checkpoint — map-foldr fusion.** By `map_foldr_fusion`, mapping `(· * 2)` and then

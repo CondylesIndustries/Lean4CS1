@@ -116,7 +116,7 @@ theorem mem_union_iff (x : α) (s t : Set α) :
 -- Subset is ∀/→:
 theorem subset_def (s t : Set α) :
     s ⊆ t ↔ ∀ x, x ∈ s → x ∈ t :=
-  Iff.intro (fun h x hx => h hx) (fun h x hx => h x hx)
+  Iff.intro (fun h _x hx => h hx) (fun h x hx => h x hx)
 
 /-! @@@
 > **Checkpoint — complement `ᶜ`.** `x ∈ sᶜ` means `¬ (x ∈ s)`. **Predict** whether `5`,

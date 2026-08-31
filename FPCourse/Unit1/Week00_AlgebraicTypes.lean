@@ -718,20 +718,20 @@ represents impossible data AND impossible proofs.
 
 -- All six constructors demonstrated side by side:
 
--- Product / And
-def dataPair  : Nat × Bool := ⟨5, true⟩
-def proofPair : 2 < 3 ∧ 3 < 4 := ⟨by decide, by decide⟩
+-- Product / And        (data is built with `def`; a proof of a Prop uses `theorem`)
+def dataPair      : Nat × Bool := ⟨5, true⟩
+theorem proofPair : 2 < 3 ∧ 3 < 4 := ⟨by decide, by decide⟩
 
 -- Sum / Or
-def dataSum    : Nat ⊕ Bool  := Sum.inl 7
-def proofDisj  : 2 < 3 ∨ 3 < 2 := Or.inl (by decide)
+def dataSum       : Nat ⊕ Bool  := Sum.inl 7
+theorem proofDisj : 2 < 3 ∨ 3 < 2 := Or.inl (by decide)
 
 -- Function / Implication
-def dataFun   : Nat → Nat   := fun n => n + 1
-def proofImpl : 2 < 3 → 2 ≤ 3 := fun h => Nat.le_of_lt h
+def dataFun       : Nat → Nat   := fun n => n + 1
+theorem proofImpl : 2 < 3 → 2 ≤ 3 := fun h => Nat.le_of_lt h
 
 -- Negation / Uninhabited
-def proofNeg  : ¬ (1 = 2) := by decide
+theorem proofNeg  : ¬ (1 = 2) := by decide
 
 -- Empty type: a function from Empty returns anything
 def fromImpossible (e : Empty) : Nat × Bool × String := nomatch e

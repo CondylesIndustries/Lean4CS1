@@ -68,7 +68,7 @@ example : Decidable (2 < 1) := Decidable.isFalse (by decide)
 #check @Nat.decEq   -- (a b : Nat) → Decidable (a = b)
 
 -- For any decidable proposition, we can extract the proof or refutation:
-def toProofOrRefutation (p : Prop) [d : Decidable p] : p ∨ ¬p :=
+theorem toProofOrRefutation (p : Prop) [d : Decidable p] : p ∨ ¬p :=
   match d with
   | Decidable.isTrue h  => Or.inl h
   | Decidable.isFalse h => Or.inr h

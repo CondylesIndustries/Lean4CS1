@@ -257,9 +257,9 @@ specification.  Any `some` result carries a proof.
 
 def typecheck : (ctx : Context) → (e : Term) →
     Option (Σ' τ, Typed ctx e τ)
-  | ctx, .natLit n  =>
+  | _, .natLit _  =>
     some ⟨.Nat, Typed.natLit⟩
-  | ctx, .boolLit b =>
+  | _, .boolLit _ =>
     some ⟨.Bool, Typed.boolLit⟩
   | ctx, .var x     =>
     match h : ctxLookup ctx x with
@@ -324,14 +324,15 @@ In our checker, the correctness proof is built into the return value.
 The type-checker and the proof of soundness are the same program.
 @@@ -/
 
--- Soundness: if typecheck returns some ⟨τ, h⟩, then h : Typed ctx e τ.
--- This is immediate from the return type — no proof needed separately.
--- Any result of the form `some ⟨τ, h⟩` already carries h : Typed ctx e τ.
-theorem typecheck_sound (ctx : Context) (e : Term) (τ : Ty) (h : Typed ctx e τ) :
-    ∃ τ', ∃ h' : Typed ctx e τ', typecheck ctx e = some ⟨τ', h'⟩ := by
-  cases typecheck ctx e with
-  | none => exact absurd h (by sorry)  -- completeness not proved here
-  | some p => exact ⟨p.1, p.2, rfl⟩
+-- Soundness: whenever `typecheck ctx e` returns `some p`, the term genuinely has the
+-- type `p.1` that the checker reports — witnessed by `p.2`.  There is nothing to
+-- construct: the proof IS the value the checker already produced, so soundness holds by
+-- `p.2` alone.  (The converse — *completeness*, that every well-typed term is accepted —
+-- is a separate property the return type does NOT give for free; it is Exercise E14.6.)
+theorem typecheck_sound (ctx : Context) (e : Term)
+    (p : Σ' τ, Typed ctx e τ) (_h : typecheck ctx e = some p) :
+    Typed ctx e p.1 :=
+  p.2
 
 /-! @@@
 ## 14.7  What you have learned
@@ -481,10 +482,10 @@ soundness the return type gives for free: *"whenever `Typed ctx e τ` holds, `ty
 returns a `some` whose type is `τ`."*  Write it as a single `def Complete : Prop := ∀ …`.
 
 (b) **Spec reading (tier 3).** Read the *provided* proof `typecheck_sound` (§14.6) — do **not**
-author a proof.  Explain: why is the `some p` case closed by `⟨p.1, p.2, rfl⟩` alone (what
-does the return type already guarantee)?  And why does the `none` case need `sorry` — what
-about *completeness*, your part (a), is *not* delivered by the return type?  One sentence
-each.  (Leave the `sorry` in place; it is a deliberate teaching marker, not a bug to fix.)
+author a proof.  Explain, in one sentence each: why is soundness discharged by `p.2` alone
+(what does the return type `Option (Σ' τ, Typed ctx e τ)` already guarantee)?  And why can that
+same return type *not* discharge your *completeness* `Prop` from part (a) — what would a proof
+of completeness have to do that soundness never does?
 @@@ -/
 
 end Week14
