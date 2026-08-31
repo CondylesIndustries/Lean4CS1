@@ -299,10 +299,10 @@ wait until the end of the semester to ask for help!
 
 **Health and Wellbeing**
 
-- Elizabeth Ramirez-Weaver, CAPS counselor\*
-- Katie Fowler, CAPS counselor\*
+- Elizabeth Ramirez-Weaver, CAPS counselor
+- Katie Fowler, CAPS counselor
 
-\*You may schedule time with the CAPS counselors through Student Health
+You may schedule time with the CAPS counselors through Student Health
 (<https://www.studenthealth.virginia.edu/getting-started-caps>). When scheduling, be sure to specify
 that you are an Engineering student. You are also urged to use TimelyCare for either scheduled or
 on-demand 24/7 mental health care.
