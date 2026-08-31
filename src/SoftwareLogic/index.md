@@ -21,9 +21,9 @@
 
 This course examines human intellectual control over complex software systems as an ongoing major technical challenge and social imperative. It is required for sustained quality of evolving long-lived software systems, especially now in the emerging era of generative AI. Its central claim is that durable intellectual control depends on abstract software specification and particularly on understanding the generalized mathematics of the domain, stating that theory precisely, and certifying separate computable implementations against it. The resulting assurance rests on two distinct objects of trust: the adequacy of the formal theory itself and the validity of the proof certificates that connect implementation to theory. Lean 4 provides a practical language in which theories, implementations, and proofs can coexist, but it does not eliminate either obligation: one must understand the mathematics being formalized, and one must understand the trusted proof-checking base on which machine-checked assurance depends.
 
-## Course Structure: Two Parts
+## Programming Thread: Two Parts
 
-The course is in two parts.
+The programming thread in this course is in two parts.
 
 - **Part I — Certified Computation (the FP book).** A functional-programming foundation, taught
   through the Curry–Howard correspondence, in which specifications are types. Students learn to read

@@ -263,6 +263,10 @@ You may use generative AI tools and search tools to assist you in doing homework
 do, then you must include a statement at the end of your assignment summarizing your use of such
 tools.
 
+### Late work
+
+No late work is accepted.
+
 ### Recording
 
 You may not electronically record any aspect of this class—audio, visual, or otherwise—without the
