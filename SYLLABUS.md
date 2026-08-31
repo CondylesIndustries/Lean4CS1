@@ -40,6 +40,17 @@ vital practice for both guiding generative AIs to produce useful results and to 
 the intellectual control necessary for human beings to be held accountable for the harmful
 failures their systems produce.
 
+Durable intellectual control depends on abstract software specification and particularly on
+understanding the generalized mathematics of the domain, stating that theory precisely, and
+certifying separate computable implementations against it. It is also required for the sustained
+quality of evolving, long-lived software systems.
+
+The resulting assurance rests on two distinct objects of trust: the adequacy of the formal theory
+itself and the validity of the proof certificates that connect implementation to theory. Lean 4
+provides a practical language in which theories, implementations, and proofs can coexist, but it
+does not eliminate either obligation: one must understand the mathematics being formalized, and one
+must understand the trusted proof-checking base on which machine-checked assurance depends.
+
 This is a course for graduate students in computer science.
 
 ---
@@ -365,4 +376,4 @@ underrepresented groups in STEM. It exists to connect students with the academic
 and community resources they need to thrive both at UVA and in the world. The CDE includes an open
 study area, event space, and staff members on site. Through this space, we affirm and empower
 equitable participation toward intercultural fluency and provide the resources necessary for
-students to be successful during their academic journey.
+students to be successful during their academic journey and future career.
