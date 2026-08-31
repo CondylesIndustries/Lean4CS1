@@ -42,9 +42,6 @@ the book is complete (Mon Sep 28) the class proceeds to **Part II** (Lean progra
 construction). Class does not meet Mon Oct 5 (fall reading days) or Wed Nov 25 (Thanksgiving);
 Labor Day (Mon Sep 7) meets. 28 sessions total.
 
-*Revision note:* the derivation method is now part of **Week 2 §2.6** and free theorems part of
-**Week 7 §7.2**. Both were previously listed as standalone interludes.
-
 | # | Date | Paper readings (Line I — by week) | Part I book (2 ch/session, starts Sep 2) → Part II |
 |---:|---|---|---|
 | | **▸ Week 1** · course intro & Lean setup | *Aug 26 + Aug 31* | |
@@ -90,9 +87,9 @@ Labor Day (Mon Sep 7) meets. 28 sessions total.
 | 27 | Wed Dec 02 | **Wk 14: Understanding Change, Evolution & Accountability.**<br>— Sillito, Murphy & De Volder, [“Questions Programmers Ask During Software Evolution Tasks”](https://citeseerx.ist.psu.edu/document?doi=3dda5d9a5e4eb27760e8a4a381a1057ce0ba7d65&repid=rep1&type=pdf), *FSE 2006*, pp. 23–34.<br>— Lehman, [“Programs, Life Cycles, and Laws of Software Evolution”](https://users.ece.utexas.edu/~perry/education/SE-Intro/lehman.pdf), *Proc. IEEE* 68(9), 1980, pp. 1060–1076.<br>— Parnas, [“Software Aging”](https://plg.uwaterloo.ca/~migod/846/papers/parnas-SwAging.pdf), *ICSE 1994*, pp. 279–287. | ‡ Institutions — package the semester's machinery as a concrete executable institution; **satisfaction condition** |
 | 28 | Mon Dec 07 · last class | ↳ *(wk 14 — cont.)* | ‡ **Endpoint** — prove the satisfaction condition; project synthesis & recoverability |
 
-‡ **Part II topics (sessions 11–28) are tentative.** The Lean materials are not yet authored, and
-the per-topic pacing (≈3 sessions each) is provisional. Part II keeps the discipline general theory
-→ separate computable realization → certified bridge.
+‡ **Part II topics (sessions 11–28) are tentative.** The per-topic pacing (≈3 sessions each) is
+provisional. Part II keeps the discipline general theory → separate computable realization →
+certified bridge.
 
 ---
 
@@ -130,9 +127,9 @@ Correctness in this course comes in three tiers, and the assessment is built aro
 - **Tier 3 — proof-carrying:** a refinement type `{ x // P x }` whose inhabitant carries a proof.
   Part I provides these proofs for reading; Part II asks students to produce them.
 
-Exercises include machine-checkable acceptance checks (`#guard`), so the compiler reports whether an
-answer is correct, and chapters include frequent predict-then-check checkpoints for immediate,
-low-stakes feedback. Week 13 (Streams) is the exception on both counts; its exercises are prose only.
+Chapter exercises include machine-checkable acceptance checks (`#guard`), so the compiler reports
+whether an answer is correct, and chapters include predict-then-check checkpoints for immediate,
+low-stakes feedback.
 
 ### Grading
 
@@ -197,7 +194,6 @@ book chapters.
 - **Institutions are the intended and designed-for endpoint of Part II.** The mathematical sequence is backward-designed from that goal: students must climb from inductive structures and sets through relations, algebraic laws, categories, signatures, models, satisfaction, and functorial translation to a theory in which meaning preservation across changes of notation can itself be stated abstractly.
 - **Subsetting rule for the companion foundations:** select and sequence material to maximize students' ability to ascend from concrete computation to increasingly general mathematics and then reconnect those abstractions to executable realizations by proof. The criterion is contribution to sustained or recoverable intellectual control, including the mathematical prerequisites needed to reach Institutions; there is no shortcut around understanding the domain mathematics and the abstract mathematics beneath it.
 - **Lean is used from Week 1 onward.** Part I establishes the ability to express intent, specifications, invariants, abstractions, mathematical models, implementations, and checked evidence. Part II changes the kind of work done in Lean; it does not introduce Lean.
-- **The companion foundation materials remain unchanged.** This syllabus links to selected chapters and adds assignments whose products are intended to remain useful as recoverable intellectual-control artifacts.
 - **Part II discipline:** **general theory → separate computable realization → certified bridge**.
 - **Traceability for assurance:** each major assurance should remain recoverable through **domain purpose → domain theory → generalized mathematics → formal theory → computable implementation → certified bridge → assumptions/trusted base → evidence**.
 - **TODO — Construct compelling mathematical case studies:** develop a small set of deep examples in which **students experience abstract mathematics itself as the principal medium of intellectual control**. Each case should begin with a realistic domain whose behavior is difficult to reason about directly, expose the domain mathematics and the deeper abstract mathematics that make the situation intelligible, formalize that theory in Lean, construct a separate executable realization, and prove the bridge that licenses reasoning about the implementation through the mathematics.

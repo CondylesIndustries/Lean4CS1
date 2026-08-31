@@ -8,8 +8,8 @@
 - **Office hours:** `[days/times, location or link]`
 - **Course book (living):** <https://github.com/kevinsullivan/Lean4CS1> · rendered: `[book URL]`
 
-> This syllabus is a draft for comment. Dates and required-reading links are fixed; Part II
-> topics and pacing are tentative (the Lean materials for Part II are still being authored).
+> This syllabus is a draft for comment. Dates and required readings are fixed; Part II topics and
+> pacing are tentative.
 
 ---
 
@@ -85,9 +85,9 @@ Correctness in this course comes in three tiers, and the assessment is built aro
 - **Tier 3 — proof-carrying:** a refinement type `{ x // P x }` whose inhabitant carries a proof.
   Part I provides these proofs for reading; Part II asks students to produce them.
 
-Exercises include machine-checkable acceptance checks (`#guard`), so the compiler reports whether an
-answer is correct, and chapters include frequent predict-then-check checkpoints for immediate,
-low-stakes feedback. Week 13 (Streams) is the exception on both counts; its exercises are prose only.
+Chapter exercises include machine-checkable acceptance checks (`#guard`), so the compiler reports
+whether an answer is correct, and chapters include predict-then-check checkpoints for immediate,
+low-stakes feedback.
 
 ---
 
@@ -164,9 +164,6 @@ Wed Sep 16), in order, beginning **Wed Sep 2**; once the book is complete (**Mon
 (Lean programming and proof construction). Class does not meet **Mon Oct 5** (fall reading days) or
 **Wed Nov 25** (Thanksgiving); **Labor Day (Mon Sep 7) meets**. 28 sessions total.
 
-*Revision note:* the derivation method is now part of **Week 2 §2.6** and free theorems part of
-**Week 7 §7.2**. Both were previously listed as standalone interludes.
-
 | # | Date | Paper readings (Line I — by week) | Part I book (2 ch/session) → Part II |
 |---:|---|---|---|
 | | **▸ Week 1** · course intro & Lean setup | *Aug 26 + Aug 31* | |
@@ -212,9 +209,9 @@ Wed Sep 16), in order, beginning **Wed Sep 2**; once the book is complete (**Mon
 | 27 | Wed Dec 02 | **Wk 14: Understanding Change, Evolution & Accountability.**<br>— Sillito, Murphy & De Volder, [“Questions Programmers Ask During Software Evolution Tasks”](https://citeseerx.ist.psu.edu/document?doi=3dda5d9a5e4eb27760e8a4a381a1057ce0ba7d65&repid=rep1&type=pdf), *FSE 2006*, pp. 23–34.<br>— Lehman, [“Programs, Life Cycles, and Laws of Software Evolution”](https://users.ece.utexas.edu/~perry/education/SE-Intro/lehman.pdf), *Proc. IEEE* 68(9), 1980, pp. 1060–1076.<br>— Parnas, [“Software Aging”](https://plg.uwaterloo.ca/~migod/846/papers/parnas-SwAging.pdf), *ICSE 1994*, pp. 279–287. | ‡ Institutions — package the semester's machinery as a concrete executable institution; **satisfaction condition** |
 | 28 | Mon Dec 07 · last class | ↳ *(wk 14 — cont.)* | ‡ **Endpoint** — prove the satisfaction condition; project synthesis & recoverability |
 
-‡ **Part II topics (sessions 11–28) are tentative.** The Lean materials are not yet authored, and
-the per-topic pacing (≈3 sessions each) is provisional. Part II keeps the discipline general theory
-→ separate computable realization → certified bridge.
+‡ **Part II topics (sessions 11–28) are tentative.** The per-topic pacing (≈3 sessions each) is
+provisional. Part II keeps the discipline general theory → separate computable realization →
+certified bridge.
 
 ---
 
