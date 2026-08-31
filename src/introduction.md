@@ -57,7 +57,7 @@ proof construction.
 | 3    | 8–9   | Higher-Order Functions, Specifications          |
 | 4    | 10    | Sets and Relations                              |
 | 5    | 11–12 | Abstract Types, Type Classes                    |
-| 6    | 13–14 | Streams, Curry-Howard                           |
+| 6    | 14    | Curry-Howard                                    |
 
 ## Building
 

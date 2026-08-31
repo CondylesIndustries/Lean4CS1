@@ -36,7 +36,7 @@ their weekly cadence: one theme per paper-week, with full bibliographic referenc
 given in each paper cell. A set is due at the session where it is listed and, where a `↳ (cont.)`
 cell appears, carries into that week's second session. The exception is **Week 2**, which carries
 two sets: **set 1 due Wed Sep 2** and **set 2 due Mon Sep 7**. The **Part I book track**
-is compressed to **two chapters per class session** (one on Wed Sep 16), run in order, beginning
+is compressed to **two chapters per class session** (one each on Wed Sep 16 and Mon Sep 28), run in order, beginning
 **Wed Sep 2**; once
 the book is complete (Mon Sep 28) the class proceeds to **Part II** (Lean programming and proof
 construction). Class does not meet Mon Oct 5 (fall reading days) or Wed Nov 25 (Thanksgiving);
@@ -58,7 +58,7 @@ Labor Day (Mon Sep 7) meets. 28 sessions total.
 | 8 | Mon Sep 21 | ↳ *(wk 4 — cont.)* | **Wk09** Specifications in Practice · **Wk10** Sets & Relations |
 | | **▸ Week 5** · Part I book · 2 ch/session — **book completes** | *Sep 23 + Sep 28* | |
 | 9 | Wed Sep 23 | **Wk 5: Specification & the Architecture of Claims.**<br>— Hoare, [“An Axiomatic Basis for Computer Programming”](https://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf), *CACM* 12(10), 1969, pp. 576–580, 583.<br>— Dijkstra, [“Guarded Commands, Nondeterminacy and Formal Derivation of Programs”](https://www.cs.utexas.edu/~EWD/ewd04xx/EWD472.PDF), *CACM* 18(8), 1975, pp. 453–457. | **Wk11** Abstract Types · **Wk12** Type Classes & Decidability |
-| 10 | Mon Sep 28 | ↳ *(wk 5 — cont.)* | **Wk13** Streams · **Wk14** Curry–Howard ← **Part I book complete** |
+| 10 | Mon Sep 28 | ↳ *(wk 5 — cont.)* | **Wk14** Curry–Howard ← **Part I book complete** |
 | | **▸ Week 6** · Part II · Lean prog. & proof — *tentative* — **begins** | *Sep 30 + Oct 07* · (reading-day break between sessions) | |
 | 11 | Wed Sep 30 | **Wk 6: Abstraction, Types & Intellectual Compression.**<br>— Liskov & Zilles, [“Programming with Abstract Data Types”](https://gleitzman.com/media/docs/adt-liskov.pdf), 1974, pp. 50–59.<br>— Reynolds, [“Types, Abstraction and Parametric Polymorphism”](https://home.ttic.edu/~dreyer/course/papers/reynolds.pdf), *Information Processing 83*, pp. 513–523.<br>— Wadler, [“Propositions as Types”](https://www.pure.ed.ac.uk/ws/portalfiles/portal/20001186/propositions_as_types.pdf), *CACM* 58(12), 2015, pp. 75–84. | ⟶ **Part II begins** (all Part II topics tentative) ‡ · **Relations** — abstract theory `A→B→Prop`: id, converse, composition, orders |
 | 12 | Wed Oct 07 · post-reading-day | ↳ *(wk 6 — cont.)* | ‡ Relations — computable: finite relations as pair-lists; decidable membership |
@@ -180,9 +180,8 @@ book chapters.
 - [Week 11: Abstract Types](../FPCourse/AbstractTypesAndTypeClasses/Week11_AbstractTypes.md)
 - [Week 12: Type Classes and Decidability](../FPCourse/AbstractTypesAndTypeClasses/Week12_TypeClassesDecidable.md)
 
-**Unit 6 — Streams and Curry-Howard**
+**Unit 6 — Curry-Howard**
 
-- [Week 13: Streams](../FPCourse/StreamsAndCurryHoward/Week13_Streams.md)
 - [Week 14: The Curry-Howard Correspondence](../FPCourse/StreamsAndCurryHoward/Week14_CurryHoward.md)
 
 ---

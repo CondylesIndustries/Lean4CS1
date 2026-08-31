@@ -23,7 +23,7 @@ The book presents **Part I** — a complete 14-week curriculum. **Part II shifts
 |3|8–9|Higher-Order Functions, Specifications|
 |4|10|Sets and Relations|
 |5|11–12|Abstract Types, Type Classes|
-|6|13–14|Streams, Curry-Howard|
+|6|14|Curry-Howard|
 
 ## Repository layout
 
@@ -34,7 +34,7 @@ FPCourse/          Lean 4 source files for the 14-week Full Course
   HigherOrderAndSpecification/     Unit 3 — Weeks 8–9
   SetsAndRelations/                Unit 4 — Week 10
   AbstractTypesAndTypeClasses/     Unit 5 — Weeks 11–12
-  StreamsAndCurryHoward/           Unit 6 — Weeks 13–14
+  StreamsAndCurryHoward/           Unit 6 — Week 14
 scripts/
   convert.py       Literate Lean → Markdown (used by the Makefile and CI)
   convert.hs       Haskell port of the same converter (not wired into any build)
