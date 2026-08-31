@@ -94,9 +94,9 @@ RUN set -a && . /tmp/versions.env && set +a && \
     printf '%s\n' \
         'export RUSTUP_HOME=/usr/local/rustup' \
         'export CARGO_HOME=/usr/local/cargo' \
-        'export PATH="/usr/local/cargo/bin:$PATH"' \
-        > /etc/profile.d/rust.sh && \
-    chmod 0644 /etc/profile.d/rust.sh
+        'export PATH="/home/dev/.elan/bin:/home/dev/.local/bin:/usr/local/cargo/bin:$PATH"' \
+        > /etc/profile.d/devcontainer.sh && \
+    chmod 0644 /etc/profile.d/devcontainer.sh
 
 # ----- Switch to dev for user-scoped installs -----
 USER dev
