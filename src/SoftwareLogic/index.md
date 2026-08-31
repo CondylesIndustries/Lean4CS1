@@ -137,8 +137,13 @@ Course grades will be based on two components, weighted equally.
 
 | Component | Weight |
 |---|---|
-| Participation, including preparation for and attendance in class | 50% |
+| Participation | 50% |
 | Two to three projects — details TBD | 50% |
+
+Participation means demonstrated preparation for and participation in class, including attendance
+and active participation in discussions. Habitual absences or inattention will result in losses
+against full credit, assessed periodically by the instructor. If you have special circumstances,
+talk with the instructor to reach a common understanding.
 
 The competencies above describe what the work is assessed against. Weekly exercise sets are
 machine-checked for immediate feedback and count as preparation for class.
