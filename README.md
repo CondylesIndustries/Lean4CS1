@@ -2,11 +2,11 @@
 
 A literate Lean 4 curriculum introducing typed functional programming through the lens of the Curry-Howard correspondence. Every file compiles cleanly against Lean 4 / Mathlib — no `sorry`, no `by`.
 
-The book presents the **Full Course** — a complete 14-week curriculum.
+The book presents **Part I** — a complete 14-week curriculum. **Part II shifts to proof construction**, building directly on the foundations Part I establishes.
 
 ## Design commitments
 
-**Students emerge fluent in computational and logical types, but proof construction is not an assessment target.**
+**In Part I, students emerge fluent in computational and logical types; proof construction is not an assessment target — that is the subject of Part II.**
 
 - Propositions are types from Week 1.
 - `decide` is the primary proof producer for decidable propositions.

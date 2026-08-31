@@ -12,15 +12,17 @@ Draft For Comment
 
 CS6501, Fall 2026
 
-A 14-week course in functional programming to establish foundations for proof construction
-in predicate logic, set theory and the theory of relations, and beyond. This web page is
+The course is in two parts. **Part I** — these 14 weeks — is a course in functional
+programming that establishes the foundations for proof construction in predicate logic, set
+theory and the theory of relations. **Part II shifts to proof construction itself**, building
+directly on those foundations. This web page is
 mirrored, modulo updates, by the Lean 4 project at [kevinsullivan/Lean4CS1](https://github.com/kevinsullivan/Lean4CS1).
 
 ## Design Commitments
 
 Students should emerge fluent in computational and logical types.
-Knowledge of proof construction is not an objective of this course.
-The focus is instead on certified *computation*: writing functions,
+Knowledge of proof construction is not an objective of Part I; that is the
+subject of Part II. Part I's focus is instead on certified *computation*: writing functions,
 stating their *specifications* as propositions, and having the machine
 either verify or reject them as correct implementations or not. Except
 in particular cases, all proof constructions are automated.
@@ -40,8 +42,8 @@ precisely the logical connectives of the generalized predicate logic of Lean.
 Types such as `Option`, `List`, and `BTree` are useful programming types
 built on top of that foundation, but the Curry-Howard correspondence itself
 lives in the core.  Week 14 does not introduce new material; it reveals that
-the course has established the entire foundation for proof constructions in
-the follow-on course. We just flip the orientation from `Type` to `Prop`.  Each  
+Part I has established the entire foundation for the proof construction that
+Part II takes up. We just flip the orientation from `Type` to `Prop`.  Each  
 concept here  — data definitions, specifications, recursion, higher-order
 functions, sets, relations, type classes — ports directly to the setting of
 proof construction.
