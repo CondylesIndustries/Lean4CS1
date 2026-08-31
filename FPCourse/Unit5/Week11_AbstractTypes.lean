@@ -102,6 +102,44 @@ theorem alist_lookup_insert_diff [DecidableEq k] {k1 k2 : k} (val : v)
   simp [AList.lookup, AList.insert, hne]
 
 /-! @@@
+> **Checkpoint — `AList.insert` then `AList.lookup`.** `insert` conses `(key, val)` onto
+> the front; `lookup` scans front-to-back. **Predict** what looking up a just-inserted key
+> returns, then check.
+@@@ -/
+
+#eval (AList.lookup 1 (AList.insert 1 100 (AList.empty : AList Nat Nat)))   -- predict first
+
+/-! @@@
+> **Checkpoint — `AList.lookup` on an absent key (`lookup_empty`).** **Predict**, from
+> `lookup_empty`, what `lookup` returns for a key that was never inserted, then check.
+@@@ -/
+
+#eval (AList.lookup 5 (AList.insert 1 100 (AList.empty : AList Nat Nat)))   -- predict first
+
+/-! @@@
+> **Checkpoint — the most recent `insert` wins (`lookup_insert_same`).** `insert` never
+> deletes the old pair, but `lookup` finds the front one first. **Predict**, from
+> `lookup_insert_same`, which value survives after inserting key `1` twice, then check.
+@@@ -/
+
+#eval (AList.lookup 1 (AList.insert 1 200 (AList.insert 1 100 (AList.empty : AList Nat Nat))))   -- predict first
+
+/-! @@@
+> **Checkpoint — `AList.delete` removes a key (`lookup_delete_same`).** **Predict**, from
+> `lookup_delete_same`, what `lookup` returns for a key after it is deleted, then check.
+@@@ -/
+
+#eval (AList.lookup 1 (AList.delete 1 (AList.insert 1 100 (AList.empty : AList Nat Nat))))   -- predict first
+
+/-! @@@
+> **Checkpoint — `delete` leaves other keys alone (`lookup_delete_diff`).** Deleting key
+> `1` must not disturb key `2`. **Predict**, from `lookup_delete_diff`, the lookup of `2`,
+> then check.
+@@@ -/
+
+#eval (AList.lookup 2 (AList.delete 1 (AList.insert 2 20 (AList.insert 1 10 (AList.empty : AList Nat Nat)))))   -- predict first
+
+/-! @@@
 ## 11.4  Opaque types: hiding implementation details
 
 The `opaque` keyword makes an identifier's definition irreducible to
@@ -129,6 +167,16 @@ axiom Counter.value_incr : ∀ c, Counter.value (Counter.incr c) =
 -- Note: in a production library, these axioms would be proved as theorems
 -- using the concrete implementation.  The opaque/axiom pattern separates
 -- the interface (what callers see) from the implementation.
+
+/-! @@@
+> **Checkpoint — an `opaque` value cannot be evaluated.** Unlike `AList`, a `Counter` has
+> no reducible definition, so `#eval Counter.value Counter.zero` would fail to compute —
+> everything you can know about it lives in the axioms. So here we `#check` instead of
+> `#eval`. **Predict** the *type* Lean reports for `Counter.value_incr` (a `∀`-statement
+> about the interface), then check.
+@@@ -/
+
+#check @Counter.value_incr   -- predict the ∀-statement; opaque, so no #eval
 
 /-! @@@
 ## 11.5  Stack: another abstract type
@@ -167,6 +215,28 @@ instance : LawfulStack List where
   size_push  := fun _ _ => rfl
 
 /-! @@@
+> **Checkpoint — `pop` undoes `push` (`pop_push`).** For the `List` stack, `push` is
+> `cons` and `pop` splits head from tail. **Predict**, from `pop_push`, the pair returned
+> after pushing `5`, then check.
+@@@ -/
+
+#eval (Stack.pop (Stack.push 5 ([1, 2, 3] : List Nat)))   -- predict first
+
+/-! @@@
+> **Checkpoint — `push` grows `size` by one (`size_push`).** **Predict**, from
+> `size_push`, the size after one `push` onto a 3-element stack, then check.
+@@@ -/
+
+#eval (Stack.size (Stack.push 5 ([1, 2, 3] : List Nat)))   -- predict first
+
+/-! @@@
+> **Checkpoint — `pop` on the empty stack (`pop_empty`).** **Predict**, from `pop_empty`,
+> what `pop` returns when there is nothing to remove, then check.
+@@@ -/
+
+#eval (Stack.pop ([] : List Nat))   -- predict first
+
+/-! @@@
 ## 11.6  Representation independence
 
 The key property of abstract types: any two implementations satisfying
@@ -179,32 +249,168 @@ the same `lookup` results in both.
 This can be stated as a theorem schema — for each sequence of operations,
 the `lookup` results agree.  We will not prove this in full generality;
 stating it precisely is the skill being practiced.
+@@@ -/
 
+/-! @@@
+> **Checkpoint — observations are what implementations must share.** Representation
+> independence says two lawful stacks agree on every *observation* (`pop`, `size`), even
+> if their internals differ. A push-push-pop sequence is such an observation. **Predict**
+> the LIFO result below, then check.
+@@@ -/
+
+#eval (Stack.pop (Stack.push 9 (Stack.push 8 ([] : List Nat))))   -- predict first (LIFO)
+
+/-! @@@
+## 11.7  Representation invariants and abstraction functions
+
+A concrete representation usually admits values the abstract type should never observe.
+An `AList` can hold *duplicate keys* — `[(1, 10), (1, 20)]` — yet a dictionary is a
+partial function, so a key must map to at most one value.  A **representation invariant**
+carves the legal representations out of the concrete type, and an **abstraction function**
+maps each legal representation to the abstract value it denotes.
+
+Lean expresses "the values satisfying an invariant" with a *refinement type* (subtype)
+`{ x // Inv x }`: a pair of a value `x` and a proof that `Inv x` holds.  The invariant
+below is *"keys are distinct"* — `(m.map Prod.fst).Nodup`.  The provided value carries a
+machine-checked proof that its three keys are distinct.  You will *read* this proof in the
+exercises, never author one.
+@@@ -/
+
+def wfExample : { m : AList Nat Nat // (m.map Prod.fst).Nodup } :=
+  ⟨[(1, 10), (2, 20), (3, 30)], by decide⟩
+
+/-! @@@
+> **Checkpoint — the representation invariant is decidable.** `Nodup` over a concrete list
+> of `DecidableEq` keys is decidable — which is exactly why `by decide` can discharge the
+> proof inside `wfExample`. **Predict** the Boolean below — do `wfExample`'s keys satisfy
+> the invariant? — then check.
+@@@ -/
+
+#eval decide ((([(1, 10), (2, 20), (3, 30)] : AList Nat Nat).map Prod.fst).Nodup)   -- predict first
+
+/-! @@@
 ## Exercises
 
-1. Add a `size : d k v → Nat` operation to `Dict` and extend `LawfulDict`
-   with laws relating `size` to `insert` and `delete`.
+Each exercise carries a banner — `[id] · competency · tier · level · target` — and,
+where it asks you to build something, an **acceptance check**: paste it beneath your
+definition in your own file and it must succeed.  `#guard` is silent on success and
+errors on failure, so the compiler is your grader.  See `EXERCISE_CONVENTIONS.md` for
+the schema.  Do every **core** exercise; **stretch** exercises go deeper and are
+optional.
 
-2. Implement `Dict` using a sorted association list.  The `lookup`
-   function can binary search (well, linear search in the sorted order).
-   Verify the first two laws.
+---
 
-3. Write the `LawfulStack` instance for a new implementation:
-   ```lean
-   structure TwoListStack (α : Type) where
-     front : List α
-     back  : List α
-   ```
-   where `push` appends to `back` and `pop` takes from `front` (rebalancing
-   by reversing `back` when `front` is empty).
+**[E11.1]** · *specification writing* · tier 1 · **core** · target `AList.size`
 
-4. State the *representation independence* theorem for `Stack`:
-   "for any two `LawfulStack` instances `S1` and `S2`, any program that
-   only uses `push`, `pop`, `size`, and `empty` produces the same
-   observable results in both."  Write this as precisely as you can in Lean.
+Add a `size` operation to the association-list dictionary and specify how it relates to
+the other operations.  Define `AList.size (m : AList k v) : Nat`, then state — as `Prop`s
+in your own words — the two laws *"the empty dict has size 0"* and *"`insert` grows size
+by exactly one"* (`AList` never deduplicates, so the second holds literally, even for a
+repeated key).  Confirm them on instances; the checks are the grader.  Effort: 1 line of
+code; then say which check is the *boundary* case and which law each remaining check
+witnesses.
 
-5. Define a `Queue` type class with enqueue/dequeue operations and
-   state its laws.
+```lean
+#guard AList.size (AList.empty : AList Nat Nat) = 0
+#guard AList.size (AList.insert 1 10 (AList.empty : AList Nat Nat)) = 1
+#guard AList.size (AList.insert 1 99 (AList.insert 1 10 (AList.empty : AList Nat Nat))) = 2
+#guard AList.size (AList.delete 1 (AList.insert 1 10 (AList.empty : AList Nat Nat))) = 0
+```
+
+---
+
+**[E11.2]** · *decidability identification* · tier 1 · **stretch**
+
+For each proposition about the dictionary, say **whether `decide` can close it and why**
+(finite domain? decidable predicate? `DecidableEq` keys?) *before* checking — the
+judgment is the point, not the tool-use:
+
+(a) `AList.lookup 2 (AList.insert 2 20 (AList.insert 1 10 (AList.empty : AList Nat Nat))) = some 20`
+(b) `∀ key ∈ ([1,2,3] : List Nat), AList.lookup key (AList.insert key 0 (AList.empty : AList Nat Nat)) = some 0`
+(c) `∀ (m : AList Nat Nat) (key : Nat), AList.lookup key (AList.insert key 0 m) = some 0`
+
+```lean
+#guard AList.lookup 2 (AList.insert 2 20 (AList.insert 1 10 (AList.empty : AList Nat Nat))) = some 20
+#guard decide (∀ key ∈ ([1, 2, 3] : List Nat),
+    AList.lookup key (AList.insert key 0 (AList.empty : AList Nat Nat)) = some 0) = true
+-- (c) has no check on purpose: say why decide cannot close a ∀ over ALL AList values,
+--     and name the §11.2 law that settles it instead.
+```
+
+---
+
+**[E11.3]** · *counterexample finding* · tier 1 · **core** · target `insertOrderCounterexample`
+
+A student claims *"`insert` order never matters: inserting two pairs and then looking up
+any key gives the same answer regardless of the order of the two inserts."*  It is
+**wrong** whenever the two keys coincide (the shadowing from §11.3).  Find inputs where
+swapping two inserts changes a lookup, and encode the witness so the check **succeeds**
+(it confirms the two sides differ):
+
+```lean
+#guard AList.lookup 1 (AList.insert 1 200 (AList.insert 1 100 (AList.empty : AList Nat Nat)))
+     ≠ AList.lookup 1 (AList.insert 1 100 (AList.insert 1 200 (AList.empty : AList Nat Nat)))
+```
+
+Then state, in one line, the *correct* condition under which insert order is irrelevant
+(it is exactly the hypothesis of `lookup_insert_diff`).
+
+---
+
+**[E11.4]** · *type-directed derivation* · tier 2 · **core** · target `peek`
+
+Derive `peek [Stack s] : s α → Option α` — the top element without removing it — from the
+`Stack` interface alone.  Produce a **derivation trace** in the Week 2 §2.6 format (the
+trace is the graded artifact), then the `def`.  *First-step hint:* the only operation that
+inspects a stack is `pop : s α → Option (α × s α)`; apply it first, then turn
+`Option (α × s α)` into `Option α` — which functor operation does that with a projection?
+Effort: ~3 trace steps, 1 line of code.
+
+```lean
+#guard peek ([1, 2, 3] : List Nat) = some 1
+#guard peek ([] : List Nat) = none
+#guard peek (Stack.push 7 ([1, 2] : List Nat)) = some 7
+```
+
+---
+
+**[E11.5]** · *type reading (free theorems)* · tier 2 · **stretch**
+
+Read two abstract signatures without running anything.
+
+(a) `Stack.pop : s α → Option (α × s α)`, polymorphic in the element type `α` and abstract
+in the container `s`.  State two things **every** inhabitant must satisfy (can it
+manufacture an `α` it was never given?  can a returned `α` be anything other than one
+already in the stack?) and one thing the type **cannot** force (e.g. LIFO vs FIFO order —
+why is that beyond the reach of the type?).
+
+(b) `Dict.lookup : k → d k v → Option v`.  What does polymorphism in `v` forbid `lookup`
+from doing to the values it returns, and why must every non-`none` result be a value that
+was previously `insert`ed?  (Builds on §7.2.  No code to submit.)
+
+---
+
+**[E11.6]** · *specification reading* · tier 3 · **core**
+
+§11.7 provides `wfExample : { m : AList Nat Nat // (m.map Prod.fst).Nodup }` — a
+well-formed dictionary carrying a machine-checked proof of its representation invariant.
+**Read** it (do not author any proof) and explain, in prose:
+
+(a) what the invariant `(m.map Prod.fst).Nodup` asserts about the representation, and why a
+dictionary needs it (relate it to *"a key maps to at most one value"* from §11.2);
+(b) what the `by decide` inside `wfExample` actually verified, and why that check is
+*decidable* here;
+(c) the **abstraction function** — which partial function from keys to values does
+`wfExample` denote?
+(d) which `AList` operation from §11.3 can produce a value that *violates* the invariant,
+and confirm the violation with the check below (a correct duplicate-key witness makes the
+inequality-to-`false` check succeed):
+
+```lean
+#guard decide ((([(1, 10), (1, 20)] : List (Nat × Nat)).map Prod.fst).Nodup) = false
+```
+
+This is a reading task: the graded artifact is your four-part explanation, not a proof.
 @@@ -/
 
 end Week11
