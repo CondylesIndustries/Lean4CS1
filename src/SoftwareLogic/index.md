@@ -101,10 +101,10 @@ Labor Day (Mon Sep 7) meets. 28 sessions total.
 | 2 | Mon Aug 31 | *intro — no paper reading due (Paper set 1 due Wed Sep 2 ▸)* | *course intro · Lean/Mathlib setup — no chapter due* |
 | | **▸ Week 2** · Part I book · 2 ch/session | *Sep 02 + Sep 07* | |
 | 3 | Wed Sep 02 | **Paper set 1 — Wk 1: Software as Intellectual Instrument.**<br>— Brooks, [“The Computer ‘Scientist’ as Toolsmith”](https://andymatuschak.org/files/papers/Brooks%20-%201977%20-%20The%20computer%20scientist%20as%20toolsmith.pdf), *Information Processing 77*, 1977, pp. 625–634.<br>— Hutchins, Hollan & Norman, [“Direct Manipulation Interfaces”](https://hci.ucsd.edu/hollan/direct-manip.pdf), *Human–Computer Interaction* 1(4), 1985, pp. 311–338. | Algebraic Types — Computation & Logic · Expressions, Types, Values |
-| 4 | Mon Sep 07 · Labor Day (meets) | **Paper set 2 — Wk 2: Program Understanding.**<br>— Simon, [“The Architecture of Complexity”](https://www2.econ.iastate.edu/tesfatsi/ArchitectureOfComplexity.HSimon1962.pdf), *Proc. Am. Philosophical Society* 106(6), 1962, pp. 467–482.<br>— Letovsky, “Cognitive Processes in Program Comprehension,” *J. Systems and Software* 7(4), 1987, pp. 325–339, [doi:10.1016/0164-1212(87)90032-X](https://doi.org/10.1016/0164-1212%2887%2990032-X) — subscription; UVA Library.<br>— Brooks, [“No Silver Bullet”](https://www.cs.unc.edu/techreports/86-020.pdf), UNC TR86-020, 1986 (also *Computer* 20(4), 1987, pp. 10–19). | Functions & Specifications *(incl. §2.6 Deriving Terms from Types)* · Recursion & Termination |
+| 4 | Mon Sep 07 · Labor Day (meets) | **Paper set 2 — Wk 2: Program Understanding.**<br>— Simon, [“The Architecture of Complexity”](https://www2.econ.iastate.edu/tesfatsi/ArchitectureOfComplexity.HSimon1962.pdf), *Proc. Am. Philosophical Society* 106(6), 1962, pp. 467–482.<br>— Letovsky, “Cognitive Processes in Program Comprehension,” *J. Systems and Software* 7(4), 1987, pp. 325–339, [doi:10.1016/0164-1212(87)90032-X](https://doi.org/10.1016/0164-1212%2887%2990032-X) — subscription; UVA Library.<br>— Brooks, [“No Silver Bullet”](https://www.cs.unc.edu/techreports/86-020.pdf), UNC TR86-020, 1986 (also *Computer* 20(4), 1987, pp. 10–19). | Functions & Specifications · Recursion & Termination |
 | | **▸ Week 3** · Part I book · 2 ch/session | *Sep 09 + Sep 14* | |
 | 5 | Wed Sep 09 | **Wk 3: Conceptual Design.**<br>— Jackson, [“Towards a Theory of Conceptual Design for Software”](https://groups.csail.mit.edu/sdg/pubs/2015/concept-essay.pdf), *Onward! 2015*, pp. 282–296.<br>— Perez De Rosso & Jackson, [“Purposes, Concepts, Misfits, and a Redesign of Git”](https://groups.csail.mit.edu/sdg/pubs/2016/gitless-oopsla16.pdf), *OOPSLA 2016*, pp. 292–310. | Algebraic Datatypes · Lists |
-| 6 | Mon Sep 14 | ↳ *(wk 3 — cont.)* | Trees & BST Invariants · Polymorphism & Decidability *(incl. §7.2 Free Theorems)* |
+| 6 | Mon Sep 14 | ↳ *(wk 3 — cont.)* | Trees & BST Invariants · Polymorphism & Decidability |
 | | **▸ Week 4** · Part I book · 2 ch/session | *Sep 16 + Sep 21* | |
 | 7 | Wed Sep 16 | **Wk 4: Modularity & Software Architecture.**<br>— Parnas, [“On the Criteria To Be Used in Decomposing Systems into Modules”](https://dl.acm.org/doi/pdf/10.1145/361598.361623), *CACM* 15(12), 1972, pp. 1053–1058.<br>— Perry & Wolf, [“Foundations for the Study of Software Architecture”](https://users.ece.utexas.edu/~perry/work/papers/swa-sen.pdf), *ACM SIGSOFT SEN* 17(4), 1992, pp. 40–52.<br>— Garlan & Shaw, [“An Introduction to Software Architecture”](https://www.cs.cmu.edu/afs/cs/project/able/ftp/intro_softarch/intro_softarch.pdf), 1993, pp. 1–39. | Higher-Order Functions |
 | 8 | Mon Sep 21 | ↳ *(wk 4 — cont.)* | Specifications in Practice · Sets & Relations |
@@ -214,7 +214,7 @@ book chapters.
 
 - [Week 0: Algebraic Types — Computation and Logic](../FPCourse/ExpressionsFunctionsRecursion/Week00_AlgebraicTypes.md)
 - [Week 1: Expressions, Types, and Values](../FPCourse/ExpressionsFunctionsRecursion/Week01_ExpressionsTypesValues.md)
-- [Week 2: Functions and Specifications](../FPCourse/ExpressionsFunctionsRecursion/Week02_FunctionsSpecifications.md) — incl. §2.6 Deriving Terms from Types
+- [Week 2: Functions and Specifications](../FPCourse/ExpressionsFunctionsRecursion/Week02_FunctionsSpecifications.md)
 - [Week 3: Recursion and Termination](../FPCourse/ExpressionsFunctionsRecursion/Week03_RecursionTermination.md)
 
 **Unit 2 — Algebraic Datatypes, Lists, Trees, Decidability**
@@ -222,7 +222,7 @@ book chapters.
 - [Week 4: Algebraic Datatypes](../FPCourse/InductiveStructures/Week04_AlgebraicDatatypes.md)
 - [Week 5: Lists](../FPCourse/InductiveStructures/Week05_Lists.md)
 - [Week 6: Trees and BST Invariants](../FPCourse/InductiveStructures/Week06_Trees.md)
-- [Week 7: Polymorphism and Decidability](../FPCourse/InductiveStructures/Week07_PolymorphismDecidability.md) — incl. §7.2 Free Theorems
+- [Week 7: Polymorphism and Decidability](../FPCourse/InductiveStructures/Week07_PolymorphismDecidability.md)
 
 **Unit 3 — Higher-Order Functions, Specifications**
 
