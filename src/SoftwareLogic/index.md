@@ -133,9 +133,12 @@ low-stakes feedback.
 
 ### Grading
 
-Course grades will be based on periodic quizzes to test that one is keeping up to date, on
-knowledge of readings demonstrated by participation in class discussions, and on a semester-long
-course project.
+Course grades will be based on two components, weighted equally.
+
+| Component | Weight |
+|---|---|
+| Participation, including preparation for and attendance in class | 50% |
+| Two to three projects — details TBD | 50% |
 
 The competencies above describe what the work is assessed against. Weekly exercise sets are
 machine-checked for immediate feedback and count as preparation for class.
