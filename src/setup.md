@@ -6,8 +6,7 @@ Docker builds on your laptop. You do not install Lean, Mathlib, or the book
 tooling yourself. You install Docker and VS Code, open this project, and let
 the container supply the rest.
 
-The benefit is that every student has an identical environment, and "it works
-on my machine" stops being a category of problem.
+The benefit is that every student has an identical environment with fairly low effort.
 
 Work through the steps in order. Step 4 takes the longest; start it before
 you need it.
