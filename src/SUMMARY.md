@@ -8,7 +8,7 @@
 
 # Software Logic
 
-*CS6501-010, Fall 2026 — intellectual control for accountability.*
+*CS6501-010, Fall 2026 — intellectual control for quality and accountability.*
 
 - [Course Page and Schedule](./SoftwareLogic/index.md)
 
