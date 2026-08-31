@@ -271,6 +271,10 @@ Part II builds new theory on top of these chapters. It introduces no further boo
 
 ## Course Policies
 
+### Academic integrity
+
+The UVa Honor Code additionally governs this course and is incorporated by reference herein.
+
 ### Use of Generative AI
 
 You are responsible for mastering the concepts, languages, tools, and methods taught in this class.
