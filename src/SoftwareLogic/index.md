@@ -144,6 +144,9 @@ The competencies above describe what the work is assessed against. The table giv
 to compute the course grade. Weekly exercise sets are machine-checked for immediate feedback and
 count as preparation for class.
 
+These two components are the whole of the course grade. The number of projects, their scope, and
+their due dates will be announced.
+
 ---
 
 ## Course Materials in This Book

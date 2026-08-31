@@ -6,7 +6,7 @@
 - **Department:** Computer Science, University of Virginia
 - **Meetings:** Mondays & Wednesdays, 11:00 AM – 12:15 PM · Rice 508 — 28 sessions
 - **Office hours:** Tuesdays, 1:00 – 3:00 PM · Rice 508
-- **Course book (living):** <https://github.com/kevinsullivan/Lean4CS1> · rendered: `[book URL]`
+- **Course book (living):** <https://kevinsullivan.github.io/Lean4CS1> · source: <https://github.com/kevinsullivan/Lean4CS1>
 
 > This syllabus is subject to change. If changes are made they will be pre-announced and
 > documented here.
@@ -104,7 +104,8 @@ The competencies above describe what the work is assessed against. The table giv
 to compute the course grade. Weekly exercise sets are machine-checked for immediate feedback and
 count as preparation for class.
 
-`[Insert grade scale, late-work policy, project count and due dates, and any exam/quiz structure.]`
+These two components are the whole of the course grade. The number of projects, their scope, and
+their due dates will be announced.
 
 ---
 
@@ -116,7 +117,8 @@ count as preparation for class.
   [VS Code](https://code.visualstudio.com/), and the Dev Containers extension. The container supplies
   Lean 4, **Mathlib**, the Lean 4 extension, and mdBook. Give Docker at least 10 GB of memory and
   15 GB of free disk. No purchase required; all tools are free and open-source.
-- **Book:** the living course book at <https://github.com/kevinsullivan/Lean4CS1>. Each chapter is a
+- **Book:** the living course book at <https://kevinsullivan.github.io/Lean4CS1>, with sources at
+  <https://github.com/kevinsullivan/Lean4CS1>. Each chapter is a
   literate Lean file, so the rendered prose can be read beside the type-checked source.
 - **Setup:** follow [*Setting Up Your Machine*](src/setup.md) in the course book, which is the
   authoritative procedure. Fork the repository, clone your fork, and reopen it in the container.
