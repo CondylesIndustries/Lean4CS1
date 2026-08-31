@@ -199,21 +199,6 @@ certified bridge.
 
 ---
 
-## Part I Book Chapters
-
-| Unit                                                | Chapters                                                                                                                                      |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 · Expressions, Functions, Recursion               | Algebraic Types · Expressions, Types, Values · Functions & Specifications · Recursion & Termination |
-| 2 · Algebraic Datatypes, Lists, Trees, Decidability | Algebraic Datatypes · Lists · Trees & BST Invariants · Polymorphism & Decidability                   |
-| 3 · Higher-Order Functions, Specifications          | Higher-Order Functions · Specifications in Practice                                                                                 |
-| 4 · Sets and Relations                              | Sets & Relations                                                                                                                         |
-| 5 · Abstract Types, Type Classes                    | Abstract Types · Type Classes & Decidability                                                                                        |
-| 6 · Curry–Howard                                    | The Curry–Howard Correspondence                                                                                                          |
-
-Part II builds new theory on top of these chapters. It introduces no further book chapters.
-
----
-
 ## Course Policies
 
 ### Academic integrity
