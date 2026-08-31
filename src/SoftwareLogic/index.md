@@ -6,6 +6,17 @@
   <div style="font-size: 0.95em; font-weight: 400; line-height: 1.2; margin-top: 0.15em;">CS6501-010 Fall 2026</div>
 </div>
 
+- **Instructor:** Kevin Sullivan · <sullivan@virginia.edu>
+- **Department:** Computer Science, University of Virginia
+- **Meetings:** Mondays & Wednesdays, 11:00 AM – 12:15 PM · Rice 508 — 28 sessions
+- **Office hours:** Tuesdays, 1:00 – 3:00 PM · Rice 508
+- **Course book (living):** <https://kevinsullivan.github.io/Lean4CS1> · source: <https://github.com/kevinsullivan/Lean4CS1>
+
+> This syllabus is subject to change. Any such changes will be pre-announced and documented
+> here.
+
+---
+
 ## About This Course
 
 This course examines human intellectual control over complex software systems as an ongoing major technical challenge and social imperative. It is required for sustained quality of evolving long-lived software systems, especially now in the emerging era of generative AI. Its central claim is that durable intellectual control depends on abstract software specification and particularly on understanding the generalized mathematics of the domain, stating that theory precisely, and certifying separate computable implementations against it. The resulting assurance rests on two distinct objects of trust: the adequacy of the formal theory itself and the validity of the proof certificates that connect implementation to theory. Lean 4 provides a practical language in which theories, implementations, and proofs can coexist, but it does not eliminate either obligation: one must understand the mathematics being formalized, and one must understand the trusted proof-checking base on which machine-checked assurance depends.
