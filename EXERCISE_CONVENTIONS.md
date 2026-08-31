@@ -92,7 +92,7 @@ Rules:
 ## 4. Deliverable = the derivation, not the term
 
 For `type-directed derivation` exercises the graded artifact is the **derivation
-trace** (Derivation interlude format), not merely a term that compiles. Ask for the
+trace** (Week 2 §2.6 format), not merely a term that compiles. Ask for the
 trace explicitly, and give a *first-step hint* naming the introduction/elimination
 move to start with, plus an **effort bound** (`~4 trace steps, 3 lines`). The `#guard`
 checks confirm the by-product; the trace shows the method.

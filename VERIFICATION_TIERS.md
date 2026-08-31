@@ -33,8 +33,8 @@ abstraction theorem, with **no proof written at all**. `∀ α, List α → List
 cannot invent elements; `∀ α, List α → Nat` can only measure shape. This is the
 *only* tier where correctness follows from the type **alone**, and it is the tier
 with no analogue in SF or in any assertion-after-the-fact discipline. It is also
-the tier the course currently under-exploits. The new *Free Theorems* interlude
-(`FPCourse/Unit3/FreeTheorems.lean`) is tier 2 in pure form.
+the tier the course currently under-exploits. The free-theorems material in Week 7
+(§7.2) is tier 2 in pure form.
 
 ### Tier 3 — proof-carrying
 
@@ -49,8 +49,8 @@ student who reaches the subtype exercise hits a cliff the earlier weeks disowned
 ## Producing an inhabitant: derivation, not search
 
 All three tiers require *producing* a term, and the course teaches one method for
-doing so across all of them: **type-directed derivation** (the *Deriving Terms from
-Types* interlude). The goal type's outermost constructor licenses the next
+doing so across all of them: **type-directed derivation** (Week 2 §2.6). The goal
+type's outermost constructor licenses the next
 introduction/elimination step; the term is built top-down, each step predicted and
 then *confirmed* by the compiler rather than discovered by poking it. The graded
 artifact is the **derivation trace**, not merely the accepted term — a term that

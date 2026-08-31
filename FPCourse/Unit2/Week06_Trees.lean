@@ -301,7 +301,7 @@ State the *correct* relationship between `(bstInsert x t).size` and `t.size` in 
 **[E6.4]** · *type-directed derivation* · tier 2 · **core** · target `BTree.mirror`
 
 Derive `BTree.mirror : BTree α → BTree α` that swaps every node's left and right
-subtrees.  Give a **derivation trace** (the trace is graded), then the `def`.
+subtrees.  Give a **derivation trace** (Week 2 §2.6 format; the trace is graded), then the `def`.
 *First-step hint:* match the input's constructor (`.leaf` vs `.node l v r`) — ⊕E — then
 rebuild, recursing on both subtrees.  Effort: ~3 trace steps, 3 lines.
 

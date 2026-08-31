@@ -165,7 +165,124 @@ example : (1 + 1 = 2) ↔ (2 = 1 + 1) :=
   Iff.intro (fun h => h.symm) (fun h => h.symm)
 
 /-! @@@
-## 2.6  Reading function specifications
+## 2.6  Deriving terms from types
+
+A term the compiler accepts is worth little if you found it by trial and error.
+`#check` and the red squiggle are an *oracle* — they answer *accepted* or *rejected* —
+but an oracle is not a *method*: it never tells you how to *arrive at* a term.
+Type-directed derivation is the method.  The structure of the goal *type* dictates the
+structure of the *term*, built top-down, each step forced or chosen for a stated
+reason.  You should be able to **predict acceptance before you build**.
+
+### Introduction and elimination
+
+Each type constructor comes with a way to *build* a value (introduction) and a way to
+*use* one (elimination) — the natural-deduction discipline we name in Week 14.
+
+| Goal / hypothesis | Move | In Lean you write |
+|---|---|---|
+| goal `A → B` | →I: introduce the argument | `fun (a : A) => ?` — new goal `B`, with `a : A` |
+| have `f : A → B`, `a : A` | →E: apply | `f a : B` |
+| goal `A × B` | ×I: build a pair | `(?, ?)` — goals `A` and `B` |
+| have `p : A × B` | ×E: project / match | `p.1`, `p.2`, or `match p with \| (a, b) => ?` |
+| goal `A ⊕ B` | ⊕I: choose a side | `.inl ?` (goal `A`) or `.inr ?` (goal `B`) |
+| have `s : A ⊕ B` | ⊕E: case-split | `match s with \| .inl a => ? \| .inr b => ?` |
+
+Read the goal, pick the move its *outermost* constructor licenses, write that much of
+the term, and read off the smaller goal(s) that remain.  Recall from §2.5 that `∧`
+behaves like `×` and `∨` like `⊕`, so the *same* moves derive proofs of logical claims.
+
+### How Lean shows you the goal
+
+A hole `_` in a term is Lean *printing the goal*: it reports the expected type and the
+local context — the "remaining goal" of your derivation.  The canonical demonstration
+is in `FPCourse/specsAndImpls.lean` (`def e : Empty := _` reports `⊢ Empty`).  In VS
+Code, type the hole and watch the **InfoView** shrink as you fill each step.  Use the
+compiler as a *confirmer* of a step you predicted, not as a blind search engine.
+
+### The derivation trace
+
+Record a derivation as a short trace.  The trace — not the final term — is the artifact
+you are graded on; the final term is its by-product.  `RULE` at each step is one of
+`→I`, `→E`, `×I`, `×E`, `⊕I`, `⊕E`, or "use `h`".
+@@@ -/
+
+/-! @@@
+**Worked derivation 1 — `Nat → Nat`.**
+```text
+DERIVATION of  addSelf : Nat → Nat
+  goal: Nat → Nat
+  step 1 [→I]    fun (a : Nat) => ?   ⟶ goal: Nat, with a : Nat
+  step 2 [use a] a + a                ⟶ closed (a is the only Nat in scope)
+  ∎
+```
+@@@ -/
+
+def addSelf : Nat → Nat := fun a => a + a
+
+/-! @@@
+**Worked derivation 2 — `(P → Q) → (Q → R) → (P → R)`.**  Composition; under the logical
+reading, transitivity of implication — one derivation certifies both.
+```text
+  step 1 [→I]  fun (f : P → Q) => ?   ⟶ goal: (Q → R) → (P → R)
+  step 2 [→I]  fun (g : Q → R) => ?   ⟶ goal: P → R
+  step 3 [→I]  fun (p : P) => ?       ⟶ goal: R, with f, g, p
+  step 4 [→E]  f p : Q
+  step 5 [→E]  g (f p) : R            ⟶ closed
+```
+@@@ -/
+
+def compose {P Q R : Type} : (P → Q) → (Q → R) → (P → R) :=
+  fun f g p => g (f p)
+
+/-! @@@
+**Worked derivation 3 — `A × B → B × A`.**
+```text
+  step 1 [→I]  fun (p : A × B) => ?   ⟶ goal: B × A, with p : A × B
+  step 2 [×E]  p.1 : A,  p.2 : B
+  step 3 [×I]  (p.2, p.1) : B × A     ⟶ closed
+```
+@@@ -/
+
+def swapProd {A B : Type} : A × B → B × A :=
+  fun p => (p.2, p.1)
+
+/-! @@@
+**Worked derivation 4 — `A ⊕ B → B ⊕ A`.**  The goal `B ⊕ A` would call for ⊕I, but
+which side is right depends on the input — so eliminate the hypothesis first.
+```text
+  step 1 [→I]  fun (s : A ⊕ B) => ?
+  step 2 [⊕E]  match s with .inl a => ? | .inr b => ?   ⟶ two goals B ⊕ A
+  step 3 [⊕I]  .inr a   (case inl)    ⟶ closed
+  step 4 [⊕I]  .inl b   (case inr)    ⟶ closed
+```
+@@@ -/
+
+def swapSum {A B : Type} : A ⊕ B → B ⊕ A :=
+  fun s => match s with
+    | .inl a => .inr a
+    | .inr b => .inl b
+
+/-! @@@
+### Grading the trace
+
+A derivation exercise is graded on the **trace**, not merely on whether the term
+compiles.  Full credit: (1) name the correct rule at each step; (2) state the remaining
+goal after each step; (3) close every goal by a hypothesis in scope.  A term that
+compiles but whose trace mis-names a rule or skips a goal is *not* full credit — it may
+be correct by luck.
+
+### The inverse direction
+
+Derivation *builds* a term from a type.  Its inverse *reads* a type to learn what
+**every** inhabitant must do — *free theorems*, developed in Week 7 (§7.2).  Where a
+type is fully polymorphic the derivation is *forced* and the free theorem is *total*:
+`∀ α, α → α` has one inhabitant; `∀ α, α → α → α` has exactly two.  Building a term from
+a type and reading what every term of a type must do are one skill in two directions.
+@@@ -/
+
+/-! @@@
+## 2.7  Reading function specifications
 
 When a function's type contains propositions, the type IS the specification.
 The examples below show how to read proof-carrying function types.
@@ -206,6 +323,21 @@ The examples below show how to read proof-carrying function types.
    `max' : Nat → Nat → Nat` that returns the larger of two numbers.
    Your specification should assert: (a) the result is ≥ both inputs,
    and (b) the result equals one of the two inputs.
+
+Deriving terms (§2.6).  For 6–8, give a **derivation trace** and then the term; the
+trace is the graded artifact.
+
+6. Derive `andComm : P ∧ Q → Q ∧ P`.  (Computationally this is `A × B → B × A`; state
+   which rule closes each goal.)
+
+7. Derive `curry : (A × B → C) → (A → B → C)`.  How many `→I` steps appear before the
+   first elimination, and why?
+
+8. Derive `orElim : (A → C) → (B → C) → (A ⊕ B → C)`.  Name the step that must come
+   before you can use either function, and why.
+
+9. Method only (no term): for the target `(A → B → C) → B → A → C`, which introduction-
+   or elimination-step must come **first**, and which hypothesis closes the final goal?
 @@@ -/
 
 end Week02

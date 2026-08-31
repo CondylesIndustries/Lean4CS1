@@ -250,7 +250,7 @@ Then state the *correct* length spec in one line (you will build it in E5.5).
 **[E5.4]** · *type-directed derivation* · tier 2 · **core** · target `headOr`
 
 Derive `headOr : α → List α → α` (return the head, or the default on `[]`).  Produce a
-**derivation trace** in the Derivation-interlude format — the trace is the graded
+**derivation trace** in the Week 2 §2.6 format — the trace is the graded
 artifact — then the `def`.  *First-step hint:* the second argument is a `List α`; its
 constructor (`[]` vs `h :: t`) is what you eliminate first (⊕E-style `match`).  Effort:
 ~4 trace steps, 3 lines of code.
@@ -283,7 +283,7 @@ Look **only** at the type of `List.map`, namely `(α → β) → List α → Lis
 in `α` and `β`.  Without running anything, state two things *every* inhabitant of this
 type must do, and one thing it *cannot* do (can it invent a `β` from nowhere?  change
 the length?  inspect an `α` it was not handed a function for?).  This is the inverse of
-E5.4 and previews the *Free Theorems* interlude (Unit 3).  No code to submit.
+E5.4 and previews the free theorems of Week 7 (§7.2).  No code to submit.
 @@@ -/
 
 end Week05
