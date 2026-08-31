@@ -58,7 +58,9 @@ and proofs can coexist, but it does not eliminate either obligation: one must un
 mathematics being formalized, and one must understand the trusted proof-checking base on which that
 confidence depends.
 
-This is a course for graduate students in computer science.
+This is a course for graduate students in computer science. The course has two main class-related
+threads: learning to think and express concepts mathematically in Lean 4, and learning deep and
+abiding principles through readings of seminal papers leading to the present moment and thesis.
 
 ## Programming Thread: Two Parts
 
