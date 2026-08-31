@@ -91,6 +91,6 @@
     <div class="cover-affiliation">Department of Computer Science</div>
     <div class="cover-affiliation">CS6501-010 &middot; Fall 2026</div>
     <div class="cover-mark">theorem correct : &forall; n, f n = spec n := by decide</div>
-    <div class="cover-status">Draft for comment</div>
+    <div class="cover-status">Living edition &middot; revised through the semester</div>
   </div>
 </div>
