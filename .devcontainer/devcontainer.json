@@ -16,6 +16,15 @@
 	"remoteEnv": {
 		"PATH": "/home/dev/.elan/bin:/home/dev/.local/bin:${containerEnv:PATH}"
 	},
+	// Persist Claude Code history (~/.claude) across container rebuilds via a
+	// named volume. A fresh volume mounts root-owned, so chown it to dev once
+	// on create (dev has passwordless sudo). Note: do NOT mount all of
+	// /home/dev — an empty volume there would shadow the image-baked ~/.elan
+	// and the Claude binary in ~/.local.
+	"mounts": [
+		"source=cs1-claude,target=/home/dev/.claude,type=volume"
+	],
+	"postCreateCommand": "sudo chown -R dev:dev /home/dev/.claude",
 	"runArgs": [
 		"--memory=10gb",
 		"--init",

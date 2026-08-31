@@ -1,10 +1,11 @@
 # Copyright © 2026 by the Rectors and Visitors of the University of Virginia.
 
 # Base image pinned by digest for reproducible rebuilds.
-# python:3.14-slim-bookworm multi-arch index digest resolved 2026-08-31.
-# Re-pin with:
-#   docker buildx imagetools inspect python:3.14-slim-bookworm
-FROM python:3.14-slim-bookworm@sha256:416f0db2a2b561945630cef9877a7ea0581b27449eb9fd9df42f03e1b74b5b63
+# python:3.14-slim-trixie (Debian 13) multi-arch index digest resolved 2026-08-31.
+# Trixie over bookworm: fewer/less-severe base CVEs (drops the sqlite critical
+# and the util-linux TOCTOU cluster). Re-pin with:
+#   docker buildx imagetools inspect python:3.14-slim-trixie
+FROM python:3.14-slim-trixie@sha256:cae66f2ef0ec51a9891263eeee7f987dacf0a9879e8aa9353d5606e0530619a5
 LABEL org.opencontainers.image.description="Lean-Enabled Development and Publication VM"
 
 ARG DEBIAN_FRONTEND=noninteractive
