@@ -107,46 +107,6 @@ a common understanding.
 
 ---
 
-## Learning Objectives — Assessed Competencies
-
-**Part I** assesses six competencies (no proof production required):
-
-1. **Specification writing** — given a function and an English description, write the correct
-   Lean type expressing its specification.
-2. **Specification reading** — given a Lean proposition, state in English what it asserts; give a
-   satisfying and a falsifying example.
-3. **Type-directed derivation** — given a target type, derive an inhabiting term by type-directed
-   steps and narrate the derivation: name each introduction or elimination step, the hypothesis or
-   constructor used, and the goal that remains. The narrated trace is what is graded. A companion
-   form of the question asks which step must come first, and why; it cannot be answered by trial and
-   error at the compiler.
-4. **Counterexample finding** — given a function and an incorrect specification, find a concrete
-   input that witnesses the mismatch.
-5. **Decidability identification** — given a proposition, state whether `decide` closes it, which
-   other term does if not, and why.
-6. **Type reading (free theorems)** — given a polymorphic signature, state what every inhabitant
-   must satisfy and what the type forbids. No term is written.
-
-**Part II** adds a seventh competency, **proof construction**, and its practical use in expressing
-and verifying deeper mathematical abstractions.
-
-### How work is verified
-
-Correctness in this course comes in three tiers, and the assessment is built around them:
-
-- **Tier 1 — decide-checkable:** a decidable proposition closed by `decide` (evidence is a
-  computation).
-- **Tier 2 — type-guaranteed:** properties true of every inhabitant of a type, forced by
-  parametricity (free theorems). Correctness follows from the type alone, with no proof written.
-- **Tier 3 — proof-carrying:** a refinement type `{ x // P x }` whose inhabitant carries a proof.
-  Part I provides these proofs for reading; Part II asks students to produce them.
-
-Chapter exercises include machine-checkable acceptance checks (`#guard`), so the compiler reports
-whether an answer is correct, and chapters include predict-then-check checkpoints for immediate,
-low-stakes feedback.
-
----
-
 ## Materials & Setup
 
 - **Software:** the course runs inside a development container. You install a
@@ -174,22 +134,6 @@ mdbook serve         # serve the book locally at http://localhost:3000
 
 - **Readings** are publisher-copyrighted and are **linked**, not redistributed. Two closed-access
   papers (Letovsky 1987; Hoare 1972) are cited by DOI and read through the UVA Library.
-
----
-
-## Course Themes
-
-- **Central epistemic structure.** The generalized mathematics of the domain comes first: it
-  supplies the theory whose concepts, laws, invariants, and theorems are the principal medium of
-  intellectual control. A separate computable implementation is then built, and a proof bridge
-  certifies that the implementation realizes the theory. Assurance is therefore conditional on both
-  trust in the theory and trust in the proof certificates and checker.
-- **There is no absolute machine-checked certainty.** Lean 4.32.2 (July 2026) fixed a kernel
-  soundness bug; a malicious metaprogram could have made the kernel accept a proof of `False`. See
-  the [4.32.2 release notes](https://lean-lang.org/doc/reference/latest/releases/v4.32.2/) and
-  [issue #14576](https://github.com/leanprover/lean4/issues/14576). Machine-checked assurance is
-  explicitly conditional on a trusted computing base, and the soundness of that base must itself be
-  engineered, tested, and sometimes independently checked.
 
 ---
 
