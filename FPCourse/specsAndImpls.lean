@@ -27,41 +27,6 @@ Implementations: There's no way to implement this specification
 Proof          : There's no proof of this proposition (so it's false)
 @@@ -/
 
-/- @@@
-An amazing fact.*Anything* is *true of every values* of any
-*uninhabited* (empty) type. So, for example, is every pink
-elepant an Elvis fan? Yes! And is every pink elephant also
-not an Elvis fan? Yes! Each of these statements is true of
-every single pink elephant. Of course there are none, so it's
-easy to be true of every one of those! Nevertheless, people
-are generally confused about why it's true that if you have
-an object that can't exist, well, then anything goes!
-
-For example, consider the question, is every pink elephant
-nice? Of course the answer is yes. The answer is also no.
-The answer is whatever you want?  Why? Because as there are
-no pink elephants at all any statement is true of all of them!
-Ever pink elephant is nice, mean, and even ironical. Anything
-goes for nothing at all.
-@@@ -/
-
-abbrev PinkElephant := Empty
-
-theorem everyPinkElephantNice :
-   ∀  (pe : PinkElephant)              -- assumption
-      (nice : PinkElephant → Bool),    -- assumption
-    nice pe == true :=                 -- claim
-      fun pe _ => nomatch pe           -- proof of ∀ claim
-
-theorem inEmptyAnythingGoes : ∀ (e : Empty), ∀ (P : Empty → Bool), P e == true :=
-   fun e => nomatch e
-
-theorem ifFalseAnythingGoes : ∀ (f : False), ∀ (P : Empty → Prop), P e :=
-   fun e => nomatch e
-
-
-
-
 #check Unit
 #check Unit.unit
 
@@ -148,6 +113,57 @@ def l : List := _
 -- Implementations (Total Functions)
 
 def e2e : Empty → Empty := fun (e : Empty) => e
+
+/- @@@
+## If You Assume the Impossible then Anything Goes
+
+An amazing fact.*Anything* is *true of every values* of any
+empty (*uninhabited*) type. So, for example, is every pink
+elepant an Elvis fan? Yes! And is every pink elephant also
+not an Elvis fan? Yes! Each of these statements is true of
+every single pink elephant. Of course there are none, so it's
+easy for anything to be, and everything actually is, true
+of every value of any empty type!
+@@@ -/
+
+abbrev PinkElephant := Empty
+
+theorem everyPinkElephantNice :
+   ∀  (pe : PinkElephant)              -- assumption
+      (nice : PinkElephant → Bool),    -- assumption
+    nice pe == true :=                 -- claim
+      fun pe _ => nomatch pe           -- proof of ∀ claim
+
+theorem inEmptyAnythingGoes : ∀ (e : Empty), ∀ (P : Empty → Bool), P e == true :=
+   fun e => nomatch e
+
+/- @@@
+There is a special kind of type call Prop. We conventionally
+define mathematical specifications as *Prop* types whereas we
+define data and function types as inhabiting the type universe,
+*Type*. What distinguishes *Prop* most crucially is that all
+values of any propositional type are considered to be equal.
+After all, these values are intended to be interpreted as proofs
+of mathematical statements, the latter expressed as new type
+definitions, and for purposes of certifying the *validity* of a
+given proposition, any proof will do. The *Prop* type universe
+automates the notion that any proof will do, the principle of
+so-called *proof irrelevance*.
+@@@ -/
+
+theorem ifFalseAnythingGoes :
+   ∀  (e : False)
+      (p : False → Prop),
+   p e :=
+      fun e => nomatch e
+
+/- @@@
+Read this as follows. We show for any proof, *f*, of *False*, and any
+predicate
+@@@ -/
+
+
+
 
 
 
