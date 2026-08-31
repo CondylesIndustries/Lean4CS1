@@ -62,9 +62,9 @@ This is a course for graduate students in computer science. The course has two m
 threads: learning to think and express concepts mathematically in Lean 4, and learning deep and
 abiding principles through readings of seminal papers leading to the present moment and thesis.
 
-## Programming Thread: Two Parts
+## Mathematical Thread: Two Parts
 
-The programming thread in this course is in two parts.
+The mathematical thread in this course is in two parts.
 
 - **Part I — Certified Computation (the FP book).** A functional-programming foundation, taught
   through the Curry–Howard correspondence, in which specifications are types. Students learn to read
