@@ -127,8 +127,8 @@ a common understanding.
 6. **Type reading (free theorems)** — given a polymorphic signature, state what every inhabitant
    must satisfy and what the type forbids. No term is written.
 
-**Part II** adds a seventh competency, **proof construction**: producing machine-checked proofs, and
-building the general-theory, computable-realization and certified-bridge artifacts described above.
+**Part II** adds a seventh competency, **proof construction**, and its practical use in expressing
+and verifying deeper mathematical abstractions.
 
 ### How work is verified
 
