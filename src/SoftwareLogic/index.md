@@ -145,45 +145,7 @@ certified bridge.
 
 ---
 
-## Assessment
-
-**Part I** assesses six competencies (no proof production required):
-
-1. **Specification writing** — given a function and an English description, write the correct
-   Lean type expressing its specification.
-2. **Specification reading** — given a Lean proposition, state in English what it asserts; give a
-   satisfying and a falsifying example.
-3. **Type-directed derivation** — given a target type, derive an inhabiting term by type-directed
-   steps and narrate the derivation: name each introduction or elimination step, the hypothesis or
-   constructor used, and the goal that remains. The narrated trace is what is graded. A companion
-   form of the question asks which step must come first, and why; it cannot be answered by trial and
-   error at the compiler.
-4. **Counterexample finding** — given a function and an incorrect specification, find a concrete
-   input that witnesses the mismatch.
-5. **Decidability identification** — given a proposition, state whether `decide` closes it, which
-   other term does if not, and why.
-6. **Type reading (free theorems)** — given a polymorphic signature, state what every inhabitant
-   must satisfy and what the type forbids. No term is written.
-
-**Part II** adds a seventh competency, **proof construction**, and its practical use in expressing
-and verifying deeper mathematical abstractions.
-
-### How work is verified
-
-Correctness in this course comes in three tiers, and the assessment is built around them:
-
-- **Tier 1 — decide-checkable:** a decidable proposition closed by `decide` (evidence is a
-  computation).
-- **Tier 2 — type-guaranteed:** properties true of every inhabitant of a type, forced by
-  parametricity (free theorems). Correctness follows from the type alone, with no proof written.
-- **Tier 3 — proof-carrying:** a refinement type `{ x // P x }` whose inhabitant carries a proof.
-  Part I provides these proofs for reading; Part II asks students to produce them.
-
-Chapter exercises include machine-checkable acceptance checks (`#guard`), so the compiler reports
-whether an answer is correct, and chapters include predict-then-check checkpoints for immediate,
-low-stakes feedback.
-
-### Grading
+## Grading
 
 Course grades will be based on two components, weighted equally.
 
@@ -241,15 +203,4 @@ book chapters.
 **Unit 6 — Curry-Howard**
 
 - [Week 14: The Curry-Howard Correspondence](../FPCourse/StreamsAndCurryHoward/Week14_CurryHoward.md)
-
----
-
-## Notes
-
-- **Central epistemic structure:** the generalized mathematics of the domain comes first. It provides the theory whose concepts, laws, invariants, and theorems constitute the principal medium of intellectual control. A separate computable implementation is then constructed, and a proof bridge certifies that the implementation realizes the theory. The resulting assurance is therefore conditional on both **trust in the theory statement** and **trust in the proof certificates and checker**.
-- **There is no absolute machine-checked certainty.** Lean 4.32.2, released July 28, 2026, fixed a kernel soundness bug involving nested inductive types with phantom parameters; a malicious metaprogram could cause the kernel to accept a proof of `False` or any theorem. See the [official Lean 4.32.2 release notes](https://lean-lang.org/doc/reference/latest/releases/v4.32.2/), [Lean issue #14576](https://github.com/leanprover/lean4/issues/14576), and the [oss-security report](https://www.openwall.com/lists/oss-security/2026/08/02/1). The lesson is not that formal proof is weak, but that its assurance is explicitly conditional on a trusted computing base whose own soundness must be engineered, tested, diversified, and sometimes independently checked.
-- **Institutions are the intended and designed-for endpoint of Part II.** The mathematical sequence is backward-designed from that goal: students must climb from inductive structures and sets through relations, algebraic laws, categories, signatures, models, satisfaction, and functorial translation to a theory in which meaning preservation across changes of notation can itself be stated abstractly.
-- **Lean is used from Week 1 onward.** Part I establishes the ability to express intent, specifications, invariants, abstractions, mathematical models, implementations, and checked evidence. Part II changes the kind of work done in Lean; it does not introduce Lean.
-- **Part II discipline:** **general theory → separate computable realization → certified bridge**.
-- **Traceability for assurance:** each major assurance should remain recoverable through **domain purpose → domain theory → generalized mathematics → formal theory → computable implementation → certified bridge → assumptions/trusted base → evidence**.
 
