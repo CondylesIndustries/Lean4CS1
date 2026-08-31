@@ -332,7 +332,7 @@ Define `myNub [DecidableEq α] : List α → List α` removing duplicates.  Stat
 
 **[E7.2]** · *decidability identification* · tier 1 · **core**
 
-For each, state whether `decide` can close it and **why**, using the §7.5 boundary
+For each, state whether `decide` can close it and **why**, using the §7.6 boundary
 table — *then* check only the ones that are decidable:
 
 (a) `("hello" : String) = "hello"`   (b) `(1.0 : Float) = 1.0`
@@ -358,7 +358,7 @@ the witness so the check **succeeds**:
 ```
 
 What is the *correct* characterization of `contains x xs = true`?  (It is
-`contains_spec`, §7.2 — read it.)
+`contains_spec`, §7.3 — read it.)
 
 ---
 
@@ -388,7 +388,7 @@ duplicate."  Read that off the type: state two things **every** inhabitant of `�
 
 Define `inductive Color where | Red | Green | Blue deriving DecidableEq`.  Use `decide`
 to settle both, then explain why the bounded `∀ c ∈ […]` is decidable here but the same
-shape over **all** `Nat` (§7.5) is not:
+shape over **all** `Nat` (§7.6) is not:
 
 ```lean
 #guard decide (Color.Red ≠ Color.Blue) = true

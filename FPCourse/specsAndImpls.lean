@@ -62,7 +62,15 @@ context:
 def e : Empty := _
 -- Additional details are at the end of this lesson
 
+-- The definition above cannot succeed, so Lean fills `e`'s body with `sorry`.
+-- Both messages are pinned below: the *type* still elaborates, but there is no value
+-- behind it.  This is the point of the example, so the output is checked, not leaked.
+/-- info: e : Empty -/
+#guard_msgs in
 #check e
+
+/-- info: sorry -/
+#guard_msgs in
 #reduce e
 
 def u : Unit := PUnit.unit

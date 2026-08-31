@@ -82,12 +82,12 @@ target" true.
 
 The slogan is an honest **entry point**: it lets a first-year student experience
 machine-checked correctness on day one without a tactic language. But the design
-should state plainly that **at scale the separated proof returns**. The two Week 13
-readings are the evidence:
+should state plainly that **at scale the separated proof returns**. The Week 8 and
+Week 13 readings are the evidence:
 
-- **Leroy 2009 (CompCert)** — the compiler's correctness is a *separately proved*
+- **Leroy 2009 (CompCert), Week 8** — the compiler's correctness is a *separately proved*
   semantic-preservation theorem, not a typechecking artifact. Tier 3, industrial size.
-- **Necula 1997 (Proof-Carrying Code)** — the code ships *with* an explicit proof
+- **Necula 1997 (Proof-Carrying Code), Week 13** — the code ships *with* an explicit proof
   object that the consumer checks. The "compiler as grader" you admire, but only
   after a proof was **produced**. Again tier 3.
 
