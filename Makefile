@@ -16,6 +16,7 @@ BUILD_FILES := $(patsubst %.lean,src/%.md,$(SRC_FILES))
 all: $(BUILD_FILES)
 	mdbook build
 	@$(MAKE) --no-print-directory stamp
+	@$(MAKE) --no-print-directory canvas
 
 # Rule: .lean → src/%.md
 $(BUILD_FILES): src/%.md: %.lean
@@ -36,6 +37,10 @@ stamp:
 	@sed -i 's/@GIT_COMMIT@/$(GIT_COMMIT)$(GIT_DIRTY)/' book/cover.html
 	@echo "Stamped book/cover.html with $(GIT_COMMIT)$(GIT_DIRTY)"
 
+# Regenerate the Canvas-pasteable exports from SYLLABUS.md
+canvas:
+	@python3 scripts/canvas_export.py
+
 # Serve locally with live reload
 serve:
 	mdbook serve
@@ -48,4 +53,4 @@ clean-md:
 clean:
 	rm -rf src/Overview src/FPCourse book/
 
-.PHONY: all convert build stamp serve clean-md clean
+.PHONY: all convert build stamp canvas serve clean-md clean
