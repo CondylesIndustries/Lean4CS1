@@ -26,14 +26,15 @@ rate at which generative AIs can produce specifications and proofs, now mixed to
 with ordinary programming types and functions and effects, means that one's constructions
 can easily escape one's intellectual control, even when it's all formalized and proven.
 
-The problem with loss of intellectual control is that it's antithetical to good faith
-acceptance of accountability for harmful failures that either were or could and should
-have been foreseen and averted. Accountability, in turn, is a key input to the justified
-trust that a user places in assurances for which the developer should be accountable. The
-social equation is you-are-accountable implies more-likely-not-to-cheat-or-neglect. The
-idea underpins the notion of a legal system in which real people are punished. (At least
-that's the theory.) And justified, properly calibrated trust is crucial to the success
-of a system and the surrounding society.
+The problem with loss of intellectual control is that it's antithetical to good faith acceptance of
+accountability for harmful failures that either were or could and should have been foreseen and
+averted. Accountability, in turn, is a key input to the justified trust that a user is asked to
+place in the validity of assurances that the product is fit for use in all agreed respects, which
+in turn allows them to ignore otherwise distracting complexity — because someone else has taken
+care of it. The social equation is you-are-accountable implies more-likely-not-to-cheat-or-neglect.
+The idea underpins the notion of a legal system in which real people are punished. (At least that's
+the theory.) And justified, properly calibrated trust is crucial to the success of a system and the
+surrounding society.
 
 This course will emphasize the development of formal specification architectures as a
 vital practice for both guiding generative AIs to produce useful results and to maintain
