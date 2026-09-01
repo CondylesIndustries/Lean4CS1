@@ -54,7 +54,7 @@ and proofs can coexist, but it does not eliminate either obligation: one must un
 mathematics being formalized, and one must understand the trusted proof-checking base on which that
 confidence depends.
 
-This is a course for graduate students in computer science. The course has two main threads: learning to think and concepts formally in Lean 4, and learning deep and abiding principles of intellectual control over software through readings of seminal papers leading up to the present moment.
+This is a course for graduate students in computer science. The course has two main threads: learning to think and express concepts formally in Lean 4, and learning deep and abiding principles of intellectual control over software through readings of seminal papers leading up to the present moment.
 
 ---
 
