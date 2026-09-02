@@ -31,10 +31,6 @@ namespace Week09
 abbrev List.Sorted (r : α → α → Prop) (xs : List α) : Prop := List.Pairwise r xs
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 9.1  The Sorted predicate
 
 `List.Sorted r xs` holds iff every adjacent pair in `xs` satisfies `r`.
@@ -54,10 +50,6 @@ example : List.Sorted (· ≤ ·) ([] : List Nat) := by decide   -- vacuously
 ```lean
 #eval decide (List.Sorted (· ≤ ·) ([1, 2, 3, 4] : List Nat))   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 9.2  The Perm predicate
 
@@ -84,10 +76,6 @@ theorem perm_symm (xs ys : List α) : xs ~ ys → ys ~ xs :=
 #eval decide (([1, 2, 3] : List Nat) ~ [3, 1, 2])   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 9.3  The CorrectSort specification
 
 This is the heart of the week: a single type that captures what it means
@@ -109,10 +97,6 @@ def CorrectSort (sort : List Nat → List Nat) : Prop :=
 ```lean
 #eval decide (List.Sorted (· ≤ ·) ([] : List Nat) ∧ (([] : List Nat) ~ [1]))   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 9.4  Insertion sort: implementation
 
@@ -144,10 +128,6 @@ def insertionSort : List Nat → List Nat
 ```lean
 #eval insertionSort [3, 1, 2]   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 9.5  Proving CorrectSort — provided term-mode proofs
 
@@ -258,10 +238,6 @@ theorem insertionSort_correct : CorrectSort insertionSort :=
 #eval decide (List.Sorted (· ≤ ·) (insertionSort [4, 2, 3, 1]) ∧ insertionSort [4, 2, 3, 1] ~ [4, 2, 3, 1])   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 9.6  Verifying on concrete instances
 
 Because `Sorted` and `Perm` are decidable on `List Nat`, we can check
@@ -277,10 +253,6 @@ example : insertionSort [3, 1, 4, 1, 5] ~ [3, 1, 4, 1, 5] := by decide
 ```lean
 #eval decide (insertionSort [3, 1, 4, 1, 5, 9] ~ [3, 1, 4, 1, 5, 9])   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 9.7  Specifications with pre- and postconditions
 
@@ -307,10 +279,6 @@ def sortedMerge
 ```lean
 #eval (([1, 3] ++ [2, 4] : List Nat)).mergeSort (· ≤ ·)   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

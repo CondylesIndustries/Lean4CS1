@@ -251,10 +251,6 @@ Read the goal, pick the move its *outermost* constructor licenses, write that mu
 the term, and read off the smaller goal(s) that remain.  Recall from §2.5 that `∧`
 behaves like `×` and `∨` like `⊕`, so the *same* moves derive proofs of logical claims.
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ### How Lean shows you the goal
 
 A hole `_` in a term is Lean *printing the goal*: it reports the expected type and the
@@ -262,10 +258,6 @@ local context — the "remaining goal" of your derivation.  The canonical demons
 is in `FPCourse/specsAndImpls.lean` (`def e : Empty := _` reports `⊢ Empty`).  In VS
 Code, type the hole and watch the **InfoView** shrink as you fill each step.  Use the
 compiler as a *confirmer* of a step you predicted, not as a blind search engine.
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### The derivation trace
 
@@ -348,10 +340,6 @@ def swapSum {A B : Type} : A ⊕ B → B ⊕ A :=
 #eval decide (swapSum (Sum.inl 1 : Nat ⊕ Nat) = Sum.inr 1)   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ### Grading the trace
 
 A derivation exercise is graded on the **trace**, not merely on whether the term
@@ -359,10 +347,6 @@ compiles.  Full credit: (1) name the correct rule at each step; (2) state the re
 goal after each step; (3) close every goal by a hypothesis in scope.  A term that
 compiles but whose trace mis-names a rule or skips a goal is *not* full credit — it may
 be correct by luck.
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### The inverse direction
 

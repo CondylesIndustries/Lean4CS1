@@ -28,10 +28,6 @@ their elements.  Every operation on sets is an operation on propositions.
 namespace Week10
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 10.1  Set membership and basic notation
 ```lean
 -- Set α is defined in Mathlib as α → Prop
@@ -70,10 +66,6 @@ theorem not_mem_empty (x : α) : x ∉ (∅ : Set α) :=
 #eval decide ((7 : Nat) ∈ (Set.univ : Set Nat))   -- predict first
 #eval decide ((7 : Nat) ∈ (∅ : Set Nat))          -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 10.2  Set operations as proposition operations
 
@@ -140,10 +132,6 @@ theorem subset_def (s t : Set α) :
 #eval decide ((2 : Nat) ∈ ({1, 2} : Set Nat) → (2 : Nat) ∈ ({1, 2, 3} : Set Nat))   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 10.3  Set algebraic laws as propositions
 
 These laws are propositions that hold for all sets.  The proofs are
@@ -188,10 +176,6 @@ theorem compl_union (s t : Set α) : (s ∪ t)ᶜ = sᶜ ∩ tᶜ :=
 theorem subset_trans {s t u : Set α} (h1 : s ⊆ t) (h2 : t ⊆ u) : s ⊆ u :=
   Set.Subset.trans h1 h2
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 10.4  Relations
 
@@ -238,10 +222,6 @@ example : divides 1 n := ⟨n, (Nat.one_mul n).symm⟩   -- for any n
 ```lean
 #eval decide ((3 : Nat) ≤ 5)   -- predict first (lePair 3 5)
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 10.5  Properties of relations
 
@@ -303,10 +283,6 @@ example : Equivalence' (· = · : Rel Nat Nat) :=
 #eval decide ((2 : Nat) = 2 ∧ ((2 : Nat) = 3 → (3 : Nat) = 2))   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 10.6  Relational composition and image
 
 *Composition* of relations: `r` composed with `s` relates `a` to `c`
@@ -349,10 +325,6 @@ theorem image_univ (f : α → β) :
 #eval decide ((fun (x : Nat) => x * 2) 3 = 6)   -- predict first (3 ↦ 6, so 6 ∈ image)
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 10.7  Functions as total relations
 
 A function `f : α → β` determines a *functional relation*: the set of
@@ -369,10 +341,6 @@ value.  Sorting is about relations between the input and output lists.
 ```lean
 #eval decide ((fun (x : Nat) => x * 2) 2 = 4)   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

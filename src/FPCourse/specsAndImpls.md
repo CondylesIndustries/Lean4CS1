@@ -16,10 +16,6 @@ without defining them here are defined in implicitly imported Lean
 
 Specification  : Absurd
 Types          : Empty, False
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## Implementation ≡ Proof ≡ Value
 
 Values         : There are no values of this type
@@ -122,10 +118,6 @@ def l : List := _
 def e2e : Empty → Empty := fun (e : Empty) => e
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## If You Assume the Impossible then Anything Goes
 
 An amazing fact.*Anything* is *true of every values* of any
@@ -169,10 +161,6 @@ theorem ifFalseAnythingGoes :
 
 Read this as follows. We show for any proof, *f*, of *False*, and any
 predicate
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## Additional Details
 
 Some code below is *meant* to fail. We keep it because the failure is the

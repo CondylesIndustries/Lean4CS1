@@ -20,10 +20,6 @@ picture of how `decide` works as a term-mode proof producer.
 namespace Week12
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 12.1  Decidable: an inductive type carrying proofs
 
 `Decidable` is defined in Lean's core library as:
@@ -86,10 +82,6 @@ theorem toProofOrRefutation (p : Prop) [d : Decidable p] : p ∨ ¬p :=
 #eval decide (2 < 1)   -- predict first (which constructor?)
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 12.2  DecidableEq as a type class instance
 
 `DecidableEq α` is a type class (an alias for `(a b : α) → Decidable (a = b)`).
@@ -112,10 +104,6 @@ def eqTest [DecidableEq α] (a b : α) : String :=
 #eval eqTest (3 : Nat) 3    -- predict first ("equal" / "not equal"?)
 #eval eqTest (3 : Nat) 4    -- predict first ("equal" / "not equal"?)
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 12.3  Functor as a type class
 
@@ -149,10 +137,6 @@ instance : MyFunctor Option where
 #eval MyFunctor.fmap (· + 1) [1, 2, 3]            -- predict (List instance)
 #eval MyFunctor.fmap (· + 1) (some (5 : Nat))     -- predict (Option instance)
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 12.4  Foldable as a type class
 ```lean
@@ -192,10 +176,6 @@ theorem option_fold_some (f : α → β → β) (z : β) (x : α) :
 ```lean
 #eval MyFoldable.fold (· :: ·) ([] : List Nat) [1, 2, 3]   -- predict from list_fold_spec
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 12.5  Monoid: an algebraic structure with laws
 ```lean
@@ -239,10 +219,6 @@ instance : MyMonoid (List α) where
 #eval (MyMonoid.one : List Nat)                 -- predict first (the identity)
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 12.6  The boundary, revisited
 
 After twelve weeks, we can state the decidability boundary precisely.
@@ -272,10 +248,6 @@ foundational concepts of computer science.
 ```lean
 #eval decide (∀ n ∈ ([0, 1, 2, 3] : List Nat), n + 0 = n)   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

@@ -23,10 +23,6 @@ type has `DecidableEq` and the list is finite, we can check them with
 namespace Week05
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 5.1  Standard list functions and their specifications
 
 The specifications below are ALL provided as term-mode proofs.
@@ -67,10 +63,6 @@ theorem mem_append_iff (a : α) (xs ys : List α) :
 #eval decide (3 ∈ (([1, 2, 3] ++ [4, 5]) : List Nat))    -- predict from mem_append_iff
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 5.2  Decide on finite lists
 
 When the element type has `DecidableEq`, propositions of the form
@@ -97,10 +89,6 @@ example : ([1, 2] ++ [3, 4] : List Nat) = [1, 2, 3, 4] := by decide
 ```lean
 #eval decide (∀ x ∈ ([2, 4, 7] : List Nat), x % 2 = 0)   -- predict first (note the 7)
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 5.3  Reverse and the auxiliary lemma pattern
 
@@ -132,10 +120,6 @@ theorem reverse_reverse (xs : List α) : xs.reverse.reverse = xs :=
 #eval ([1, 2, 3].reverse.reverse : List Nat)   -- predict from reverse_reverse
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 5.4  Map and its specification
 
 `List.map f` applies `f` to every element.  Its specification:
@@ -166,10 +150,6 @@ theorem map_comp (f : β → γ) (g : α → β) (xs : List α) :
 #eval ([1, 2, 3, 4].map (· + 100)).length   -- predict from the spec, then read
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 5.5  Specifications students should practice writing
 
 Reading a specification is easier than writing one.  The following are
@@ -195,10 +175,6 @@ theorem filter_length_le (p : α → Bool) (xs : List α) :
 #eval ([1, 2, 3, 4, 5, 6].filter (· % 2 == 0) : List Nat)       -- predict
 #eval (([1, 2, 3, 4, 5, 6].filter (· % 2 == 0)).length : Nat)   -- predict; ≤ 6
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

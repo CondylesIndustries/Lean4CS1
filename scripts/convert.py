@@ -4,11 +4,9 @@ Literate Lean → Markdown converter.
 Processes files containing /-! @@@ ... @@@ -/ comment blocks:
   - Text between @@@ markers is emitted as-is (markdown)
   - Lean code outside the markers is wrapped in ```lean ... ``` blocks
-  - A boxed "Report an issue" link is appended at the end of each
-    lowest-level subsection (detected by markdown headings).
+  - A boxed "Report an issue" link is appended once, at the end of the page.
 """
 
-import re
 import sys
 from pathlib import Path
 
@@ -24,8 +22,6 @@ ISSUE_BOX = (
     f'📝 <a href="{ISSUE_URL}">Report an issue</a> with this section'
     '</div>\n'
 )
-
-HEADING_RE = re.compile(r'^(#{1,6})\s')
 
 
 def convert(lines):
@@ -67,45 +63,8 @@ def convert(lines):
 
 
 def inject_issue_links(lines):
-    """Insert a boxed issue link before each heading and at the end."""
-    # Find indices of all heading lines
-    heading_indices = [
-        i for i, line in enumerate(lines) if HEADING_RE.match(line)
-    ]
-
-    if not heading_indices:
-        # No headings — just append at the end
-        result = lines + ["", ISSUE_BOX]
-        return "\n".join(result) + "\n"
-
-    # Find the deepest (most #'s) heading level used
-    max_depth = max(
-        len(HEADING_RE.match(lines[i]).group(1))
-        for i in heading_indices
-    )
-
-    # Collect indices of deepest-level headings
-    deepest = [
-        i for i in heading_indices
-        if len(HEADING_RE.match(lines[i]).group(1)) == max_depth
-    ]
-
-    # Insert issue box before each deepest heading (except the first)
-    # and after the last line of the document
-    result = []
-    insert_before = set(deepest[1:])  # skip first deepest heading
-    for i, line in enumerate(lines):
-        if i in insert_before:
-            result.append("")
-            result.append(ISSUE_BOX)
-            result.append("")
-        result.append(line)
-
-    # Always append at the very end
-    result.append("")
-    result.append(ISSUE_BOX)
-
-    return "\n".join(result) + "\n"
+    """Append a single boxed issue link at the end of the page."""
+    return "\n".join(lines + ["", ISSUE_BOX]) + "\n"
 
 
 def main():

@@ -176,8 +176,10 @@ example : 100 < 200         := by decide  -- Evaluation: comparison ↝ true ✓
 same normal form*.  `1 + 1 = 2` holds by `rfl` because both sides reduce
 to `2` — the equality is *definitional*, certified by computation.
 
-**Evaluation.**  `decide` works by evaluating the *decision procedure*
-for the proposition.  For `7 * 6 = 42`, Lean evaluates `7 * 6` to `42`,
+**Evaluation.**  `decide` works by evaluating a *decision procedure*
+for the proposition, an operation that determines if the proposition is
+true or false and that returns the corresponding Boolean answer.
+For `7 * 6 = 42`, Lean evaluates `7 * 6` to `42`,
 confirms both sides are the same, and constructs the proof automatically.
 If evaluation had produced `false`, the file would not compile — the
 proof term would be absent, and the type would be uninhabited.
@@ -226,8 +228,8 @@ The arrow type `α → β` is the type of **functions** from `α` to `β`.
 A value of type `α → β` takes any input of type `α` and produces an
 output of type `β`.
 
-Functions are the most fundamental type constructor.  Every other
-construct — recursion, type classes, proofs — ultimately reduces to
+Functions are the most fundamental type constructor.  Many other
+constructs — recursion, type classes, proofs — ultimately reduce to
 functions.
 @@@ -/
 

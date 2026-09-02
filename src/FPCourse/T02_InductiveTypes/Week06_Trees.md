@@ -21,10 +21,6 @@ a specification.
 namespace Week06
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 6.1  The BTree type
 ```lean
 inductive BTree (α : Type) where
@@ -32,10 +28,6 @@ inductive BTree (α : Type) where
   | node : BTree α → α → BTree α → BTree α
 deriving Repr
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 6.2  Basic tree functions
 ```lean
@@ -86,10 +78,6 @@ theorem toList_length_eq_size (t : BTree α) :
 #eval (BTree.node (BTree.node BTree.leaf 3 BTree.leaf) 5 (BTree.node BTree.leaf 7 BTree.leaf)).member 4   -- predict
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 6.3  The BST predicate
 
 A BST (for `BTree Nat`) is a tree where:
@@ -137,10 +125,6 @@ instance decForAll (p : Nat → Prop) [DecidablePred p] :
 #eval decide (BTree.ForAll (· < 5) (BTree.node BTree.leaf 3 BTree.leaf))   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 6.4  BST insertion
 
 Insert `x` into a BST, maintaining the invariant:
@@ -161,10 +145,6 @@ def bstInsert (x : Nat) : BTree Nat → BTree Nat
 ```lean
 #eval (bstInsert 4 (BTree.node (BTree.node BTree.leaf 3 BTree.leaf) 5 BTree.leaf)).toList   -- predict
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 6.5  Preservation of ForAll
 
@@ -193,10 +173,6 @@ theorem forAll_bstInsert (p : Nat → Prop) (x : Nat) (hx : p x) :
 #eval decide (BTree.ForAll (· < 10) (bstInsert 4 (BTree.node (BTree.node BTree.leaf 3 BTree.leaf) 5 BTree.leaf)))   -- predict
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 6.6  Preservation of IsBST
 
 If `t` is a BST and `x : Nat`, then `bstInsert x t` is also a BST.
@@ -220,10 +196,6 @@ theorem bstInsert_isBST (x : Nat) :
         hfl (forAll_bstInsert (v < ·) x hgt r hfr)
     · exact IsBST.node hl hr hfl hfr
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 6.7  Mutual recursion: Rose trees
 
@@ -256,10 +228,6 @@ end
 ```lean
 #eval roseSize (RoseTree.node 1 (Forest.cons (RoseTree.node 2 Forest.nil) (Forest.cons (RoseTree.node 3 Forest.nil) Forest.nil)))   -- predict
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

@@ -25,10 +25,6 @@ at most one value.  The laws of `Dict` are laws of partial functions.
 namespace Week11
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 11.1  The Dict interface
 
 A dictionary maps keys to values.  Operations: empty dict, insert,
@@ -40,10 +36,6 @@ class Dict (d : Type → Type → Type) where
   lookup : [DecidableEq k] → k → d k v → Option v
   delete : [DecidableEq k] → k → d k v → d k v
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 11.2  Laws: the specification for Dict
 
@@ -65,10 +57,6 @@ class LawfulDict (d : Type → Type → Type) [DecidableEq k] extends Dict d whe
   lookup_delete_diff : ∀ (k1 k2 : k) (m : d k v),
       k1 ≠ k2 → lookup k1 (delete k2 m) = lookup k1 m
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 11.3  Association list implementation
 
@@ -180,10 +168,6 @@ instance {k : Type} [DecidableEq k] : LawfulDict (d := AList) (k := k) where
 #eval (AList.lookup 2 (AList.delete 1 (AList.insert 2 20 (AList.insert 1 10 (AList.empty : AList Nat Nat)))))   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 11.4  Opaque types: hiding implementation details
 
 The `opaque` keyword makes an identifier's definition irreducible to
@@ -220,10 +204,6 @@ axiom Counter.value_incr : ∀ c, Counter.value (Counter.incr c) =
 ```lean
 #check @Counter.value_incr   -- predict the ∀-statement; opaque, so no #eval
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 11.5  Stack: another abstract type
 
@@ -279,10 +259,6 @@ instance : LawfulStack List where
 #eval (Stack.pop ([] : List Nat))   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 11.6  Representation independence
 
 The key property of abstract types: any two implementations satisfying
@@ -302,10 +278,6 @@ stating it precisely is the skill being practiced.
 ```lean
 #eval (Stack.pop (Stack.push 9 (Stack.push 8 ([] : List Nat))))   -- predict first (LIFO)
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 11.7  Representation invariants and abstraction functions
 
@@ -332,10 +304,6 @@ def wfExample : { m : AList Nat Nat // (m.map Prod.fst).Nodup } :=
 ```lean
 #eval decide ((([(1, 10), (2, 20), (3, 30)] : AList Nat Nat).map Prod.fst).Nodup)   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

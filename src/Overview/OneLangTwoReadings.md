@@ -54,10 +54,6 @@ atomic claims — true or false, no internal structure.
 `#eval` runs the reduction machine.  `by decide` runs the same machine
 and packages the result as a proof.
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ### Setting up the running examples
 ```lean
 -- Model "raining" and "ground is wet" as simple propositions
@@ -80,10 +76,6 @@ These are the atoms.  Now we connect them.
 
 ## 2  The Arrow: Functions and Implication
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ### `α → β` — computation is function, logic is implication
 ```lean
 -- Computation: a function takes input, returns output
@@ -98,10 +90,6 @@ theorem rain_means_wet : Raining → GroundWet :=
 
 The `→` is the same symbol in both.  A function IS an implication
 proof.  That is not a metaphor.
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### `∀` is also `→`
 ```lean
@@ -125,10 +113,6 @@ universal IS a function.
 
 ## 3  Products: Pairs and Conjunction
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ### `α × β` — bundling two things
 ```lean
 -- Computation: a pair carries two values at once
@@ -143,10 +127,6 @@ def evenAndPositive (n : Nat) : Bool × Bool :=
 #eval evenAndPositive 6   -- (true, true)
 #eval evenAndPositive 0   -- (true, false)
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### `P ∧ Q` — proving two things at once
 
@@ -173,10 +153,6 @@ theorem six_pos : 6 % 2 = 0 ∧ 6 > 0 → 6 > 0 :=
 
 ## 4  Sums: Choice and Disjunction
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ### `α ⊕ β` — one or the other
 ```lean
 -- Computation: a value of α ⊕ β is either a left α or a right β
@@ -199,10 +175,6 @@ def describeSize (v : String ⊕ Nat) : String :=
 
 To use a sum, you must handle both cases — the compiler enforces
 exhaustiveness.
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### `P ∨ Q` — proving at least one
 
@@ -227,10 +199,6 @@ theorem even_pos_classify (n : Nat)
 ```
 
 ## 5  Empty and Negation: Falsity and Impossibility
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### `Empty` / `False` — the type with nothing inside
 ```lean
@@ -271,10 +239,6 @@ theorem explosion : False → 6 = 7 := fun f => nomatch f
 Zero-case pattern match = "there are no cases to consider."  This is
 *ex falso quodlibet*: from impossibility, anything.
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ### `¬P` is `P → False` — negation is a function type
 ```lean
 def notAUnicorn (_ : Nat) : Unicorn → False :=
@@ -286,10 +250,6 @@ def notAUnicorn (_ : Nat) : Unicorn → False :=
 
 Negation is not a primitive.  It is the arrow to the empty type.  The
 sixth constructor is just the first and fifth combined.
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### The running example, completed
 
@@ -307,10 +267,6 @@ theorem the_running_example
 
 ## 6  Recursion and Higher-Order Functions
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ### Recursion = Induction
 ```lean
 -- Computation: structural recursion follows the inductive type
@@ -325,10 +281,6 @@ def sum : List Nat → Nat
 |---|---|
 | Base: `f [] = ...` | Prove `P []` |
 | Step: `f (h :: t)` uses `f t` | From `P t`, prove `P (h :: t)` |
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### Higher-order functions = higher-order proof combinators
 ```lean

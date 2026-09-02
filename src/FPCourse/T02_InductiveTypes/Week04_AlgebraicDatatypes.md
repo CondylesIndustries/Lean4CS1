@@ -19,10 +19,6 @@ of type A and `m` values of type B as alternatives has `n + m` values.
 namespace Week04
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 4.1  Enumeration types (pure sums)
 ```lean
 inductive Direction where
@@ -40,10 +36,6 @@ example : Direction.North ≠ Direction.South := by decide
 #eval decide (Direction.North ≠ Direction.South)   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 4.2  Record types (pure products)
 ```lean
 structure Point where
@@ -59,10 +51,6 @@ def origin : Point := { x := 0.0, y := 0.0 }
 ```lean
 #eval origin.x   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 4.3  Option: the prototypical proof-carrying type
 
@@ -100,10 +88,6 @@ theorem option_map_isSome (f : α → β) :
 #eval (Option.map (· + 1) (some 3)).isSome              -- predict from option_map_isSome
 #eval (Option.map (· + 1) (none : Option Nat)).isSome   -- predict
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 4.4  ∀ and ∃ in datatype specifications
 
@@ -143,10 +127,6 @@ example : ∃ n : Nat, factorial' n > 1000 :=
 ```lean
 #eval decide (factorial' 7 > 1000)   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 4.5  Recursive types: expressions
 
@@ -199,10 +179,6 @@ theorem eval_add (e₁ e₂ : Expr) :
 #eval decide (Expr.eval (.add (.num 3) (.num 4)) = Expr.eval (.num 3) + Expr.eval (.num 4))   -- predict from eval_add
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 4.6  The template principle
 
 Every inductive type `T` has a corresponding *elimination principle*:
@@ -218,10 +194,6 @@ For `Expr`:
 
 This is the *template principle*: the type tells you the shape of the
 function.
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

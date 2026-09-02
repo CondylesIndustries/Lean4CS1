@@ -171,8 +171,10 @@ example : 100 < 200         := by decide  -- Evaluation: comparison ↝ true ✓
 same normal form*.  `1 + 1 = 2` holds by `rfl` because both sides reduce
 to `2` — the equality is *definitional*, certified by computation.
 
-**Evaluation.**  `decide` works by evaluating the *decision procedure*
-for the proposition.  For `7 * 6 = 42`, Lean evaluates `7 * 6` to `42`,
+**Evaluation.**  `decide` works by evaluating a *decision procedure*
+for the proposition, an operation that determines if the proposition is
+true or false and that returns the corresponding Boolean answer.
+For `7 * 6 = 42`, Lean evaluates `7 * 6` to `42`,
 confirms both sides are the same, and constructs the proof automatically.
 If evaluation had produced `false`, the file would not compile — the
 proof term would be absent, and the type would be uninhabited.
@@ -216,8 +218,8 @@ The arrow type `α → β` is the type of **functions** from `α` to `β`.
 A value of type `α → β` takes any input of type `α` and produces an
 output of type `β`.
 
-Functions are the most fundamental type constructor.  Every other
-construct — recursion, type classes, proofs — ultimately reduces to
+Functions are the most fundamental type constructor.  Many other
+constructs — recursion, type classes, proofs — ultimately reduce to
 functions.
 ```lean
 -- Defining functions with `def`:
@@ -271,10 +273,6 @@ def max' (a b : Nat) : Nat := if a ≥ b then a else b
 ```lean
 #eval max' 7 7   -- predict first (the a = b boundary)
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### The logical reading: implication
 
@@ -378,10 +376,6 @@ def hypotenuse (legs : Float × Float) : Float :=
   Float.sqrt (legs.1 ^ 2 + legs.2 ^ 2)
 #eval hypotenuse (3.0, 4.0)   -- 5.0
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### The logical reading: conjunction (AND)
 
@@ -501,10 +495,6 @@ def showResult (r : Option Nat) : String :=
 #eval safeDivide 20 4   -- predict first
 #eval safeDivide 7 0    -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ### The logical reading: disjunction (OR)
 

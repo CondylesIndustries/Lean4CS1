@@ -25,10 +25,6 @@ week that follows.  By Week 14 you will have a name for it.
 namespace Week01
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 1.1  Computational types
 ```lean
 -- Every literal has a type.  Use #check to inspect it.
@@ -61,10 +57,6 @@ namespace Week01
 ```lean
 #eval (true && (false || true))   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 1.2  The Bool / Prop distinction
 
@@ -107,10 +99,6 @@ example : Nat.succ 7 = 8 := rfl  -- both sides evaluate to 8
 ```lean
 #eval Nat.succ 7   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 1.3  `decide`: mechanically proving decidable propositions
 
@@ -159,10 +147,6 @@ example : ∃ x ∈ ([1, 2, 3] : List Nat), x > 2  := by decide
 -- example : 2 + 2 = 5 := decide
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 1.4  Product types
 
 A product type `α × β` pairs a value of type `α` with a value of type `β`.
@@ -194,10 +178,6 @@ def triple : Nat × Bool × String := (3, false, "hi")
 ```lean
 #eval triple.2.1   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 1.5  Proof-carrying types: a first look
 
@@ -240,10 +220,6 @@ def safeDiv (a : Nat) (b : Nat) (_h : b ≠ 0) : Nat := a / b
 -- not compile.
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 1.6  Type derivation rules (summary)
 
 | Syntax | Type |
@@ -257,10 +233,6 @@ def safeDiv (a : Nat) (b : Nat) (_h : b ≠ 0) : Nat := a / b
 
 Reading types is the foundational skill of this course.
 Every week adds new type constructors to this table.
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

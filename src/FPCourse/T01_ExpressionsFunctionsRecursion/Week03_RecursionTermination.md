@@ -46,10 +46,6 @@ any larger value.
 namespace Week03
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 3.1  Factorial — direct recursive definition
 ```lean
 def factorial : Nat → Nat
@@ -92,10 +88,6 @@ a well-defined answer for every input, not just how to compute it.
 #eval factorial 4   -- predict first  (4 * 6)
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 3.2  Tail recursion and accumulators
 
 The direct definition rebuilds the product on the way *back* from the
@@ -129,10 +121,6 @@ example : factorialTR 5 = 120 := rfl
 ```lean
 #eval factorialTR 4   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 3.3  Specification: the two definitions agree
 
@@ -169,10 +157,6 @@ theorem factorialTR_spec (n : Nat) : factorialTR n = factorial n :=
 ```lean
 #eval decide (factorialTR 6 = factorial 6)   -- predict from factorialTR_spec
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 3.4  Non-structural termination
 
@@ -227,10 +211,6 @@ theorem gcd_eq_nat_gcd : ∀ a b : Nat, gcd a b = Nat.gcd a b := by
       rw [key, Nat.gcd_comm, ← Nat.gcd_rec, Nat.gcd_comm]
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 3.5  The termination / totality distinction
 
 A function in Lean must be *total*: it must return a value for every input.
@@ -248,10 +228,6 @@ disables proof of properties about the function.
 This is not a limitation.  It is a *feature*: if a function has a type
 in Lean, it terminates on all inputs.  This means any specification you
 write about it is asking a question that always has an answer.
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 3.6  Reading specifications about recursive functions
 
@@ -285,10 +261,6 @@ theorem factorial_mono : ∀ n : Nat, factorial n ≤ factorial (n + 1) :=
 ```lean
 #eval decide (factorial 4 ≤ factorial 5)   -- predict from factorial_mono
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Worked out in class
 ```lean
@@ -375,10 +347,6 @@ def myTree : BinTreeNat :=
 ```lean
 #reduce (@BinTreeNat.rec (fun _ => Nat) 0 (fun n _ _ al ar => n + al + ar)) myTree   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 

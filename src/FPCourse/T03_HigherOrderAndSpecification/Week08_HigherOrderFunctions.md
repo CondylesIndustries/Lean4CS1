@@ -23,10 +23,6 @@ pattern*: a family of propositions that all instances must satisfy.
 namespace Week08
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 8.1  map, filter, fold: the canonical trio
 
 These three functions together cover an enormous range of list
@@ -84,10 +80,6 @@ computations.
 #eval ([1, 2, 3, 4] : List Int).foldr (fun x acc => x - acc) 0   -- predict first
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 8.2  Deriving map from fold
 
 `map` can be expressed as a `foldr`:
@@ -119,10 +111,6 @@ def filterViaFoldr (p : α → Bool) (xs : List α) : List α :=
 ```lean
 #eval filterViaFoldr (· % 2 == 0) [1, 2, 3, 4]   -- predict first
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 8.3  The functor laws
 
@@ -164,10 +152,6 @@ theorem map_comp_law : ∀ (f : β → γ) (g : α → β) (xs : List α),
               = ((([1, 2, 3] : List Nat).map (· * 2)).map (· + 1)))   -- predict from map_comp_law
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 8.4  Writing law statements for other types
 
 A key skill: given a new type with a map-like operation, state the
@@ -193,10 +177,6 @@ theorem option_map_comp : ∀ (f : β → γ) (g : α → β) (o : Option α),
 #eval decide ((some 5 : Option Nat).map id = some 5)   -- predict from option_map_id
 #eval decide ((none  : Option Nat).map id = none)      -- predict from option_map_id
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## 8.5  fold and its specification pattern
 
@@ -235,10 +215,6 @@ theorem foldr_append (f : α → β → β) (z : β) (xs ys : List α) :
               -- predict from foldr_append
 ```
 
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
-
 ## 8.6  The fusion law
 
 When a `map` is followed immediately by a `fold`, they can be fused into
@@ -264,10 +240,6 @@ theorem map_foldr_fusion (f : β → γ → γ) (z : γ) (g : α → β) (xs : L
 #eval decide (((([1, 2, 3] : List Nat).map (· * 2)).foldr (· + ·) 0)
               = (([1, 2, 3] : List Nat).foldr ((· + ·) ∘ (· * 2)) 0))   -- predict from map_foldr_fusion
 ```
-
-
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
 
 ## Exercises
 
