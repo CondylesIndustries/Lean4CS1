@@ -151,7 +151,7 @@ We can ask the identical question of *propositions*:
 | `False` | none — it is false |
 
 A proposition with at least one inhabitant is *true*.  A proposition
-with no inhabitant is *false*.  In Lean, propositions ARE types.
+with no inhabitant is *false*.  In Lean, propositions are encoded as types.
 ```lean
 -- Proofs are terms.  `rfl` inhabits `1 + 1 = 2` the way `42` inhabits `Nat`.
 example : 1 + 1 = 2 := rfl   -- Evaluation: 1+1 ↝ 2, same as the right side

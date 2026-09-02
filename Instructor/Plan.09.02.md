@@ -17,4 +17,7 @@
   - git merge
   - git stash
 - Go over assigned course materials
+  - Read first from book then go to code
+  - Predict first then check on the code side
+  - Obtaining the special characters
 - Discussion of assigned papers
