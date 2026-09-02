@@ -109,9 +109,7 @@ further reduction is possible.  The irreducible result is the *normal form*.
    (source)        (evaluates)       (irreducible value)
 ```
 
-Every `#eval` you write invokes this machine.  Every `by decide` runs
-it on a decision procedure.  Every `rfl` succeeds because both sides
-of the equation reach the *same* normal form.
+Every `#eval` you write invokes this machine.
 
 Each `#eval` above is a chain of named reductions:
 
