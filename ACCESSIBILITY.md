@@ -125,8 +125,10 @@ templates.
 `<input disabled type="checkbox">` with no accessible name, failing 4.1.2 Name, Role,
 Value (A). The setup checklist used that syntax and carried eight instances. It is now
 written as a plain bulleted list, which reads the same and removes the defect from this
-site entirely. The underlying mdBook bug is unreported upstream and would return if
-task-list syntax were reintroduced, so it is recorded here rather than forgotten.
+site entirely. The underlying mdBook bug is reported upstream as
+[#3212](https://github.com/rust-lang/mdBook/issues/3212) and would return if task-list
+syntax were reintroduced, so it is recorded here rather than forgotten. The build now
+rejects that syntax, so the claim in this paragraph cannot quietly become false.
 
 PR #3078 is mergeable and awaiting review; PR #2144 currently conflicts. Neither has
 merged, so **remediation here does not depend on upstream**: mdBook supports replacing
