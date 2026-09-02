@@ -160,7 +160,7 @@ inside Linux, whatever your laptop actually runs.
 Two steps remain, both run in the VS Code terminal *inside* the container.
 
 **Open any Lean file first** — for example
-`FPCourse/ExpressionsFunctionsRecursion/Week00_AlgebraicTypes.lean`. The Lean 4 extension activates,
+`FPCourse/T01_ExpressionsFunctionsRecursion/Week00_AlgebraicTypes.lean`. The Lean 4 extension activates,
 notices the `lean-toolchain` file, and installs the exact compiler version
 this course uses. A progress notice appears in the status bar. Wait for it to
 finish, then confirm:
