@@ -284,7 +284,112 @@ running while you work. If you stop it, or close the terminal it is running
 in, the forwarded address stops serving and the page goes blank instead of
 reporting an error.
 
-## 7. Verify your setup
+## 7. Track the course repository
+
+Steps 1 through 6 leave you able to work. This step connects the course
+repository to your editor, so that new assignments, corrections, and answers
+to other students' questions reach you where you are already working.
+
+**Nothing here needs installing.** The container already supplies both
+extensions this step uses — **GitHub Pull Requests and Issues** and
+**GitLens** — along with the rest of the course toolchain. If you go looking
+for them in the Extensions view, look under the **Dev Container: CS1**
+heading rather than **Local**: an extension installed locally does not run in
+the container window, which is where you work.
+
+### Sign in to GitHub
+
+Click the **GitHub** icon in the Activity Bar, the narrow strip down the left
+edge. If a **Login** view greets you, click **Sign in** and authorize VS Code
+in the browser that opens. The container reuses the account and Git
+credentials of the VS Code running on your laptop, so you may instead be
+asked only to approve access with a single click, or not asked at all.
+
+Signed in, the GitHub view holds three lists: **Pull Requests**, **Issues**,
+and **Notifications**.
+
+The extension reads the repository's `origin` and `upstream` remotes — that
+is the default of its `githubPullRequests.remotes` setting — which is why
+adding `upstream` back in step 3 matters here.
+
+### Watch the repository
+
+Open the course repository —
+**[github.com/kevinsullivan/Lean4CS1](https://github.com/kevinsullivan/Lean4CS1)** — and click **Watch**, at the top
+right beside **Fork**. Choose **All Activity**, or **Custom** and tick
+**Issues**. GitHub will then email you when something is opened, changed, or
+answered.
+
+Watching is the feature that notifies you. *Starring* a repository bookmarks
+it on your account and *pinning* displays it on your profile page; neither
+sends you anything, and neither changes what VS Code shows you.
+
+### Show course issues in the editor
+
+The Issues view ships with queries about *your* repository and *your* issues.
+The course issues are not in your fork: a fork begins with none of the
+original's issues, and GitHub leaves the Issues tab switched off on forks by
+default. So add a query that names the course repository outright.
+
+Open the Command Palette and run **Preferences: Open User Settings (JSON)**,
+then add:
+
+```json
+"githubIssues.queries": [
+  {
+    "label": "Course Issues",
+    "query": "repo:kevinsullivan/Lean4CS1 is:open sort:updated-desc"
+  },
+  {
+    "label": "Assigned to Me",
+    "query": "repo:kevinsullivan/Lean4CS1 is:open assignee:${user}"
+  }
+]
+```
+
+Each entry becomes a collapsible group in the Issues view. The query text is
+ordinary [GitHub search syntax](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests); `${user}` expands to whoever is
+signed in. Note that this setting *replaces* the built-in queries rather than
+adding to them, so list everything you want to see.
+
+Hovering a query row in the Issues view reveals a pencil, **Edit Query**,
+which brings you back to this setting. There is no *Configure Queries* item
+in the view's `...` menu or in the Command Palette; the setting is the route.
+
+User settings are reused inside the container, so this survives a container
+rebuild. If you would rather the query travel with your fork, put the same
+block in `.vscode/settings.json` in the project instead — workspace settings
+take precedence over user ones.
+
+The **Notifications** view is a narrower thing than its name suggests: it
+reports on pull requests only, and is off until you set
+`githubPullRequests.notifications` to `pullRequests`. Email from watching the
+repository remains the dependable alert.
+
+### See new upstream commits
+
+VS Code and GitLens show you the remote as of your last `git fetch`. Nothing
+streams in on its own, and `git.autofetch` is off by default; even set to
+`true` it fetches only the repository's default remote, which is `origin` —
+your fork, where course commits never appear. To have `upstream` polled too,
+add to the same settings file:
+
+```json
+"git.autofetch": "all",
+"git.autofetchPeriod": 180
+```
+
+The period is in seconds, and 180 is the default.
+
+New commits then show up without your asking. In the **Source Control** side
+bar, expand **Remotes → upstream** — that view comes from GitLens, and lives
+there rather than in the GitLens side bar, which holds the Commit Graph and
+Home. Either will show you what the instructor has pushed.
+
+Fetching only updates what you can *see*. To bring the changes into your own
+files, merge them as described under "Working from day to day" below.
+
+## 8. Verify your setup
 
 Work down this list. If every line holds, you are ready.
 
@@ -297,6 +402,8 @@ Work down this list. If every line holds, you are ready.
 - [ ] `make serve` prints `Serving on: http://0.0.0.0:3000`, and the **Local
       Address** shown in the **PORTS** panel opens this book in a browser.
 - [ ] `git remote -v` lists both `origin` (your fork) and `upstream`.
+- [ ] The GitHub view's **Issues** list shows the course repository's open
+      issues under **Course Issues**.
 
 ## Working from day to day
 
@@ -334,6 +441,8 @@ If the update changes `lean-toolchain` or `lake-manifest.json`, run
 | `ERR_CONNECTION_REFUSED` in the browser | Most often you used `http://localhost:3000` instead of the **Local Address** from the **PORTS** panel — they are usually different ports. Failing that, mdBook was started without `-n 0.0.0.0` and is listening on IPv6 loopback only; stop it with `Ctrl+C` and rerun `make serve`. |
 | The page is completely blank, with no error message at all | The forward is alive but nothing is answering behind it: mdBook is not running. It was stopped, or the terminal it started in was closed. Rerun `make serve`. |
 | No **mdBook** row in the **PORTS** panel | The forward was never established. Click **Forward a Port** in that panel and enter `3000`, or run `"$BROWSER" http://localhost:3000/` in the container terminal, which asks VS Code to create the forward and open it. |
+| The GitHub view shows only **Login** | You are not signed in. Click **Sign in** in that view and authorize VS Code in the browser. |
+| The **Issues** list is empty | The query names your fork rather than the course repository. Forks start with no issues and have the Issues tab off by default; use the literal `repo:kevinsullivan/Lean4CS1` shown in step 7. |
 
 Still stuck? Bring the exact command you ran and the exact message you saw —
 copy the text rather than describing it — and ask in office hours or by
