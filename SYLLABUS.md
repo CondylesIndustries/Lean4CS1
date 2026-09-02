@@ -121,9 +121,9 @@ a common understanding.
   Then, inside the container:
 
 ```bash
-lake exe cache get       # fetch prebuilt Mathlib (several GB; about ten minutes)
-lake build               # compile the course sources
-mdbook serve -n 0.0.0.0  # serve the book locally at http://localhost:3000
+lake exe cache get   # fetch prebuilt Mathlib (several GB; about ten minutes)
+lake build           # compile the course sources
+make serve           # serve the book; open the address in VS Code's PORTS panel
 ```
 
 - **Working style:** study the rendered book (right pane) alongside the `.lean` source (left pane)

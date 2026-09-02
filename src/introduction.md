@@ -62,9 +62,9 @@ proof construction.
 ## Building
 
 ```bash
-lake build               # compile the Lean sources
-make convert             # convert .lean → .md
-mdbook serve -n 0.0.0.0  # serve locally at http://localhost:3000
+lake build        # compile the Lean sources
+make convert      # convert .lean → .md
+make serve        # serve the book locally
 ```
 
 ## How to Study These Materials
@@ -85,19 +85,19 @@ code .
 (`Ctrl+\`` or Terminal → New Terminal):
 
 ```bash
-mdbook serve -n 0.0.0.0
+make serve
 ```
 
-This builds the book and serves it at `http://localhost:3000`. The
-`-n 0.0.0.0` is needed because mdBook otherwise binds the IPv6 loopback
-address only, which VS Code's port forwarding cannot reach.
+This builds the book and serves it on port 3000 *inside the container*. VS
+Code forwards that to a port on your own machine, which is often a different
+number — open the **PORTS** panel and use the **Local Address** it shows.
 The server watches for changes and refreshes automatically.
 
 **Step 3 — Open the browser panel inside VS Code.**
 
 1. Open the Command Palette (`Cmd+Shift+P` on macOS, `Ctrl+Shift+P` on Windows/Linux).
 2. Type **Simple Browser: Show** and press Enter.
-3. Enter `http://localhost:3000` as the URL.
+3. Paste the **Local Address** from the **PORTS** panel as the URL.
 
 **Step 4 — Arrange the panels side by side.**  Drag the Simple Browser
 tab to the right half of the editor area.  Open the corresponding

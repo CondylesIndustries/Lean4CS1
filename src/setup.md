@@ -203,23 +203,35 @@ the live, type-checked Lean source on the other.
 In the container terminal:
 
 ```bash
-mdbook serve -n 0.0.0.0
+make serve
 ```
 
-The `-n 0.0.0.0` matters. Left to its default, mdBook binds only the IPv6
-loopback address, while VS Code's port forwarding reaches the container over
-IPv4. The browser then reports `ERR_CONNECTION_REFUSED` even though the
-server is running and rebuilding normally. Binding every interface removes
-the mismatch. Running `make serve` passes the flag for you.
+This runs `mdbook serve -n 0.0.0.0`. The `-n 0.0.0.0` matters: left to its
+default, mdBook binds only the IPv6 loopback address, while VS Code's port
+forwarding reaches the container over IPv4. The browser then reports
+`ERR_CONNECTION_REFUSED` even though the server is running and rebuilding
+normally. Wait for the line `Serving on: http://0.0.0.0:3000` before going
+on.
 
-VS Code detects the server and offers to open port 3000, labeled **mdBook**.
-Accept, or open the **Ports** panel and click the globe icon beside 3000. To
-keep everything in one window, run **Simple Browser: Show** from the Command
-Palette and enter `http://localhost:3000`, then drag that tab to the right
+**Then find the address your own browser should use.** Port 3000 is the port
+*inside* the container. VS Code forwards it to a port on your laptop, and
+that port is frequently *not* 3000 — it is often a high number such as
+`64461`, and it can change from one session to the next. Do not guess it,
+and do not assume `http://localhost:3000` will work.
+
+Open the **PORTS** panel — the tab beside TERMINAL — and read the **Local
+Address** column on the row labeled **mdBook**. Whatever it says is the
+address that works. Right-click that row and choose **Open in Browser**, or
+copy the address.
+
+To keep everything in one window, run **Simple Browser: Show** from the
+Command Palette and paste that same address, then drag the tab to the right
 half of the editor.
 
 The server rebuilds and refreshes automatically as files change. Leave it
-running while you work.
+running while you work. If you stop it, or close the terminal it is running
+in, the forwarded address stops serving and the page goes blank instead of
+reporting an error.
 
 ## 7. Verify your setup
 
@@ -230,7 +242,8 @@ Work down this list. If every line holds, you are ready.
 - [ ] `lake build` finishes without errors.
 - [ ] Opening a `.lean` file shows the Lean infoview; placing the cursor on a
       `#eval` or `#check` line displays its result.
-- [ ] `mdbook serve -n 0.0.0.0` serves this book at `http://localhost:3000`.
+- [ ] `make serve` prints `Serving on: http://0.0.0.0:3000`, and the **Local
+      Address** shown in the **PORTS** panel opens this book in a browser.
 - [ ] `git remote -v` lists both `origin` (your fork) and `upstream`.
 
 ## Working from day to day
@@ -266,8 +279,9 @@ If the update changes `lean-toolchain` or `lake-manifest.json`, run
 | Build runs for hours | Mathlib is compiling from source. `Ctrl+C`, then `lake exe cache get`. |
 | `bash\r: command not found`, or scripts failing oddly (Windows) | Files were checked out with CRLF line endings. Apply the Git settings in step 3, then delete the folder and clone again. |
 | "File name too long" or missing files under `.lake` (Windows) | `core.longpaths` is not set. Run `git config --global core.longpaths true`. |
-| Port 3000 refuses the connection (`ERR_CONNECTION_REFUSED`) while `mdbook serve` is clearly running | mdBook was started without `-n 0.0.0.0`, so it is listening on IPv6 loopback only. Stop it with `Ctrl+C` and rerun `mdbook serve -n 0.0.0.0`. |
-| Port 3000 unreachable in the browser | Check the **Ports** panel for the forwarded address; VS Code sometimes maps it to a different local port. |
+| `ERR_CONNECTION_REFUSED` in the browser | Most often you used `http://localhost:3000` instead of the **Local Address** from the **PORTS** panel — they are usually different ports. Failing that, mdBook was started without `-n 0.0.0.0` and is listening on IPv6 loopback only; stop it with `Ctrl+C` and rerun `make serve`. |
+| The page is completely blank, with no error message at all | The forward is alive but nothing is answering behind it: mdBook is not running. It was stopped, or the terminal it started in was closed. Rerun `make serve`. |
+| No **mdBook** row in the **PORTS** panel | The forward was never established. Click **Forward a Port** in that panel and enter `3000`, or run `"$BROWSER" http://localhost:3000/` in the container terminal, which asks VS Code to create the forward and open it. |
 
 Still stuck? Bring the exact command you ran and the exact message you saw —
 copy the text rather than describing it — and ask in office hours or by

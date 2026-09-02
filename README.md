@@ -71,7 +71,7 @@ make convert
 **Build and serve locally:**
 
 ```bash
-make serve          # builds and serves at http://localhost:3000
+make serve          # builds and serves; use the address in VS Code's PORTS panel
 ```
 
 **Full pipeline:**
