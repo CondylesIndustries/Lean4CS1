@@ -97,7 +97,7 @@ are listed explicitly and cannot be broken down further.
 > `.length` counts characters.  **Predict** the length of `"hello" ++ ", world"` — remember
 > to count the comma and the space — before reading it.
 ```lean
-#eval ("hello" ++ ", world").length   -- predict first
+#eval ("hello" ++ ", world").length   -- predict firstw
 ```
 
 **The Lean notional machine.**  Think of Lean as a machine with one job:
