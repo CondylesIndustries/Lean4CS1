@@ -28,4 +28,6 @@ Every once in a while I try to take a quick snapshot of where we are today regar
 
 _Market caps retrieved 2 Sept 2026, in USD. Tencent is reported by some aggregators at roughly twice the figure above; this follows the exchange's own arithmetic — HKD 438.20 × 9.00B shares = HKD 3.94T, about $503B. Italic tags mark figures that are not completed rounds._
 
-*The bracketed numbers are sources* — all 30, each read against the claim it supports, are listed on the page: https://claude.ai/code/artifact/79dd325b-80ec-4fe2-ba88-94e8f9d5619d
+*The bracketed numbers are sources* — all 30, each read against the claim it supports:
+https://kevinsullivan.github.io/Lean4CS1/lean4-fall-2026-sources.html
+Same snapshot as a page: https://kevinsullivan.github.io/Lean4CS1/lean4-fall-2026.html
