@@ -398,16 +398,16 @@ files, merge them as described under "Working from day to day" below.
 
 Work down this list. If every line holds, you are ready.
 
-- [ ] VS Code's bottom-left indicator reads **Dev Container: CS1**.
-- [ ] `lean --version` matches the version in `lean-toolchain`.
-- [ ] `lake build` finishes without errors.
-- [ ] Opening a `.lean` file shows the Lean infoview; placing the cursor on a
+- VS Code's bottom-left indicator reads **Dev Container: CS1**.
+- `lean --version` matches the version in `lean-toolchain`.
+- `lake build` finishes without errors.
+- Opening a `.lean` file shows the Lean infoview; placing the cursor on a
       `#eval` or `#check` line displays its result.
-- [ ] `make build` finishes without errors and writes a `book/` directory.
-- [ ] `make serve` prints `Serving on: http://0.0.0.0:3000`, and the **Local
+- `make build` finishes without errors and writes a `book/` directory.
+- `make serve` prints `Serving on: http://0.0.0.0:3000`, and the **Local
       Address** shown in the **PORTS** panel opens this book in a browser.
-- [ ] `git remote -v` lists both `origin` (your fork) and `upstream`.
-- [ ] The GitHub view's **Issues** list shows the course repository's open
+- `git remote -v` lists both `origin` (your fork) and `upstream`.
+- The GitHub view's **Issues** list shows the course repository's open
       issues under **Course Issues**.
 
 ## Working from day to day

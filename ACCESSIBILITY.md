@@ -120,7 +120,13 @@ templates.
 | Sidebar toggle is a `<label>` carrying ARIA attributes not permitted on that element | 4.1.2 Name, Role, Value (A) | every generated page | [#2615](https://github.com/rust-lang/mdBook/issues/2615), fix proposed in [PR #3078](https://github.com/rust-lang/mdBook/pull/3078) |
 | No bypass block to skip the repeated sidebar and header | 2.4.1 Bypass Blocks (A) | every generated page | [#2107](https://github.com/rust-lang/mdBook/issues/2107), fix proposed in [PR #2144](https://github.com/rust-lang/mdBook/pull/2144) |
 | Scrollable code and table regions are not keyboard focusable | 2.1.1 Keyboard (A) | chapters with wide code or tables | [#1789](https://github.com/rust-lang/mdBook/issues/1789) |
-| Task-list checkboxes render as `<input disabled type="checkbox">` with no label | 4.1.2 Name, Role, Value (A) | `setup.html` (8 instances) | **not reported upstream** |
+
+**Remediated, not merely absent.** mdBook renders Markdown task lists (`- [ ]`) as
+`<input disabled type="checkbox">` with no accessible name, failing 4.1.2 Name, Role,
+Value (A). The setup checklist used that syntax and carried eight instances. It is now
+written as a plain bulleted list, which reads the same and removes the defect from this
+site entirely. The underlying mdBook bug is unreported upstream and would return if
+task-list syntax were reintroduced, so it is recorded here rather than forgotten.
 
 PR #3078 is mergeable and awaiting review; PR #2144 currently conflicts. Neither has
 merged, so **remediation here does not depend on upstream**: mdBook supports replacing
