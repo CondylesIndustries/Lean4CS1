@@ -23,3 +23,7 @@ renderer = ["html"]
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
 renderer = ["html"]
+
+[preprocessor.stamp]
+command = "python3 scripts/stamp_commit.py"
+renderer = ["html"]

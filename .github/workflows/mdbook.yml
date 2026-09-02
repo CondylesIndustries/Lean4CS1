@@ -84,13 +84,13 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
-      # `make build` is `mdbook build` followed by the `stamp` target, which
-      # substitutes the @GIT_COMMIT@ placeholder in the built cover.  Pass the
-      # commit in explicitly: the convert and NFC steps above can leave the
-      # checkout dirty, and the Makefile's own default would then append
-      # "-dirty" to what is actually a clean build of a pushed commit.
-      - name: Build with mdBook and stamp the cover
-        run: make build GIT_COMMIT="${GITHUB_SHA::7}" GIT_DIRTY=
+      # The stamp preprocessor registered in book.toml substitutes the cover's
+      # @GIT_COMMIT@ token during the build.  Pass the commit in explicitly:
+      # the convert and NFC steps above rewrite tracked Markdown, so the
+      # checkout is dirty by now and the preprocessor's own default would
+      # label a clean build of a pushed commit "-dirty".
+      - name: Build with mdBook
+        run: BOOK_COMMIT="${GITHUB_SHA::7}" mdbook build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
