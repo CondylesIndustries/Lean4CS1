@@ -200,18 +200,37 @@ correct and complete.
 The intended way to study is the rendered book on one side of the screen and
 the live, type-checked Lean source on the other.
 
+### Three commands keep the book current
+
+You never call mdBook directly. Three `make` targets, run from the project
+root in the container terminal, cover everything you need:
+
+| Command | What it does |
+|---|---|
+| `make build` | Renders the book once, into `book/`, then stops. |
+| `make serve` | Renders it and keeps serving it, rebuilding and refreshing the page whenever a file under `src/` changes. This is the one to use while studying. |
+| `make clean` | Deletes what those two generate — `book/`, and the Markdown produced from the Lean sources — so the next build starts from nothing. |
+
+Both `make build` and `make serve` render the Markdown that is already in
+`src/`. The chapters are themselves generated from the `.lean` files, so
+after editing Lean source run plain `make`, which converts and then builds.
+Reach for `make clean` only when a build looks stale or inconsistent;
+nothing you wrote is lost, since it removes generated files only.
+
+### Start the server
+
 In the container terminal:
 
 ```bash
 make serve
 ```
 
-This runs `mdbook serve -n 0.0.0.0`. The `-n 0.0.0.0` matters: left to its
-default, mdBook binds only the IPv6 loopback address, while VS Code's port
-forwarding reaches the container over IPv4. The browser then reports
-`ERR_CONNECTION_REFUSED` even though the server is running and rebuilding
-normally. Wait for the line `Serving on: http://0.0.0.0:3000` before going
-on.
+This runs `mdbook serve -n 0.0.0.0` for you. The `-n 0.0.0.0` matters: left
+to its default, mdBook binds only the IPv6 loopback address, while VS
+Code's port forwarding reaches the container over IPv4. The browser then
+reports `ERR_CONNECTION_REFUSED` even though the server is running and
+rebuilding normally. Wait for the line `Serving on: http://0.0.0.0:3000`
+before going on.
 
 **Then find the address your own browser should use.** Port 3000 is the port
 *inside* the container. VS Code forwards it to a port on your laptop, and
@@ -274,6 +293,7 @@ Work down this list. If every line holds, you are ready.
 - [ ] `lake build` finishes without errors.
 - [ ] Opening a `.lean` file shows the Lean infoview; placing the cursor on a
       `#eval` or `#check` line displays its result.
+- [ ] `make build` finishes without errors and writes a `book/` directory.
 - [ ] `make serve` prints `Serving on: http://0.0.0.0:3000`, and the **Local
       Address** shown in the **PORTS** panel opens this book in a browser.
 - [ ] `git remote -v` lists both `origin` (your fork) and `upstream`.
