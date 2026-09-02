@@ -84,8 +84,13 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
-      - name: Build with mdBook
-        run: mdbook build
+      # `make build` is `mdbook build` followed by the `stamp` target, which
+      # substitutes the @GIT_COMMIT@ placeholder in the built cover.  Pass the
+      # commit in explicitly: the convert and NFC steps above can leave the
+      # checkout dirty, and the Makefile's own default would then append
+      # "-dirty" to what is actually a clean build of a pushed commit.
+      - name: Build with mdBook and stamp the cover
+        run: make build GIT_COMMIT="${GITHUB_SHA::7}" GIT_DIRTY=
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
