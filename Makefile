@@ -30,6 +30,13 @@ convert: $(BUILD_FILES)
 build:
 	mdbook build
 
+# Accessibility gate over the built book.  Pages authored here must pass
+# WCAG 2.1 AA and Section 508; mdBook's own pages are reported but do not fail
+# the build, since their violations come from the upstream theme.  Needs
+# playwright: pip install playwright && python3 -m playwright install --with-deps chromium
+a11y: build
+	@python3 scripts/a11y_check.py book
+
 # Regenerate the Canvas-pasteable exports from SYLLABUS.md
 canvas:
 	@python3 scripts/canvas_export.py
@@ -52,4 +59,4 @@ clean-md:
 clean:
 	rm -rf $(GENERATED_MD) book/
 
-.PHONY: all convert build canvas serve clean-md clean
+.PHONY: all convert build a11y canvas serve clean-md clean
