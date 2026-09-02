@@ -1,5 +1,6 @@
-# Source and target directories
-SRC_DIRS := Overview FPCourse
+# Source and target directories.  Overview/ was removed in bc8a745; listing a
+# directory that no longer exists made `find` error on every make invocation.
+SRC_DIRS := FPCourse
 
 # The cover's @GIT_COMMIT@ token is substituted by the stamp preprocessor
 # (scripts/stamp_commit.py, registered in book.toml), so every build mdBook
@@ -37,12 +38,18 @@ canvas:
 serve:
 	mdbook serve -n 0.0.0.0
 
+# Directories under src/ that are generated from Lean sources, and so are the
+# only ones safe to delete.  Derived from SRC_DIRS rather than written out, so
+# the two cannot drift apart: a hardcoded src/Overview here would have deleted
+# a tracked file whose .lean source no longer exists.
+GENERATED_MD := $(addprefix src/,$(SRC_DIRS))
+
 # Clean generated markdown (but keep src/SUMMARY.md and src/introduction.md)
 clean-md:
-	rm -rf src/Overview src/FPCourse
+	rm -rf $(GENERATED_MD)
 
 # Clean everything including the built book
 clean:
-	rm -rf src/Overview src/FPCourse book/
+	rm -rf $(GENERATED_MD) book/
 
 .PHONY: all convert build canvas serve clean-md clean
