@@ -120,7 +120,7 @@
     <div class="cover-affiliation">Department of Computer Science</div>
     <div class="cover-affiliation">CS6501-010 &middot; Fall 2026</div>
     <div class="cover-mark">theorem correct : &forall; n, f n = spec n := by decide</div>
-    <div><a class="cover-cta" href="SoftwareLogic/index.html">Let&rsquo;s Go!</a></div>
+    <div><a class="cover-cta" href="setup.html">Let&rsquo;s Go!</a></div>
     <div class="cover-status">Living edition &middot; revised through the semester &middot; <span class="cover-commit">@GIT_COMMIT@</span></div>
   </div>
 </div>

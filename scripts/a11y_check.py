@@ -25,8 +25,8 @@ TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "section508"]
 # Pages authored here, which must stay clean.
 GATED = ["/lean4-fall-2026.html", "/lean4-fall-2026-sources.html"]
 # A representative sample of mdBook output, reported only.
-REPORTED = ["/index.html", "/cover.html", "/SoftwareLogic/index.html",
-            "/accessibility.html"]
+REPORTED = ["/index.html", "/cover.html", "/setup.html",
+            "/SoftwareLogic/index.html", "/accessibility.html"]
 
 
 def serve(directory):

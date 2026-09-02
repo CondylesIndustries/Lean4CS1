@@ -2,6 +2,8 @@
 
 [Cover](./cover.md)
 
+[Setting Up Your Machine](./setup.md)
+
 ---
 
 # Software Logic
