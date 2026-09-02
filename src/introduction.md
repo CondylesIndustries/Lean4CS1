@@ -62,9 +62,9 @@ proof construction.
 ## Building
 
 ```bash
-lake build        # compile the Lean sources
-make convert      # convert .lean → .md
-mdbook serve      # serve locally at http://localhost:3000
+lake build               # compile the Lean sources
+make convert             # convert .lean → .md
+mdbook serve -n 0.0.0.0  # serve locally at http://localhost:3000
 ```
 
 ## How to Study These Materials
@@ -85,10 +85,12 @@ code .
 (`Ctrl+\`` or Terminal → New Terminal):
 
 ```bash
-mdbook serve
+mdbook serve -n 0.0.0.0
 ```
 
-This builds the book and serves it at `http://localhost:3000`.
+This builds the book and serves it at `http://localhost:3000`. The
+`-n 0.0.0.0` is needed because mdBook otherwise binds the IPv6 loopback
+address only, which VS Code's port forwarding cannot reach.
 The server watches for changes and refreshes automatically.
 
 **Step 3 — Open the browser panel inside VS Code.**

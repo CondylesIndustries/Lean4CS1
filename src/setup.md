@@ -203,8 +203,14 @@ the live, type-checked Lean source on the other.
 In the container terminal:
 
 ```bash
-mdbook serve
+mdbook serve -n 0.0.0.0
 ```
+
+The `-n 0.0.0.0` matters. Left to its default, mdBook binds only the IPv6
+loopback address, while VS Code's port forwarding reaches the container over
+IPv4. The browser then reports `ERR_CONNECTION_REFUSED` even though the
+server is running and rebuilding normally. Binding every interface removes
+the mismatch. Running `make serve` passes the flag for you.
 
 VS Code detects the server and offers to open port 3000, labeled **mdBook**.
 Accept, or open the **Ports** panel and click the globe icon beside 3000. To
@@ -224,7 +230,7 @@ Work down this list. If every line holds, you are ready.
 - [ ] `lake build` finishes without errors.
 - [ ] Opening a `.lean` file shows the Lean infoview; placing the cursor on a
       `#eval` or `#check` line displays its result.
-- [ ] `mdbook serve` serves this book at `http://localhost:3000`.
+- [ ] `mdbook serve -n 0.0.0.0` serves this book at `http://localhost:3000`.
 - [ ] `git remote -v` lists both `origin` (your fork) and `upstream`.
 
 ## Working from day to day
@@ -260,6 +266,7 @@ If the update changes `lean-toolchain` or `lake-manifest.json`, run
 | Build runs for hours | Mathlib is compiling from source. `Ctrl+C`, then `lake exe cache get`. |
 | `bash\r: command not found`, or scripts failing oddly (Windows) | Files were checked out with CRLF line endings. Apply the Git settings in step 3, then delete the folder and clone again. |
 | "File name too long" or missing files under `.lake` (Windows) | `core.longpaths` is not set. Run `git config --global core.longpaths true`. |
+| Port 3000 refuses the connection (`ERR_CONNECTION_REFUSED`) while `mdbook serve` is clearly running | mdBook was started without `-n 0.0.0.0`, so it is listening on IPv6 loopback only. Stop it with `Ctrl+C` and rerun `mdbook serve -n 0.0.0.0`. |
 | Port 3000 unreachable in the browser | Check the **Ports** panel for the forwarded address; VS Code sometimes maps it to a different local port. |
 
 Still stuck? Bring the exact command you ran and the exact message you saw —

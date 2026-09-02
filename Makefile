@@ -43,7 +43,7 @@ canvas:
 
 # Serve locally with live reload
 serve:
-	mdbook serve
+	mdbook serve -n 0.0.0.0
 
 # Clean generated markdown (but keep src/SUMMARY.md and src/introduction.md)
 clean-md:
