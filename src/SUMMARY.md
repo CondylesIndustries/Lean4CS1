@@ -2,8 +2,6 @@
 
 [Cover](./cover.md)
 
-[Setting Up Your Machine](./setup.md)
-
 ---
 
 # Software Logic
@@ -49,3 +47,9 @@
 ## Unit 6: Curry-Howard
 
 - [The Curry-Howard Correspondence](./FPCourse/T06_StreamsAndCurryHoward/Week14_CurryHoward.md)
+
+---
+
+# Appendix
+
+- [Accessibility](./accessibility.md)

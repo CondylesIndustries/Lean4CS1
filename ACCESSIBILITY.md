@@ -68,7 +68,7 @@ with their upstream tracking issues.
 The assurance is a build gate, not a periodic audit, so a regression cannot reach the
 published site between reviews.
 
-**What runs.** [`scripts/a11y_check.py`](scripts/a11y_check.py) serves the built book,
+**What runs.** [`scripts/a11y_check.py`](https://github.com/kevinsullivan/Lean4CS1/blob/main/scripts/a11y_check.py) serves the built book,
 drives it in headless Chromium, and runs [axe-core](https://github.com/dequelabs/axe-core)
 against the rule tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa` and `section508`.
 
@@ -77,7 +77,7 @@ against the rule tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa` and `section508
 - **Locally**, as `make a11y`. The target depends on `build`, so it can never audit a
   stale `book/`.
 - **In continuous integration**, as the *Check accessibility* step of
-  [`.github/workflows/mdbook.yml`](.github/workflows/mdbook.yml), positioned between the
+  [`.github/workflows/mdbook.yml`](https://github.com/kevinsullivan/Lean4CS1/blob/main/.github/workflows/mdbook.yml), positioned between the
   build and the upload. **A violation on a gated page fails the job, and nothing is
   published.** The site cannot regress into non-conformance without the deploy stopping.
 
@@ -120,7 +120,11 @@ templates.
 | Sidebar toggle is a `<label>` carrying ARIA attributes not permitted on that element | 4.1.2 Name, Role, Value (A) | every generated page | [#2615](https://github.com/rust-lang/mdBook/issues/2615), fix proposed in [PR #3078](https://github.com/rust-lang/mdBook/pull/3078) |
 | No bypass block to skip the repeated sidebar and header | 2.4.1 Bypass Blocks (A) | every generated page | [#2107](https://github.com/rust-lang/mdBook/issues/2107), fix proposed in [PR #2144](https://github.com/rust-lang/mdBook/pull/2144) |
 | Scrollable code and table regions are not keyboard focusable | 2.1.1 Keyboard (A) | chapters with wide code or tables | [#1789](https://github.com/rust-lang/mdBook/issues/1789) |
-| Task-list checkboxes render as `<input disabled type="checkbox">` with no label | 3.3.2 Labels or Instructions (A) | `setup.html` (7 instances) | **not yet reported upstream** |
+
+A fourth defect — task-list checkboxes rendering as `<input disabled type="checkbox">`
+with no label, failing 3.3.2 Labels or Instructions (A) — no longer occurs, the only page
+using task lists having been removed. It remains an unreported mdBook bug and would
+reappear if `- [ ]` syntax is used again.
 
 PR #3078 is mergeable and awaiting review; PR #2144 currently conflicts. Neither has
 merged, so **remediation here does not depend on upstream**: mdBook supports replacing
