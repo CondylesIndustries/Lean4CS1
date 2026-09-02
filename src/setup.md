@@ -224,9 +224,41 @@ Address** column on the row labeled **mdBook**. Whatever it says is the
 address that works. Right-click that row and choose **Open in Browser**, or
 copy the address.
 
-To keep everything in one window, run **Simple Browser: Show** from the
-Command Palette and paste that same address, then drag the tab to the right
-half of the editor.
+**Then put the book beside the source, not on top of it.** The order of
+these steps matters; dragging tabs around is the unreliable way to do it.
+
+1. Open the chapter you are working on, so that a `.lean` file is the
+   active editor.
+2. From the Command Palette, run **Simple Browser: Show** and paste the
+   forwarded address. The browser opens as a tab in the *same* column, so
+   it hides the source. That is expected; the next step fixes it.
+3. With the Simple Browser tab still focused, run **View: Move Editor into
+   Next Group** from the Command Palette. VS Code creates a second column
+   on the right and moves the browser into it.
+4. Click the `.lean` tab in the left column. Both are now visible at once,
+   with no tab switching.
+
+Dragging works too, but only if you drop the tab on the right *edge* of the
+editor area, where a vertical highlight appears down the side. Dropped
+anywhere else, the tab joins the column it came from and you are back to
+flipping between tabs.
+
+The book page for a chapter follows the source path exactly. Editing
+
+    FPCourse/T01_ExpressionsFunctionsRecursion/Week00_AlgebraicTypes.lean
+
+corresponds to
+
+    .../FPCourse/T01_ExpressionsFunctionsRecursion/Week00_AlgebraicTypes.html
+
+in the book, so you can edit the address directly rather than clicking
+through the sidebar.
+
+**The Lean infoview competes for the same column.** It also opens beside
+the source, so with the book already there you can end up with three narrow
+columns and no room to read. Toggle it off while reading and back on while
+working a proof: **Lean 4: Toggle Infoview**, or `Ctrl+Shift+Enter`
+(`Cmd+Shift+Enter` on macOS).
 
 The server rebuilds and refreshes automatically as files change. Leave it
 running while you work. If you stop it, or close the terminal it is running
