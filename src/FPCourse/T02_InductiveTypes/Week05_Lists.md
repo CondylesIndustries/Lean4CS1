@@ -4,7 +4,7 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.List.Lemmas
 ```
 
-# Week 5: Lists
+# Lists
 
 ## Lists as the canonical inductive type
 

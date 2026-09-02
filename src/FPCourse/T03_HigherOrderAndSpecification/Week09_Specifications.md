@@ -6,7 +6,7 @@ import Mathlib.Data.List.Pairwise
 open scoped List
 ```
 
-# Week 9: Specifications in Practice
+# Specifications in Practice
 
 ## What is a correct sort?
 

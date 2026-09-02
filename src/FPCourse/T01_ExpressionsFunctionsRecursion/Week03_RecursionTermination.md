@@ -4,7 +4,7 @@ import Mathlib.Data.Nat.Basic
 import Mathlib.Tactic.Ring
 ```
 
-# Week 3: Recursion and Termination
+# Recursion and Termination
 
 ## Structural recursion
 

@@ -4,7 +4,7 @@ import Mathlib.Data.List.Basic
 import Mathlib.Logic.Basic
 ```
 
-# Week 14: The Curry-Howard Correspondence
+# The Curry-Howard Correspondence
 
 ## Naming what you already know
 

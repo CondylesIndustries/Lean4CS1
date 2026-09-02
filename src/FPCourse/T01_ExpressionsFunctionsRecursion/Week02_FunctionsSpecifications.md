@@ -4,7 +4,7 @@ import Mathlib.Data.Nat.Basic
 import Mathlib.Logic.Basic
 ```
 
-# Week 2: Functions and Specifications
+# Functions and Specifications
 
 ## The dual reading of →
 
