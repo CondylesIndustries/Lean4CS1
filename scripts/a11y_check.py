@@ -14,6 +14,7 @@ Usage:  python3 scripts/a11y_check.py [build-dir]
 """
 import http.server
 import pathlib
+import re
 import socket
 import socketserver
 import sys
@@ -46,6 +47,30 @@ def serve(directory):
     return httpd, f"http://127.0.0.1:{port}"
 
 
+def check_source_invariants():
+    """Fail if the Markdown reintroduces a defect the accessibility statement says is gone.
+
+    ACCESSIBILITY.md records that Markdown task lists were replaced with plain bullets,
+    because mdBook renders `- [ ]` as <input disabled type="checkbox"> with no accessible
+    name (WCAG 4.1.2 Name, Role, Value, Level A).  Nothing stops someone typing `- [ ]`
+    again, which would silently make the published statement false, so the build checks
+    rather than trusts.
+    """
+    pattern = re.compile(r"^\s*[-*+]\s+\[[ xX]\]\s", re.M)
+    offenders = []
+    for md in sorted(pathlib.Path("src").rglob("*.md")):
+        for n, line in enumerate(md.read_text(encoding="utf-8").splitlines(), 1):
+            if pattern.match(line):
+                offenders.append(f"{md}:{n}: {line.strip()[:60]}")
+    if offenders:
+        print("  task-list syntax found -- mdBook renders these as unlabelled checkboxes:")
+        for o in offenders:
+            print(f"    {o}")
+        print("  Either write them as plain bullets, or update ACCESSIBILITY.md, which"
+              "\n  currently states this defect has been remediated.")
+    return len(offenders)
+
+
 def main():
     build = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "book")
     if not build.is_dir():
@@ -56,8 +81,8 @@ def main():
         sys.exit("error: playwright not installed.\n"
                  "  pip install playwright && python3 -m playwright install --with-deps chromium")
 
+    failures = check_source_invariants()
     httpd, base = serve(build)
-    failures = 0
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(args=["--no-sandbox"])
@@ -87,7 +112,7 @@ def main():
         httpd.shutdown()
 
     if failures:
-        print(f"\nFAIL: {failures} violation type(s) on pages authored here.")
+        print(f"\nFAIL: {failures} accessibility problem(s) in material authored here.")
         return 1
     print("\nOK: every authored page passes WCAG 2.1 AA and Section 508.")
     return 0
