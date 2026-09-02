@@ -120,11 +120,7 @@ templates.
 | Sidebar toggle is a `<label>` carrying ARIA attributes not permitted on that element | 4.1.2 Name, Role, Value (A) | every generated page | [#2615](https://github.com/rust-lang/mdBook/issues/2615), fix proposed in [PR #3078](https://github.com/rust-lang/mdBook/pull/3078) |
 | No bypass block to skip the repeated sidebar and header | 2.4.1 Bypass Blocks (A) | every generated page | [#2107](https://github.com/rust-lang/mdBook/issues/2107), fix proposed in [PR #2144](https://github.com/rust-lang/mdBook/pull/2144) |
 | Scrollable code and table regions are not keyboard focusable | 2.1.1 Keyboard (A) | chapters with wide code or tables | [#1789](https://github.com/rust-lang/mdBook/issues/1789) |
-
-A fourth defect — task-list checkboxes rendering as `<input disabled type="checkbox">`
-with no label, failing 3.3.2 Labels or Instructions (A) — no longer occurs, the only page
-using task lists having been removed. It remains an unreported mdBook bug and would
-reappear if `- [ ]` syntax is used again.
+| Task-list checkboxes render as `<input disabled type="checkbox">` with no label | 3.3.2 Labels or Instructions (A) | `setup.html` (8 instances) | **not reported upstream** |
 
 PR #3078 is mergeable and awaiting review; PR #2144 currently conflicts. Neither has
 merged, so **remediation here does not depend on upstream**: mdBook supports replacing
