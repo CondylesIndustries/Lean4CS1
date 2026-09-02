@@ -30,6 +30,10 @@ convert: $(BUILD_FILES)
 build:
 	mdbook build
 
+# Regenerate the Slack copy-paste page from the Slack text
+slack:
+	@python3 scripts/make_slack_html.py
+
 # Accessibility gate over the built book.  Pages authored here must pass
 # WCAG 2.1 AA and Section 508; mdBook's own pages are reported but do not fail
 # the build, since their violations come from the upstream theme.  Needs
@@ -59,4 +63,4 @@ clean-md:
 clean:
 	rm -rf $(GENERATED_MD) book/
 
-.PHONY: all convert build a11y canvas serve clean-md clean
+.PHONY: all convert build a11y slack canvas serve clean-md clean
