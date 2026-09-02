@@ -28,9 +28,11 @@ strictly partition values into such classes.
 `Bool` classifies `true` and `false`.  When you encounter a type, ask:
 *what values of this type can exist?*
 
-This course is organized around six kinds of types.  Every data structure
-in computing is built from some combination of these six.  And every
-proposition in propositional logic is expressed by the same six constructors.
+This course is organized around six kinds of types.  These types are
+sufficient to support a broad range of programming needs.  Moreover, we will
+see that the logical analogs of these types provide a basis for expressing
+mathematical propositions in the language we can call higher-order predicate
+logic.
 
 This is not an analogy.  It is the same language, read two ways.
 
