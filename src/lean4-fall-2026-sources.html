@@ -1,4 +1,6 @@
-<title>Lean 4, Fall 2026</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lean 4, Fall 2026 — Sources</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
   :root {
@@ -23,7 +25,7 @@
   }
 
   * { box-sizing: border-box; }
-  body { background: var(--paper); color: var(--ink); font-family: var(--sans);
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans);
     line-height: 1.55; }
 
   .doc { max-width: 42rem; margin: 0 auto;
@@ -74,131 +76,21 @@
     border-bottom-color: var(--accent); }
   a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .qed { color: var(--accent); }
+  .more { color: var(--accent); text-decoration: none;
+    border-bottom: 1px solid currentColor; }
 </style>
 
 <article class="doc">
 
   <header>
-    <h1>Lean 4, Fall 2026</h1>
-    <p class="byline">From: Sullivan &nbsp;·&nbsp; September 2, 2026</p>
+    <h1>Sources</h1>
+    <p class="byline"><a class="more" href="lean4-fall-2026.html">&larr; Lean 4, Fall 2026</a></p>
   </header>
 
-  <p class="note">Every once in a while I try to take a quick snapshot of where we are today
-  regarding the impact of Lean 4 beyond research. The numbers here could be off, so don't quote
-  them, but they're ballpark right at a glance. This'll go to students in class, but figured I'd
-  post it here, too, FYI. Best wishes for a good Fall.</p>
+  <p class="foot">Each citation was retrieved and read against the claim it supports, not merely
+  checked for a live URL. Figures are quoted from the cited page. Where a claim and a source
+  parted company, the claim was cut or re-sourced rather than kept. Retrieved 2 September 2026.</p>
 
-  <section>
-    <h2>Production software, formally verified</h2>
-    <div class="entry">
-      <div class="line"><span class="name">Microsoft</span><span class="val">$3.69T<sup><a href="#s2">2</a></sup></span></div>
-      <p class="act">Originated Lean. <strong>Aeneas</strong>-based Lean verification of Rust SymCrypt:
-        "complete proofs for the Rust ML-KEM and SHA3 code that is being used in insiders builds of
-        Windows today"<sup><a href="#s13">13</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Amazon / AWS</span><span class="val">$2.75T<sup><a href="#s3">3</a></sup></span></div>
-      <p class="act"><strong>Cedar</strong> authorization language, modelled in Lean and differentially
-        tested against the production Rust<sup><a href="#s14">14</a></sup>; the proofs found 4 validator
-        bugs and testing found 21 more<sup><a href="#s15">15</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Nethermind</span><span class="val">Private</span></div>
-      <p class="act">EVM and Yul semantics in Lean, "passing 99.99% (22,330/22,332) of these Cancun
-        execution tests"<sup><a href="#s27">27</a></sup>; <strong>Halva</strong> found a Keccak-256 bug
-        in Scroll's circuit<sup><a href="#s28">28</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Galois</span><span class="val">Private</span></div>
-      <p class="act"><strong>FVSpec</strong> — 2,772 property-based tests translated into "9,415 Lean 4
-        specifications"<sup><a href="#s29">29</a></sup>; released under the GaloisInc
-        organization<sup><a href="#s30">30</a></sup></p>
-    </div>
-  </section>
-
-  <section>
-    <h2>AI solving already-formalized problems</h2>
-    <div class="entry">
-      <div class="line"><span class="name">ByteDance</span><span class="val">&gt;$600B<sup><a href="#s6">6</a></sup><span class="tag">proposed sale</span></span></div>
-      <p class="act"><strong>BFS-Prover</strong> — best-first search over Lean 4, open-sourced;
-        72.95% on MiniF2F<sup><a href="#s18">18</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Tencent</span><span class="val">$503B<sup><a href="#s7">7</a></sup></span></div>
-      <p class="act"><strong>HunyuanProver</strong> — scalable data synthesis with guided tree search
-        for automated theorem proving<sup><a href="#s19">19</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">DeepSeek</span><span class="val">~$74B<sup><a href="#s8">8</a></sup><span class="tag">round open</span></span></div>
-      <p class="act"><strong>DeepSeek-Prover-V2</strong> — subgoal decomposition by reinforcement
-        learning; 88.9% on MiniF2F-test<sup><a href="#s20">20</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Moonshot AI</span><span class="val">~$50B<sup><a href="#s9">9</a></sup><span class="tag">round open, pre-money</span></span></div>
-      <p class="act"><strong>Kimina-Prover</strong> — "developed by Project Numina and Kimi teams &hellip;
-        in Lean 4"<sup><a href="#s21">21</a></sup></p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Informal mathematics into formal</h2>
-    <div class="entry">
-      <div class="line"><span class="name">Google DeepMind</span><span class="val">Alphabet $4.13T<sup><a href="#s1">1</a></sup></span></div>
-      <p class="act"><strong>AlphaProof</strong> — reinforcement learning over Lean; olympiad-level
-        formal reasoning, published in <em>Nature</em><sup><a href="#s12">12</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Mistral AI</span><span class="val">~$23B<sup><a href="#s10">10</a></sup><span class="tag">reported, in talks</span></span></div>
-      <p class="act"><strong>Leanstral</strong> — "the first open-source code agent designed for Lean 4",
-        weights under Apache 2.0, evaluated on the Fermat's Last Theorem
-        project<sup><a href="#s22">22</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Harmonic</span><span class="val">$1.45B<sup><a href="#s11">11</a></sup></span></div>
-      <p class="act"><strong>Aristotle</strong> — "among the first AI models to achieve formally verified
-        gold medal-level performance on the 2025 International Mathematical
-        Olympiad"<sup><a href="#s23">23</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Math, Inc.</span><span class="val">Undisclosed</span></div>
-      <p class="act"><strong>Gauss</strong> completed "a challenge set by Fields Medallist Terence Tao and
-        Alex Kontorovich &hellip; to formalize the strong Prime Number Theorem (PNT) in
-        Lean"<sup><a href="#s24">24</a></sup>; <strong>OpenGauss</strong> released
-        MIT-licensed<sup><a href="#s25">25</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">Huawei</span><span class="val">Employee-owned</span></div>
-      <p class="act"><strong>Mathesis</strong> — natural language to Lean 4 via an RL-trained
-        autoformalizer<sup><a href="#s26">26</a></sup></p>
-    </div>
-  </section>
-
-  <section>
-    <h2>New mathematics, machine-checkable</h2>
-    <div class="entry">
-      <div class="line"><span class="name">Anthropic</span><span class="val">$965B<sup><a href="#s4">4</a></sup></span></div>
-      <p class="act">Claude raised a lower bound on zeta zeros "from 41.6% to 67.2%"; the Lean
-        formalization "passes the standard validation tool comparator"<sup><a href="#s16">16</a></sup></p>
-    </div>
-    <div class="entry">
-      <div class="line"><span class="name">OpenAI</span><span class="val">$852B<sup><a href="#s5">5</a></sup></span></div>
-      <p class="act">Public repository of "Lean certificates accompanying ten proofs in mathematics and
-        theoretical computer science"<sup><a href="#s17">17</a></sup></p>
-    </div>
-  </section>
-
-  <p class="foot">Market capitalizations retrieved 2 September 2026, in USD. Tencent is reported by
-  some aggregators at roughly twice the figure above; this follows the exchange's own arithmetic —
-  HKD 438.20 &times; 9.00B shares = HKD 3.94T, about $503B.<sup><a href="#s7">7</a></sup> Italic tags
-  mark figures that are not completed rounds. The boundaries between these four groups are soft:
-  Harmonic, Mistral and Google DeepMind — and increasingly OpenAI and Anthropic — work across
-  specification, formalization and proof at once. <span class="qed">&#8718;</span></p>
-
-  <section>
-    <h2>Sources</h2>
-    <p class="foot">Each citation was retrieved and read against the claim it supports, not merely
-    checked for a live URL. Where a claim and a source parted company, the claim was cut or
-    re-sourced.</p>
     <div class="bib">
       <div id="s1"><b>1</b>StockAnalysis. &ldquo;Alphabet (GOOGL) Market Cap.&rdquo; Retrieved 2 September 2026. <a href="https://stockanalysis.com/stocks/googl/market-cap/">stockanalysis.com/stocks/googl/market-cap</a></div>
       <div id="s2"><b>2</b>StockAnalysis. &ldquo;Microsoft (MSFT) Market Cap.&rdquo; Retrieved 2 September 2026. <a href="https://stockanalysis.com/stocks/msft/market-cap/">stockanalysis.com/stocks/msft/market-cap</a></div>
@@ -231,6 +123,5 @@
       <div id="s29"><b>29</b>Dougherty, Quinn, Max von Hippel, Simon Henniger, Hazel Shackleton and Mike Dodds. &ldquo;FVSpec: Real-World Property-Based Tests as Lean Challenges.&rdquo; arXiv:2606.01008, 31 May 2026 (rev. 17 August 2026). <a href="https://arxiv.org/abs/2606.01008">arxiv.org/abs/2606.01008</a></div>
       <div id="s30"><b>30</b>Galois, Inc. &ldquo;fvspec: Benchmark suite for helping evaluate how AIs perform on formal verification related tasks.&rdquo; GitHub. <a href="https://github.com/GaloisInc/fvspec">github.com/GaloisInc/fvspec</a></div>
     </div>
-  </section>
 
 </article>
