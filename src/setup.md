@@ -290,13 +290,17 @@ Steps 1 through 6 leave you able to work. This step connects the course
 repository to your editor, so that new assignments, corrections, and answers
 to other students' questions reach you where you are already working.
 
-**Nothing here needs installing.** The container already supplies both
-extensions this step uses — **GitHub Pull Requests and Issues** and
-**GitLens** — along with the rest of the course toolchain. If you go looking
-for them in the Extensions view — the Extensions icon in the Activity Bar,
-or `Ctrl+Shift+X`, `Cmd+Shift+X` on a Mac — look under the
-**Dev Container: CS1** heading rather than **Local**: an extension installed locally does not run in
-the container window, which is where you work.
+**Nothing in this step needs installing.** The container already supplies
+both extensions it uses — **GitHub Pull Requests and Issues** and
+**GitLens** — exactly as it supplies Lean 4 and the rest of the toolchain.
+They are there the moment the container finishes building.
+
+If you open the Extensions view to look for them — the Extensions icon in
+the Activity Bar, or `Ctrl+Shift+X` (`Cmd+Shift+X` on a Mac) — find them
+under the **Dev Container: CS1** heading rather than **Local**. An extension
+installed locally does not run in the container window, which is where you
+work, so installing either one by hand would leave you with a copy in the
+wrong place and no visible benefit.
 
 ### Sign in to GitHub
 
