@@ -1,10 +1,26 @@
-# Setting Up Your Machine
+# Getting Started
 
-Everything in this course runs inside a **development container** — a
-preconfigured Linux environment, defined by files in this repository, that
+This online book is generated from literate code (see Knuth) written
+in the dependently typed, mathematical-supporting programming language
+called Lean 4. At the top of the page, from the left, the hamburger menu
+shows/hides the table of contents; the paintbrush icon is for changing
+the color scheme; the magnifying icon is for text search over this book;
+the printer icon is for printing it (or saving it as a PDF for offline
+reading); and the last, GitHb, icon takes you to the GitHub repo where
+this book is stored.
+
+Everything in this course runs inside a Docker **development container,**
+a preconfigured Linux environment defined by files in this repository, that
 Docker builds on your laptop. You do not install Lean, Mathlib, or the book
 tooling yourself. You install Docker and VS Code, open this project, and let
 the container supply the rest.
+
+The best way to use this book is to open it in a browser within
+VSCode, right alongside the Lean 4 code that was processed to create
+it. To be able to do that, follow the directions here. In a nutshell,
+you will fork our repo, clone your fork of our repo, open your clone
+in VSCode; activate the Dev Containers VSCode plug-in; start up the
+"container"; then arrange your editor layout. Voila! Up and running.
 
 The benefit is that every student has an identical environment with fairly low effort.
 
@@ -15,12 +31,12 @@ you need it.
 
 You need four things on your laptop. Install them in this order.
 
-| | What | Notes |
-|---|---|---|
-| 1 | A [GitHub account](https://github.com/signup) | Free. Use an address you check. |
-| 2 | [Git](https://git-scm.com/downloads) | Already present on macOS and most Linux systems. Check with `git --version`. |
-| 3 | [Docker Desktop](https://www.docker.com/products/docker-desktop/) | The container engine. Choose the build matching your chip — Apple Silicon or Intel on macOS. |
-| 4 | [Visual Studio Code](https://code.visualstudio.com/) | The editor. |
+|     | What                                                              | Notes                                                                                        |
+| --- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 1   | A [GitHub account](https://github.com/signup)                     | Free. Use an address you check.                                                              |
+| 2   | [Git](https://git-scm.com/downloads)                              | Already present on macOS and most Linux systems. Check with `git --version`.                 |
+| 3   | [Docker Desktop](https://www.docker.com/products/docker-desktop/) | The container engine. Choose the build matching your chip — Apple Silicon or Intel on macOS. |
+| 4   | [Visual Studio Code](https://code.visualstudio.com/)              | The editor.                                                                                  |
 
 Then install one VS Code extension by hand — the
 [**Dev Containers**](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
@@ -78,10 +94,10 @@ git config --global core.longpaths true
 
 What each one does:
 
-| Setting | Why |
-|---|---|
-| `core.autocrlf false` | Stops Git rewriting LF to CRLF on checkout. Files stay exactly as the repository stores them. |
-| `core.eol lf` | Makes LF the line ending Git writes, so files you create match the rest of the repository. |
+| Setting               | Why                                                                                                                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `core.autocrlf false` | Stops Git rewriting LF to CRLF on checkout. Files stay exactly as the repository stores them.                                                                                   |
+| `core.eol lf`         | Makes LF the line ending Git writes, so files you create match the rest of the repository.                                                                                      |
 | `core.longpaths true` | Lifts Windows' 260-character path limit. Mathlib's nested paths under `.lake/packages/` exceed it, and without this the toolchain fails with confusing "file not found" errors. |
 
 Confirm they took effect:
@@ -205,11 +221,11 @@ the live, type-checked Lean source on the other.
 You never call mdBook directly. Three `make` targets, run from the project
 root in the container terminal, cover everything you need:
 
-| Command | What it does |
-|---|---|
-| `make build` | Renders the book once, into `book/`, then stops. |
+| Command      | What it does                                                                                                                                     |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `make build` | Renders the book once, into `book/`, then stops.                                                                                                 |
 | `make serve` | Renders it and keeps serving it, rebuilding and refreshing the page whenever a file under `src/` changes. This is the one to use while studying. |
-| `make clean` | Deletes what those two generate — `book/`, and the Markdown produced from the Lean sources — so the next build starts from nothing. |
+| `make clean` | Deletes what those two generate — `book/`, and the Markdown produced from the Lean sources — so the next build starts from nothing.              |
 
 Both `make build` and `make serve` render the Markdown that is already in
 `src/`. The chapters are themselves generated from the `.lean` files, so
@@ -434,20 +450,20 @@ If the update changes `lean-toolchain` or `lake-manifest.json`, run
 
 ## When something goes wrong
 
-| Symptom | Likely cause and remedy |
-|---|---|
-| "Cannot connect to the Docker daemon" | Docker Desktop is not running. Start it and retry. |
-| Container build fails partway | Usually disk or memory. Free space, raise Docker's memory limit, then run **Dev Containers: Rebuild Container**. |
-| No Lean infoview; no red squiggles | The Lean extension has not activated. Open a `.lean` file and wait; if nothing happens, run **Developer: Reload Window**. |
-| `lake: command not found` | The toolchain is not installed yet. Complete step 5, then open a fresh terminal. |
-| Build runs for hours | Mathlib is compiling from source. `Ctrl+C`, then `lake exe cache get`. |
-| `bash\r: command not found`, or scripts failing oddly (Windows) | Files were checked out with CRLF line endings. Apply the Git settings in step 3, then delete the folder and clone again. |
-| "File name too long" or missing files under `.lake` (Windows) | `core.longpaths` is not set. Run `git config --global core.longpaths true`. |
-| `ERR_CONNECTION_REFUSED` in the browser | Most often you used `http://localhost:3000` instead of the **Local Address** from the **PORTS** panel — they are usually different ports. Failing that, mdBook was started without `-n 0.0.0.0` and is listening on IPv6 loopback only; stop it with `Ctrl+C` and rerun `make serve`. |
-| The page is completely blank, with no error message at all | The forward is alive but nothing is answering behind it: mdBook is not running. It was stopped, or the terminal it started in was closed. Rerun `make serve`. |
-| No **mdBook** row in the **PORTS** panel | The forward was never established. Click **Forward a Port** in that panel and enter `3000`, or run `"$BROWSER" http://localhost:3000/` in the container terminal, which asks VS Code to create the forward and open it. |
-| The GitHub view shows only **Login** | You are not signed in. Click **Sign in** in that view and authorize VS Code in the browser. |
-| The **Issues** list is empty | The query names your fork rather than the course repository. Forks start with no issues and have the Issues tab off by default; use the literal `repo:kevinsullivan/Lean4CS1` shown in step 7. |
+| Symptom                                                         | Likely cause and remedy                                                                                                                                                                                                                                                               |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Cannot connect to the Docker daemon"                           | Docker Desktop is not running. Start it and retry.                                                                                                                                                                                                                                    |
+| Container build fails partway                                   | Usually disk or memory. Free space, raise Docker's memory limit, then run **Dev Containers: Rebuild Container**.                                                                                                                                                                      |
+| No Lean infoview; no red squiggles                              | The Lean extension has not activated. Open a `.lean` file and wait; if nothing happens, run **Developer: Reload Window**.                                                                                                                                                             |
+| `lake: command not found`                                       | The toolchain is not installed yet. Complete step 5, then open a fresh terminal.                                                                                                                                                                                                      |
+| Build runs for hours                                            | Mathlib is compiling from source. `Ctrl+C`, then `lake exe cache get`.                                                                                                                                                                                                                |
+| `bash\r: command not found`, or scripts failing oddly (Windows) | Files were checked out with CRLF line endings. Apply the Git settings in step 3, then delete the folder and clone again.                                                                                                                                                              |
+| "File name too long" or missing files under `.lake` (Windows)   | `core.longpaths` is not set. Run `git config --global core.longpaths true`.                                                                                                                                                                                                           |
+| `ERR_CONNECTION_REFUSED` in the browser                         | Most often you used `http://localhost:3000` instead of the **Local Address** from the **PORTS** panel — they are usually different ports. Failing that, mdBook was started without `-n 0.0.0.0` and is listening on IPv6 loopback only; stop it with `Ctrl+C` and rerun `make serve`. |
+| The page is completely blank, with no error message at all      | The forward is alive but nothing is answering behind it: mdBook is not running. It was stopped, or the terminal it started in was closed. Rerun `make serve`.                                                                                                                         |
+| No **mdBook** row in the **PORTS** panel                        | The forward was never established. Click **Forward a Port** in that panel and enter `3000`, or run `"$BROWSER" http://localhost:3000/` in the container terminal, which asks VS Code to create the forward and open it.                                                               |
+| The GitHub view shows only **Login**                            | You are not signed in. Click **Sign in** in that view and authorize VS Code in the browser.                                                                                                                                                                                           |
+| The **Issues** list is empty                                    | The query names your fork rather than the course repository. Forks start with no issues and have the Issues tab off by default; use the literal `repo:kevinsullivan/Lean4CS1` shown in step 7.                                                                                        |
 
 Still stuck? Bring the exact command you ran and the exact message you saw —
 copy the text rather than describing it — and ask in office hours or by
