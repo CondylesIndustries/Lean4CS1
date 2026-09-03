@@ -17,8 +17,10 @@ all: $(BUILD_FILES)
 	mdbook build
 	@$(MAKE) --no-print-directory canvas
 
-# Rule: .lean → src/%.md
-$(BUILD_FILES): src/%.md: %.lean
+# Rule: .lean → src/%.md.  The converter is a prerequisite too: it decides the
+# markup around every page (the closing "Report an issue" box, for one), so a
+# change to it has to re-run over sources that are themselves unchanged.
+$(BUILD_FILES): src/%.md: %.lean scripts/convert.py
 	@mkdir -p $(dir $@)
 	echo "Converting $< into $@"
 	python3 scripts/convert.py $< $@
