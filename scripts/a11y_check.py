@@ -24,8 +24,7 @@ AXE = "https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.2/axe.min.js"
 TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "section508"]
 
 # Pages authored here, which must stay clean.
-GATED = ["/lean4-fall-2026.html", "/lean4-fall-2026-sources.html",
-         "/lean4-fall-2026-slack.html"]
+GATED = ["/lean4-fall-2026.html", "/lean4-fall-2026-sources.html"]
 # A representative sample of mdBook output, reported only.
 REPORTED = ["/index.html", "/cover.html", "/setup.html",
             "/SoftwareLogic/index.html", "/accessibility.html"]

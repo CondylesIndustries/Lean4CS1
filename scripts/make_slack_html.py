@@ -14,7 +14,7 @@ import pathlib
 import re
 
 SRC = pathlib.Path("lean4-fall-2026.slack.txt")
-DST = pathlib.Path("src/lean4-fall-2026-slack.html")
+DST = pathlib.Path("lean4-fall-2026-slack.html")  # repo root: NOT published
 MARKUP = pathlib.Path("lean4-fall-2026.slack-markup.txt")
 BASE = "https://kevinsullivan.github.io/Lean4CS1/lean4-fall-2026-sources.html"
 
