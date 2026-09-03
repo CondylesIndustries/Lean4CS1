@@ -34,6 +34,14 @@ build:
 slack:
 	@python3 scripts/make_slack_html.py
 
+# Serve the Slack copy-paste page locally.  It is deliberately not part of the
+# book -- it is working material, not course material -- so it is served on its
+# own port.  Open the forwarded address, select the content, copy, paste into
+# Slack: the tables and the clickable source numbers both survive.
+slack-serve: slack
+	@echo "Open http://localhost:8800/lean4-fall-2026-slack.html (see the PORTS panel)"
+	@python3 -m http.server 8800 --bind 0.0.0.0
+
 # Accessibility gate over the built book.  Pages authored here must pass
 # WCAG 2.1 AA and Section 508; mdBook's own pages are reported but do not fail
 # the build, since their violations come from the upstream theme.  Needs
@@ -63,4 +71,4 @@ clean-md:
 clean:
 	rm -rf $(GENERATED_MD) book/
 
-.PHONY: all convert build a11y slack canvas serve clean-md clean
+.PHONY: all convert build a11y slack slack-serve canvas serve clean-md clean
