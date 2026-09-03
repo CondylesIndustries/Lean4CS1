@@ -57,8 +57,21 @@ def main():
     body, buf = [], []
 
     def flush():
+        """Emit a real <table>.  Slack renders pasted tabular data as a table;
+        a <ul> would arrive as a list of long lines, which is what it looked like before."""
         if buf:
-            body.append("<ul>\n" + "\n".join(f"  <li>{b}</li>" for b in buf) + "\n</ul>")
+            trs = []
+            for b in buf:
+                name, sep, tail = b.partition(" — ")
+                val, sep2, work = tail.partition(" — ")
+                if sep and sep2:
+                    trs.append(f"    <tr><td><b>{name}</b></td><td>{val}</td><td>{work}</td></tr>")
+                else:
+                    trs.append(f'    <tr><td colspan="3">{b}</td></tr>')
+            body.append(
+                "<table>\n  <thead><tr><th>Organization</th><th>Valuation</th>"
+                "<th>Lean 4 work</th></tr></thead>\n  <tbody>\n"
+                + "\n".join(trs) + "\n  </tbody>\n</table>")
             buf.clear()
 
     for i, line in enumerate(lines):
@@ -84,7 +97,10 @@ def main():
         "  h1 { font-size: 1.5rem; margin: 0 0 .25rem; }\n"
         "  .hint { background: #eef1f8; border-left: 3px solid #3547a8; padding: .75rem 1rem;\n"
         "    font-size: .88rem; margin: 0 0 1.75rem; }\n"
-        "  ul { padding-left: 1.2rem; } li { margin-bottom: .5rem; }\n"
+        "  table { border-collapse: collapse; width: 100%; margin: 0 0 1.5rem; font-size: .9rem; }\n"
+        "  th, td { border: 1px solid #ccd2e0; padding: .4rem .55rem; text-align: left;\n"
+        "    vertical-align: top; }\n"
+        "  th { background: #eef1f8; }\n"
         "  a { color: #3547a8; }\n</style>\n</head>\n<body>\n<main>\n"
         '<p class="hint">Select all of the text below this box, copy, and paste into Slack. '
         "Because you are copying from a rendered page, Slack keeps the bold headings and the "
