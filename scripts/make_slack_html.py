@@ -15,6 +15,7 @@ import re
 
 SRC = pathlib.Path("lean4-fall-2026.slack.txt")
 DST = pathlib.Path("src/lean4-fall-2026-slack.html")
+MARKUP = pathlib.Path("lean4-fall-2026.slack-markup.txt")
 BASE = "https://kevinsullivan.github.io/Lean4CS1/lean4-fall-2026-sources.html"
 
 
@@ -25,8 +26,34 @@ def linkify(s):
     return s
 
 
+def write_markup(lines):
+    """Emit the same message in Slack mrkdwn, for readers who have
+    Preferences > Advanced > "Format messages with markup" switched on."""
+    out = []
+    for i, line in enumerate(lines):
+        if i == 0:
+            out.append(f"*{line}*")
+        elif i == 1:
+            out.append(f"_{line}_")
+        elif line.startswith("• "):
+            rest = line[2:]
+            name, sep, tail = rest.partition(" — ")
+            tail = re.sub(r"\((round open[^)]*|proposed sale|reported, in talks)\)",
+                          r"_(\1)_", tail)
+            out.append(f"• *{name}*{sep}{tail}" if sep else f"• {rest}")
+        elif line.endswith(":") and not line.startswith("http"):
+            out.append(f"*{line[:-1]}*")
+        elif line.startswith("Market caps retrieved"):
+            out.append(f"_{line}_")
+        else:
+            out.append(line)
+    MARKUP.write_text("\n".join(out) + "\n", encoding="utf-8")
+    print(f"  wrote {MARKUP} — {sum(l.count('*') for l in out)//2} bold spans")
+
+
 def main():
     lines = SRC.read_text(encoding="utf-8").splitlines()
+    write_markup(lines)
     body, buf = [], []
 
     def flush():
