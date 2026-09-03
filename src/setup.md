@@ -9,7 +9,7 @@ The hamburger (three-line-stack) menu shows/hides the table of contents;
 the paintbrush icon is for changing the presentation color scheme; the
 magnifying icon is for text search over this book; the printer icon is
 for printing it (or saving it as a PDF for offline reading); and the last,
-GitHb, icon takes you to the GitHub repo where this book is stored.
+GitHub, icon takes you to the GitHub repo where this book is stored.
 
 Everything in this course runs inside a Docker **development container,**
 a preconfigured Linux environment defined by files in this repository, that
