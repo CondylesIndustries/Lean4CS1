@@ -27,7 +27,8 @@ TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "section508"]
 GATED = ["/lean4-fall-2026.html", "/lean4-fall-2026-sources.html"]
 # A representative sample of mdBook output, reported only.
 REPORTED = ["/index.html", "/cover.html", "/setup.html",
-            "/SoftwareLogic/index.html", "/accessibility.html"]
+            "/SoftwareLogic/index.html", "/accessibility.html",
+            "/lean4-industry.html"]
 
 
 def serve(directory):

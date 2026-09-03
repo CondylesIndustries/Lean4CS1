@@ -39,8 +39,8 @@ slack:
 # own port.  Open the forwarded address, select the content, copy, paste into
 # Slack: the tables and the clickable source numbers both survive.
 slack-serve: slack
-	@echo "Open http://localhost:8800/lean4-fall-2026-slack.html (see the PORTS panel)"
-	@python3 -m http.server 8800 --bind 0.0.0.0
+	@echo "Open http://localhost:8080/lean4-fall-2026-slack.html (see the PORTS panel)"
+	@python3 -m http.server 8080 --bind 0.0.0.0
 
 # Accessibility gate over the built book.  Pages authored here must pass
 # WCAG 2.1 AA and Section 508; mdBook's own pages are reported but do not fail

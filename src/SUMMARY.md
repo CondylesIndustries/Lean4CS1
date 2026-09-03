@@ -54,4 +54,5 @@
 
 # Appendix
 
+- [Lean 4 beyond research](./lean4-industry.md)
 - [Accessibility](./accessibility.md)
