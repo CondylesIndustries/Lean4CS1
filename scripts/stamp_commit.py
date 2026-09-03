@@ -29,8 +29,10 @@ def commit_label():
     head = git('rev-parse', '--short', 'HEAD')
     if head.returncode != 0:
         return 'unknown'
-    dirty = '-dirty' if git('diff', '--quiet', 'HEAD').returncode != 0 else ''
-    return head.stdout.strip() + dirty
+    # The commit only.  A "-dirty" suffix does not belong on a title page: it
+    # says nothing a reader can use and appears whenever the author has an
+    # unsaved edit open.
+    return head.stdout.strip()
 
 
 def stamp(items, label):
