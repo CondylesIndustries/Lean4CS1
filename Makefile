@@ -34,6 +34,10 @@ build:
 slack:
 	@python3 scripts/make_slack_html.py
 
+# Regenerate the link-preview image from the built cover
+og: build
+	@python3 scripts/make_og_card.py
+
 # Serve the Slack copy-paste page locally.  It is deliberately not part of the
 # book -- it is working material, not course material -- so it is served on its
 # own port.  Open the forwarded address, select the content, copy, paste into
@@ -71,4 +75,4 @@ clean-md:
 clean:
 	rm -rf $(GENERATED_MD) book/
 
-.PHONY: all convert build a11y slack slack-serve canvas serve clean-md clean
+.PHONY: all convert build a11y og slack slack-serve canvas serve clean-md clean
