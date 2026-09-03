@@ -113,8 +113,8 @@
   <div class="cover-plate">
     <div class="cover-kicker">University of Virginia</div>
     <div class="cover-title">Software Logic</div>
-    <div class="cover-subtitle">Intellectual Control for Quality and Accountability</div>
-    <div class="cover-subtitle-2">In the Era of AI and Autoformalization</div>
+    <div class="cover-subtitle">Intellectual Control, Assurance, and Accountability</div>
+    <div class="cover-subtitle-2">in the Era of AI and Autoformalization</div>
     <div class="cover-rule"></div>
     <div class="cover-author">Kevin Sullivan</div>
     <div class="cover-affiliation">Department of Computer Science</div>

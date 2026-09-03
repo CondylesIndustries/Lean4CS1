@@ -1,7 +1,7 @@
 <div style="text-align: center; margin: 0.6rem 0 1.8rem;">
   <div style="font-size: 2.8em; font-weight: 700; line-height: 1.05;">Software Logic</div>
-  <div style="font-size: 1.22em; font-weight: 500; line-height: 1.12; margin-top: 0.38em;">Intellectual Control for Quality and Accountability</div>
-  <div style="font-size: 1.22em; font-weight: 500; line-height: 1.12; margin-top: 0.04em;">In the Era of AI and Autoformalization</div>
+  <div style="font-size: 1.22em; font-weight: 500; line-height: 1.12; margin-top: 0.38em;">Intellectual Control, Assurance, and Accountability</div>
+  <div style="font-size: 1.22em; font-weight: 500; line-height: 1.12; margin-top: 0.04em;">in the Era of AI and Autoformalization</div>
   <div style="font-size: 1.05em; font-weight: 500; line-height: 1.2; margin-top: 0.9em;">Kevin Sullivan</div>
   <div style="font-size: 0.95em; font-weight: 400; line-height: 1.2; margin-top: 0.15em;">CS6501-010 Fall 2026</div>
 </div>
