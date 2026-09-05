@@ -89,3 +89,45 @@ def MyStrNatSpec : Prop := myStrNat.1 = "lean" ∧ myStrNat.2 > 0
 
 #guard 3 - 5 + 5 ≠ 3
 --- Side condition: it holds when a ≥ b
+
+
+-- E.2.1
+-- “pred' undoes successor: ∀ n, pred' (n + 1) = n, with pred' 0 = 0”
+def pred' (n: Nat) : Nat := n - 1
+
+#guard pred' 0 = 0
+#guard pred' 1 = 0
+#guard pred' 5 = 4
+#guard decide (∀ n ∈ ([0, 1, 2, 3, 10] : List Nat), pred' (n + 1) = n) = true
+
+
+-- E.2.2
+
+-- It accidentally holds at n = 2. double 2 = 2 + 2 = 4
+
+
+-- E.2.3
+
+#check @And.intro
+
+-- computationally (the constructor that builds a pair of proofs)
+-- logically (a proof of P ∧ Q from a proof of P and a proof of Q)
+
+theorem add_zero_comm (n : Nat) : n + 0 = n → n = n + 0 :=
+  fun h => h.symm
+
+-- symm closes it because the two sides of the equation are literally written the same
+-- so it is definitely equal
+
+#guard decide ((1 < 2) ∧ (2 < 3)) = true
+
+
+-- E.2.4
+
+-- a) decidable
+-- b) decidable
+-- c) decidable
+-- d) decidable
+#guard decide ((True ∧ False)) = false
+-- e) infinite domain so it's technically undecidable. decidability needs
+-- a finite domain
