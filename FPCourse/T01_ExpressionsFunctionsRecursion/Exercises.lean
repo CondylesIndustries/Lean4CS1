@@ -131,3 +131,52 @@ theorem add_zero_comm (n : Nat) : n + 0 = n → n = n + 0 :=
 #guard decide ((True ∧ False)) = false
 -- e) infinite domain so it's technically undecidable. decidability needs
 -- a finite domain
+
+
+
+
+-- E.3.1
+
+/-! @@@
+DERIVATION of  sumTo : Nat → Nat
+  goal: Nat → Nat
+  step 1 [→I]   fun (k : Nat) => ?     ⟶ goal: Nat, with k : Nat
+  step 2        base case / step case on k (0 or n+1), per §3.1
+                  | 0     => ?
+                  | n + 1 => ?          ⟶ goals: Nat (base), Nat (step, with n : Nat)
+  step 3 [use 0]        0                    ⟶ closed (base case)
+  step 4 [use sumTo n]  (n + 1) + sumTo n    ⟶ closed (step case)
+  ∎
+@@@ -/
+
+def sumTo : Nat → Nat
+  | 0 => 0
+  | n + 1 => (n + 1) + sumTo n
+
+#guard sumTo 0 = 0
+#guard sumTo 1 = 1
+#guard sumTo 3 = 6
+#guard sumTo 10 = 55
+
+
+-- E.3.2
+
+def SumToClosedForm : Prop := ∀ n : Nat, sumTo n = n * (n + 1) / 2
+#guard sumTo 5 = 5 * (5 + 1) / 2
+#guard sumTo 10 = 10 * (10 + 1) / 2
+#guard decide (∀ n ∈ List.range 20, sumTo n = n * (n + 1) / 2) = true
+
+
+-- E.3.3
+
+#guard sumTo 3 ≠ 3 * 3 / 2 -- sumTo 3 = 6. 3*3 = 9/2 = 4.5 ≠ 3
+#guard sumTo 5 ≠ 5 * 5 / 2
+
+-- you have to do n* (n+1) / 2. not n^2 / 2
+
+-- E.3.4
+
+-- a) structural, so rfl test can close it. bounded
+-- b) well-founded. bounded
+-- c) decidable. finite domain. bounded
+-- d) undecidable since infinite domain.
