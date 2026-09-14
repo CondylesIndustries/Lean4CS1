@@ -1,3 +1,4 @@
+# Types as Values
 A superpower you get by programming in such languages
 is that *types are values,* too. You can make a list
 of Type values as easily as a list of Nat values. You

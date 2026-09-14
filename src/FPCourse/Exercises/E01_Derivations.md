@@ -273,7 +273,7 @@ Curry-Howard twins. So are the commutativity of `And`
 and the swappability of `Prod`. Your preparation for
 next class includes illustrating the same duality for
 the flippability of `Sum` and the commutative of `Or`.
-## Preparation for Next Class
+## Expected Preparation for Next Class
 
 Recall that `Sum α β` or (`α ⊕ β`) is the type of term
 that holds either a value (a : α) or a value (b : β).
@@ -367,7 +367,7 @@ Infix notation for the type, Or P Q, is the usual P ∨ Q.
 
 example {P Q : Prop} : P ∨ Q → Q ∨ P
 | Or.inl p => Or.inr p
-| _ => _
+| Or.inr q => Or.inl q
 
 
 -- PROVE: P ∨ Q ∧ R → P ∧ Q ∨ P ∧ R -- ∧ has higher prec.

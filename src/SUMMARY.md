@@ -52,6 +52,14 @@
 
 ---
 
+# Exercises
+
+*Problem sets to work alongside the lessons.*
+
+- [Inference Rules and Derivations](./FPCourse/Exercises/E01_Derivations.md)
+
+---
+
 # Appendix
 
 - [Lean 4 beyond research](./lean4-industry.md)
@@ -64,3 +72,11 @@
 *Notes from each class meeting, by date.*
 
 - [September 9](./FPCourse/InClassNotes/Notes_09_09.md)
+
+---
+
+# In Class Soon
+
+*Material queued up for an upcoming meeting.*
+
+- [Types as Values](./FPCourse/Exercises/E02_TypesAsValues.md)
