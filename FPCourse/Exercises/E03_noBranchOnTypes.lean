@@ -1,3 +1,8 @@
+/- @@@
+# No Branching on Types
+@@@ -/
+
+/- @@@
 The definition below is an error, because you can't
 branch on values of variables of type Type. That's
 the rule. The logic would break down were that
@@ -27,6 +32,9 @@ Nat to something silly, maybe Hip. Ah hah. The Nat to
 the left of => doesn't refer to the ℕ (Nat) type, it
 is just an identifier to be bound to the argument. No
 matching on inhabitants of Type will work.
+@@@ -/
+
+/- @@@
 ## Why this file still compiles: `#guard_msgs`
 
 The definition below *is* an error -- that is the
@@ -57,7 +65,8 @@ Capturing the error does not discard the definition
 which is why the three `#eval`s below still run.
 Watch what they print: "Nat" every time, exactly as
 the reasoning above predicts.
-```lean
+@@@ -/
+
 /--
 error: Redundant alternative: Any expression matching
   String
@@ -73,9 +82,8 @@ def branchOnType : Type → String :=
 #eval branchOnType Nat
 #eval branchOnType Bool
 #eval branchOnType String
-```
 
 
+/- @@@
 
-<div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
+@@@-/

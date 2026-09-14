@@ -80,3 +80,4 @@
 *Material queued up for an upcoming meeting.*
 
 - [Types as Values](./FPCourse/Exercises/E02_TypesAsValues.md)
+- [No Branching on Types](./FPCourse/Exercises/E03_noBranchOnTypes.md)

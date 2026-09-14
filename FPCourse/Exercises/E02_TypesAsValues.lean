@@ -113,6 +113,13 @@ can not only formally state but also have the
 Lean kernel enforce *invariants* over the state
 components of otherwise unconstrained types.
 
+Dependent typing is indispensable here. The
+*type* of *invariant* depends on the *values*
+of both *fst* and *snd*. The proposition (type)
+that (3,9) is good is a different proposition
+than the one asserting (3,16). Be sure to see
+what breaks to cause an error report.
+
 So, voila, a first example proof-carry code in
 the form of a data type definition, restricting
 the combinations of values that will typecheck
