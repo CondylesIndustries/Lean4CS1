@@ -1,5 +1,5 @@
 /- @@@
-# Types as Values
+# Types are Values Too
 @@@ -/
 
 /- @@@

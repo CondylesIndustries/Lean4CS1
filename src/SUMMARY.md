@@ -52,11 +52,14 @@
 
 ---
 
-# Exercises
+# Class Notes
 
-*Problem sets to work alongside the lessons.*
+*Notes from each class meeting.*
 
-- [Inference Rules and Derivations](./FPCourse/Exercises/E01_Derivations.md)
+- [September 9](./FPCourse/ClassNotes/E00_familiarity.md)
+- [Inference Rules and Derivations](./FPCourse/ClassNotes/E01_Derivations.md)
+- [Types as Values](./FPCourse/ClassNotes/E02_TypesAsValues.md)
+- [No Branching on Types](./FPCourse/ClassNotes/E03_noBranchOnTypes.md)
 
 ---
 
@@ -64,20 +67,3 @@
 
 - [Lean 4 beyond research](./lean4-industry.md)
 - [Accessibility](./accessibility.md)
-
----
-
-# Class Notes
-
-*Notes from each class meeting, by date.*
-
-- [September 9](./FPCourse/InClassNotes/Notes_09_09.md)
-
----
-
-# In Class Soon
-
-*Material queued up for an upcoming meeting.*
-
-- [Types as Values](./FPCourse/Exercises/E02_TypesAsValues.md)
-- [No Branching on Types](./FPCourse/Exercises/E03_noBranchOnTypes.md)
