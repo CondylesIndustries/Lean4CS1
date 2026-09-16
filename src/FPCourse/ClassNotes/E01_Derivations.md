@@ -439,11 +439,11 @@ def meatToString : Chicken ⊕ Fish → String
 
 #eval meatToString choiceChicken
 #eval meatToString choiceFish
+```
 
+EXERCISES:
+```lean
 -- PROVE: Chicken ⊕ Fish → Fish ⊕ Chicken
-
-
--- PROVE: ⊕ is commutative in this sense in general
 ```
 
 PROVE that someone who ordered "Fish, and either
@@ -452,63 +452,74 @@ Rice or Potato" should be satisfied to be served
 just have to turn the plate a little! To prove it
 it would do to show there's a function that applied
 to a whole *meal, "Fish, and either Rice or Potato"
-derives and returns "Rice or Potato, and Fish."
+derives and returns a meal, "either Rice or Potato,
+and Fish."
 ```lean
 example : Fish × (Rice ⊕ Potato) → (Rice ⊕ Potato) × Fish
-| (f, rorp) => (rorp, f)
+| _ => sorry    -- replace this line
 ```
 
 That's just commutativity of × again. We proved it by
 running the whole proof strategy again for this special
 case of the general principle; but we don't have to, as
-we have a general *theorem* that covers it!
+we have a general "theorem" (swap function) for that.
+
+The reason we prefer to prove generalized theorems or
+write general-purpose functions is because we can then
+*apply* them where needed without having to reproduce
+the whole derivation from scratch. It's makes math work!
 ```lean
--- example : Fish × (Rice ⊕ Potato) → (Rice ⊕ Potato) × Fish
--- uncomment and finish it.
-
 example :
-  Fish × (Rice ⊕ Potato) →
-  Fish × Rice ⊕ Fish × Potato
-| (f, rorp) => sorry
+  Fish × (Rice ⊕ Potato) → (Rice ⊕ Potato) × Fish
+  | meal => swap meal
+```
 
-
--- Can you convert in either direction?
+Here's an example suggesting that × distributes over
+⊕ just as numerical multiplication distributes over
+addition: x * (y + z) = x * y + x * z. Show that the
+same principle holds for × and ⊕, first in a specific
+example, then in general.
+```lean
 example :
-  (Fish × (Rice ⊕ Potato) → Fish × Rice ⊕ Fish × Potato) ×
-  (Fish × Rice ⊕ Fish × Potato) → (Fish × (Rice ⊕ Potato))
-| _ => sorry
+  Fish × (Rice ⊕ Potato) → Fish × Rice ⊕ Fish × Potato
+  | (f, rop) =>
+      sorry
+  -- you've got fish; now does rop hold rice or potato?
+
+--
+example :
+  Fish × Rice ⊕ Fish × Potato → Fish × (Rice ⊕ Potato)
+  | _ => sorry    -- replace line with your code
 ```
 
 ### The Curry-Howard Twin of ⊕ is ∨
 
-Here is Lean's `Or` (∨) type (here specifically
-propostion) builder. It's not itself a type because
-it takes arguments. When fully reduced, it's a type.
-To fully reduce it apply it to two arguments, each
-itself a proposition. What you're specifying here in
-essence is part of the *syntax* of predicate logic.
-It's meaning is in the introduction and elimination
-rules: in the constructors and elimination methods.
+Just as *And* (∧) is the Curry-Howard twin of *×*,
+so *Or* (∨) is the twin of ⊕. Go back and study the
+inductive definition of *Sum* (⊕) then compare with
+it's logical counterpart, `Or` (∨), copied below.
 
-```
+```lean
 inductive Or (a b : Prop) : Prop where
   | inl (h : a) : Or a b
   | inr (h : b) : Or a b
 ```
 
-Infix notation for the type, Or P Q, is the usual P ∨ Q.
+Infix notation for the type, *Or P Q*, is *P ∨ Q*.
 ```lean
--- PROVE: `Or` (∨) is commutative
--- Assume a proof of either P or Q
--- Derive a proof of Q ∨ P
+-- PROVE: `Or` (∨) is commutative *in general*
 
 example {P Q : Prop} : P ∨ Q → Q ∨ P
-| Or.inl p => Or.inr p
-| Or.inr q => Or.inl q
+| _ => sorry  -- replace with your code
 
+-- Prove ∧ distributes over or in the usual way
+example {P Q R : Prop } : P ∧ (Q ∨ R) → P ∧ Q ∨ P ∧ R
+| _ => sorry  -- replace this line with your code
 
--- PROVE: P ∨ Q ∧ R → P ∧ Q ∨ P ∧ R -- ∧ has higher prec.
--- PROVE P ∨ Q ∨ R → (P ∨ Q) ∨ R
+-- Prove that ∨ is associative. It's left associative
+-- so note that P ∨ Q ∨ R is read as (P ∨ Q) ∨ R.
+example {P Q R : Prop } :  P ∨ Q ∨ R → (P ∨ Q) ∨ R
+| _ => sorry  -- replace this line with your code
 ```
 
 
