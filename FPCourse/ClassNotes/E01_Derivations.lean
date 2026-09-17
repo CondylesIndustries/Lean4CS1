@@ -497,13 +497,13 @@ def meatToString : Chicken ⊕ Fish → String
 #eval meatToString choiceFish
 
 /- @@@
-EXERCISES:
+## EXERCISES:
 @@@ -/
 
--- PROVE: Chicken ⊕ Fish → Fish ⊕ Chicken
+-- #1: PROVE: Chicken ⊕ Fish → Fish ⊕ Chicken
 
 /- @@@
-PROVE that someone who ordered "Fish, and either
+#2: PROVE: that someone who ordered "Fish, and either
 Rice or Potato" should be satisfied to be served
 "Rice or Potato, and Fish. Clearly, it's true: you
 just have to turn the plate a little! To prove it
@@ -533,8 +533,8 @@ example :
   | meal => swap meal
 
 /- @@@
-Here's an example suggesting that × distributes over
-⊕ just as numerical multiplication distributes over
+#3: Prove. Here's an example suggesting that × distributes
+over ⊕ just as numerical multiplication distributes over
 addition: x * (y + z) = x * y + x * z. Show that the
 same principle holds for × and ⊕, first in a specific
 example, then in general.
@@ -546,7 +546,7 @@ example :
       sorry
   -- you've got fish; now does rop hold rice or potato?
 
---
+-- #4 Prove the other direction too.
 example :
   Fish × Rice ⊕ Fish × Potato → Fish × (Rice ⊕ Potato)
   | _ => sorry    -- replace line with your code
@@ -570,16 +570,16 @@ Infix notation for the type, *Or P Q*, is *P ∨ Q*.
 @@@ -/
 
 
--- PROVE: `Or` (∨) is commutative *in general*
+-- #5: PROVE: `Or` (∨) is commutative *in general*
 
 example {P Q : Prop} : P ∨ Q → Q ∨ P
 | _ => sorry  -- replace with your code
 
--- Prove ∧ distributes over or in the usual way
+-- #6: Prove ∧ distributes over or in the usual way
 example {P Q R : Prop } : P ∧ (Q ∨ R) → P ∧ Q ∨ P ∧ R
 | _ => sorry  -- replace this line with your code
 
--- Prove that ∨ is associative. It's left associative
+-- #7: Prove that ∨ is associative. It's left associative
 -- so note that P ∨ Q ∨ R is read as (P ∨ Q) ∨ R.
 example {P Q R : Prop } :  P ∨ Q ∨ R → (P ∨ Q) ∨ R
 | _ => sorry  -- replace this line with your code
