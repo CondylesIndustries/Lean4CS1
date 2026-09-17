@@ -56,10 +56,10 @@
 
 *Notes from each class meeting.*
 
-- [Familiarization](./FPCourse/ClassNotes/E00_familiarity.md)
+- [Types: Computational and Logical](./FPCourse/ClassNotes/E00_Types.md)
 - [Inference Rules and Derivations](./FPCourse/ClassNotes/E01_Derivations.md)
 - [Types as Values](./FPCourse/ClassNotes/E02_TypesAsValues.md)
-- [No Branching on Types](./FPCourse/ClassNotes/E03_noBranchOnTypes.md)
+- [No Branching on Types](./FPCourse/ClassNotes/E04_noBranchOnTypes.md)
 
 ---
 
