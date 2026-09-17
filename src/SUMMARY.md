@@ -58,7 +58,7 @@
 
 - [Types: Computational and Logical](./FPCourse/ClassNotes/E00_Types.md)
 - [Inference Rules and Derivations](./FPCourse/ClassNotes/E01_Derivations.md)
-- [Deep Embedding (here) vs Shallow Embedding](./FPCourse/ClassNotes/E02_PropLogic.md)
+- [Deep vs Shallow Embedding](./FPCourse/ClassNotes/E02_PropLogic.md)
 - [No Branching on Types](./FPCourse/ClassNotes/E04_noBranchOnTypes.md)
 - [Types are Values Too](./FPCourse/ClassNotes/E05_TypesAsValues.md)
 
