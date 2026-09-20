@@ -64,3 +64,42 @@ example :
   Fish × Rice ⊕ Fish × Potato → Fish × (Rice ⊕ Potato)
   | Sum.inl (f, rice) => (f, Sum.inl rice)
   | Sum.inr (f, potato) => (f, Sum.inr potato)
+
+
+
+
+/- @@@
+### The Curry-Howard Twin of ⊕ is ∨
+
+Just as *And* (∧) is the Curry-Howard twin of *×*,
+so *Or* (∨) is the twin of ⊕. Go back and study the
+inductive definition of *Sum* (⊕) then compare with
+it's logical counterpart, `Or` (∨), copied below.
+
+```lean
+inductive Or (a b : Prop) : Prop where
+  | inl (h : a) : Or a b
+  | inr (h : b) : Or a b
+```
+
+Infix notation for the type, *Or P Q*, is *P ∨ Q*.
+@@@ -/
+
+
+-- #5: PROVE: `Or` (∨) is commutative *in general*
+
+example {P Q : Prop} : P ∨ Q → Q ∨ P
+| Or.inl a => Or.inr a
+| Or.inr a => Or.inl a
+
+-- #6: Prove ∧ distributes over or in the usual way
+example {P Q R : Prop } : P ∧ (Q ∨ R) → P ∧ Q ∨ P ∧ R
+  | And.intro p (Or.inl q) => Or.inl (And.intro p q)
+  | And.intro p (Or.inr r) => Or.inr (And.intro p r)
+
+-- #7: Prove that ∨ is associative. It's left associative
+-- so note that P ∨ Q ∨ R is read as (P ∨ Q) ∨ R.
+example {P Q R : Prop } :  P ∨ Q ∨ R → (P ∨ Q) ∨ R
+ | Or.inl p => Or.inl (Or.inl p)
+ | Or.inr (Or.inl q) => Or.inl (Or.inr q)
+ | Or.inr (Or.inr r) => Or.inr r
