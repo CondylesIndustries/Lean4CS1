@@ -1,0 +1,82 @@
+-- abstract syntax: functions, not intuitive
+-- concrete syntax: defining the use of operators as standard symbols
+-- for whatever operations you're doing.
+
+-- difference between And function and implementing &&
+
+-- UNDERSTAND false -> true. trivially true
+
+-- false to false
+
+-- this is a valid but uncallable function because
+-- the definition assumes you have a value of type empty
+def e2e : Empty → Empty
+  | e => e
+
+theorem fimpf : False → False
+  | f => f
+
+inductive MyEmpty where
+--| mk
+
+open MyEmpty
+
+def me2e : MyEmpty → Empty
+  | m => nomatch m -- you need nomatch because MyEmpty is a
+  -- different type than Empty
+
+-- if this function above exists, proves MyEmpty is uninhabited
+-- functions must be total, so if there's at least one constructor
+-- for MyEmpty, you can't build a function that takes a value of
+-- myEmpty and returns an Empty. that does not exist
+
+
+inductive MyFalse : Prop where
+--| mk
+
+theorem myFalseIsReallyFalse : MyFalse → False
+| m => nomatch m
+-- if we can't define this function, MyFalse is not really uninhabited
+
+def neg (a : Prop) : Prop := a → False
+
+#check MyFalse
+
+example : neg MyFalse | m => nomatch m
+
+example : ¬MyFalse
+| m => nomatch m
+
+
+inductive KevinIsFromCville : Prop where
+| driversLicense
+
+example : KevinIsFromCville := KevinIsFromCville.driversLicense
+
+inductive JorgIsFromToronto : Prop where
+| driversLicense
+| utilityBill
+| healthCard
+
+example: And KevinIsFromCville JorgIsFromToronto := And.intro KevinIsFromCville.driversLicense JorgIsFromToronto.utilityBill
+
+-- all proofs are equal in Prop. You can't match on proofs or distinguish them
+-- not so in Types, not all bools are equal (literally 3 and 5 are not equal).
+
+inductive Cat : Type where
+| siamese
+| tabby
+
+example : Cat.tabby ≠ Cat.siamese
+  | m => nomatch m -- the fact that this works PROVES that Cat.tabby ≠ Cat.siamese
+
+
+-- THESE ARE DIFFERENT VALUES BUT THEY ARE CONSIDERED EQUAL BECAUSE THEY ARE BOTH PROPS AND PROVE THE SAME THING
+example : JorgIsFromToronto.driversLicense = JorgIsFromToronto.healthCard := rfl
+
+-- proofs of the same thing are equal. proofs of different things are not equal
+-- example : KevinIsFromCville.driversLicense = JorgIsFromToronto.healthCard := rfl
+
+-- go look up demorgan's laws. prove them in Lean
+
+-- not all cases are valid in Lean
