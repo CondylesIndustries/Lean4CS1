@@ -80,3 +80,13 @@ example : JorgIsFromToronto.driversLicense = JorgIsFromToronto.healthCard := rfl
 -- go look up demorgan's laws. prove them in Lean
 
 -- not all cases are valid in Lean
+
+theorem negationOfConjunction {P Q : Prop} : ¬P ∨ ¬Q → ¬(P ∧ Q) :=
+  fun h hpq =>
+    match h with
+    | Or.inl np => np hpq.1
+    | Or.inr nq => nq hpq.2
+
+
+theorem negationOfDisjunction {P Q: Prop} : ¬(P ∨ Q) → ¬P ∧ ¬Q := -- P or Q -> false -> not P and not Q
+  fun h => And.intro (fun p => h (Or.inl p)) (fun q => h (Or.inr q))
