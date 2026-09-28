@@ -360,5 +360,5 @@ Brouwer's foundational work dates to 1907–1908, before this
 theorem. Use Banach–Tarski as an illustration of the demand for
 construction that motivated constructive approaches, rather than
 as their historical cause. Heyting later formalized intuitionistic
-logic. See [the history of intuitionistic logic](https://plato.stanford.edu/entries/intuitionistic-logic-development/).
+(constructive) logic. See [the history of intuitionistic logic](https://plato.stanford.edu/entries/intuitionistic-logic-development/).
 @@@ -/
