@@ -253,3 +253,22 @@ precedence level (should it bind more or less tightly than *∨*?),
 decide on its associativity, and then write the *rfl* theorems
 that confirm your choices parse the way you expect.
 @@@ -/
+
+
+--theorem DM1 : ∀ (P Q : Prop), ¬(P ∧ Q) → ¬P ∨ ¬Q :=
+---  fun P Q =>
+ --   fun h =>
+  --    Or.inl _ => _ -- we are stuck because though we know that P and Q is false, when don't know which one, whether P or Q, or both, are false.
+  -- if all we have is the value false, we can't construct without being able to look inside, but we can't.
+
+-- Question, it seems like you can deconstruct P and Q to its components everywhere else, but why not here?
+
+theorem DM2 : ∀ (P Q : Prop), ¬P ∨ ¬Q → ¬(P ∧ Q) :=
+  fun P Q =>
+    fun h =>
+      fun pandq =>
+        let p : P := And.left pandq
+        let q : Q := And.right pandq
+        match h with
+        | Or.inl np => np p
+        | Or.inr nq => nq q

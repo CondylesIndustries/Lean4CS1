@@ -90,3 +90,7 @@ theorem negationOfConjunction {P Q : Prop} : ¬P ∨ ¬Q → ¬(P ∧ Q) :=
 
 theorem negationOfDisjunction {P Q: Prop} : ¬(P ∨ Q) → ¬P ∧ ¬Q := -- P or Q -> false -> not P and not Q
   fun h => And.intro (fun p => h (Or.inl p)) (fun q => h (Or.inr q))
+
+-- h : ¬ (P∧Q)
+-- not (P ∧ Q)
+-- (P ∧ Q) → False
