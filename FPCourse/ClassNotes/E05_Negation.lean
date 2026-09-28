@@ -92,8 +92,8 @@ would let us split on P, but is not available constructively.
 
 -- Warmup: Negation
 
-theorem noContradiction {P : Prop} : ¬(P ∧ ¬P) :=
-  fun pandNotP => pandNotP.right pandNotP.left
+theorem noContradiction {P : Prop} : P ∧ ¬P → False :=
+  fun pandnotp => pandnotp.right pandnotp.left
 
 
 
