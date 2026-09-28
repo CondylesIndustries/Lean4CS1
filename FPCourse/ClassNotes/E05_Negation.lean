@@ -90,6 +90,13 @@ provide either a proof of ¬P or a proof of ¬Q. Excluded middle
 would let us split on P, but is not available constructively.
 @@@ -/
 
+-- Warmup: Negation
+
+theorem noContradiction {P : Prop} : ¬(P ∧ ¬P) :=
+  fun pandNotP => pandNotP.right pandNotP.left
+
+
+
 theorem deMorganNotOr (P Q : Prop) : ¬(P ∨ Q) → (¬P ∧ ¬Q) :=
   fun notPorQ =>
     And.intro
@@ -142,9 +149,6 @@ example (P Q : Prop) : (¬P ∨ ¬Q) → ¬(P ∧ Q) :=
       match notPorNotQ with
       | Or.inl notP => notP pandq.left
       | Or.inr notQ => notQ pandq.right
-
-theorem noContradiction {P : Prop} : ¬(P ∧ ¬P) :=
-  fun pandNotP => pandNotP.right pandNotP.left
 
 /- @@@
 ## Proof by Negation and by Contradiction
