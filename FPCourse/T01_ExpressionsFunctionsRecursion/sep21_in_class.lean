@@ -88,8 +88,35 @@ theorem negationOfConjunction {P Q : Prop} : ¬P ∨ ¬Q → ¬(P ∧ Q) :=
     | Or.inr nq => nq hpq.2
 
 
-theorem negationOfDisjunction {P Q: Prop} : ¬(P ∨ Q) → ¬P ∧ ¬Q := -- P or Q -> false -> not P and not Q
+theorem negationOfDisjunction_way_1 {P Q: Prop} : ¬(P ∨ Q) → ¬P ∧ ¬Q := -- P or Q -> false -> not P and not Q
   fun h => And.intro (fun p => h (Or.inl p)) (fun q => h (Or.inr q))
+
+-- theorem negationOfDisjunction_way_2 {P Q: Prop} : ¬P ∧ ¬Q → ¬(P ∨ Q) :=
+--   fun h =>
+--     let p : P := And.left h
+--     let q : Q := And.right h
+--     match h with
+--     | Or.inl p => nomatch h
+--     | Or.inr q => nomatch h
+
+theorem negationOfDisjunction_way_12 {P Q : Prop} : ¬(P ∨ Q) → ¬P ∧ ¬Q :=
+  fun h =>
+    let np : ¬P := fun p => h (Or.inl p)
+    let nq : ¬Q := fun q => h (Or.inr q)
+    And.intro np nq
+
+
+
+
+theorem negationOfDisjunction_way_2 {P Q: Prop} : ¬P ∧ ¬Q → ¬(P ∨ Q) :=
+  fun h horq =>
+    let np : ¬P := And.left h
+    let nq : ¬Q := And.right h
+    match horq with
+    | Or.inl p => np p
+    | Or.inr q => nq q
+
+
 
 -- h : ¬ (P∧Q)
 -- not (P ∧ Q)
