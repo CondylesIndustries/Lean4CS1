@@ -235,6 +235,160 @@ In Lean, proofs in `Prop` are erased during compilation anyway,
 including constructive proofs. So going classical does not delete
 existing program code. Rather, using `em` adds a logical capability
 without adding an executable implementation of that capability.
+### A Concrete Case: Is There an Odd Perfect Number?
+
+Before any Lean, here is the question.
+
+Call a positive number *perfect* if it is the sum of its proper
+divisors, meaning its divisors other than itself. 6 is perfect:
+its proper divisors are 1, 2, and 3, and 1 + 2 + 3 = 6. So is 28,
+since 1 + 2 + 4 + 7 + 14 = 28. Perfect numbers appear in Euclid's
+*Elements*, so people have been studying them for a very long time.
+
+Every perfect number anyone has ever found is even. Nobody has
+produced an odd one, and nobody has proved that none exists. This
+is not for lack of effort: it is known that an odd perfect number,
+if there is one, must be greater than 10^2200, and must satisfy a
+long list of further constraints. The question
+
+  Is there an odd perfect number?
+
+is one of the oldest unresolved questions in mathematics.
+
+Hold that question in mind. We are now going to pose it to Lean
+and watch exactly what classical logic hands back.
+First, the part that is ordinary programming. Summing the proper
+divisors of a number is a computation. Every proper divisor of n
+is smaller than n, so it suffices to scan the numbers below n.
+Don't worry about the programming of this function for now.
+```lean
+def sumProperDivisors (n : Nat) : Nat :=
+  (List.range n).foldl
+    (fun acc d => if d > 0 && n % d == 0 then acc + d else acc) 0
+
+def isPerfect (n : Nat) : Bool := n > 0 && sumProperDivisors n == n
+```
+
+These are total functions, and we can run them. Lean prints the
+results below, and `#guard_msgs` checks that they are what we
+claim they are.
+```lean
+#eval sumProperDivisors 28
+
+/-- info: true -/
+#guard_msgs in
+#eval isPerfect 28
+```
+
+Searching a *bounded* range is also ordinary programming. Here
+are all the perfect numbers below ten thousand. This is a real
+mathematical result about a finite range, and the code that
+produced it is the evidence: we can rerun it, and we can read it
+to see what it checked.
+```lean
+/-- info: [6, 28, 496, 8128] -/
+#guard_msgs in
+#eval (List.range 10000).filter isPerfect
+```
+
+Look at that output: 6, 28, 496, 8128. Every one of them is even.
+That is the observation that makes the open question interesting,
+and we just computed it ourselves.
+
+Testing whether a *given* number is an odd perfect number is
+equally ordinary. 28 is perfect but even, so it fails.
+```lean
+def isOddPerfect (n : Nat) : Bool := n % 2 == 1 && isPerfect n
+
+/-- info: false -/
+#guard_msgs in
+#eval isOddPerfect 28
+```
+
+So far nothing is in doubt. Each function above carries executable
+content, and every answer we got came out of running it.
+
+The open question is the *unbounded* one. We are not asking about
+any particular n, or about any finite range of them. We are asking
+whether there is any such n at all. As a proposition:
+```lean
+def SomeOddPerfect : Prop := ∃ n, isOddPerfect n = true
+```
+
+Now watch how cheap the classical answer is. A single application
+of excluded middle settles the disjunction, right now, with no
+search whatsoever.
+```lean
+theorem oddPerfectOrNot : SomeOddPerfect ∨ ¬SomeOddPerfect :=
+  em SomeOddPerfect
+```
+
+That is a complete proof, and Lean checks it. Read carefully what
+we have and what we do not have. We have a proof that the question
+has an answer. We do not have the answer. No n comes out of
+`oddPerfectOrNot`, and there is nothing in it to run. A question
+that has resisted mathematicians for centuries was not settled
+here; only the claim that it has *some* answer was, and that claim
+was free.
+
+The gap turns into a compiler error the moment we try to *use* the
+answer in a program. Recall that this chapter did `open Classical`,
+which brings `Classical.propDecidable` into scope. That makes every
+proposition count as `Decidable`, so the `if` below typechecks:
+Lean accepts it as a well-formed program that branches on whether
+an odd perfect number exists. Then code generation runs, and fails.
+The error names exactly what is missing.
+```lean
+/--
+error: failed to compile definition, consider marking it as 'noncomputable' because it depends on 'propDecidable', which is 'noncomputable'
+-/
+#guard_msgs in
+def oddPerfectAnswer : String :=
+  if SomeOddPerfect then "one exists" else "none exists"
+```
+
+We are allowed to keep the definition if we mark it
+`noncomputable`, because that marking is an honest declaration
+that no code will be produced for it. The definition is then
+accepted, and `#eval` still cannot run it.
+```lean
+noncomputable def oddPerfectAnswer' : String :=
+  if SomeOddPerfect then "one exists" else "none exists"
+
+/--
+error: failed to compile definition, consider marking it as 'noncomputable' because it depends on 'oddPerfectAnswer'', which is 'noncomputable'
+-/
+#guard_msgs in
+#eval oddPerfectAnswer'
+```
+
+Compare the two halves of this example. `isPerfect` and the
+bounded filter are constructions: they carry executable content,
+and we extracted real answers from them. `oddPerfectAnswer` is a
+proof dressed up as a program. Classical logic gave us the
+proposition "this question has an answer" for free, and gave us
+no way to compute the answer. That is the tradeoff of this
+section, priced in code.
+
+One caution about what this example does and does not show. For
+this one fixed question, some constant program is correct: either
+"one exists" or "none exists" is the right answer, and we simply
+do not know which. So what failed here is *extraction*. The
+classical proof does not hand us a program, even though a correct
+program exists.
+
+### Another Example: The Halting Problem
+
+The stronger claim is about `em` read uniformly, as the machine
+`∀ P : Prop, P ∨ ¬P` that answers for *every* P. No such machine
+can have executable code. To see why, specialize it to
+propositions of the form `∃ n, f n = true` for an arbitrary
+`f : Nat → Bool`, which is the shape of `SomeOddPerfect`. A
+program implementing that case would decide whether an arbitrary
+computation ever succeeds, and that is the halting problem, which
+is known to be undecidable. So the absence of code behind `em` is
+not a gap in Lean's implementation that a better compiler might
+close. It is a theorem about computation.
 
 <div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 
