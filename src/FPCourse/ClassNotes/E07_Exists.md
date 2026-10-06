@@ -137,7 +137,7 @@ example : ∃ (d : Dog), Suitable d :=
   Exists.intro Iris (And.intro Friendly.irisFriendly Furry.irisFurry)
 ```
 
-## Introduction: Exhibit a Witness
+## Introduction: More Examples
 
 Now the general rule. `Exists` has exactly one constructor,
 `Exists.intro`. It takes two arguments: a *witness*, `w : α`, and
