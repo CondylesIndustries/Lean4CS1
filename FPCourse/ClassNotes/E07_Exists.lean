@@ -19,7 +19,15 @@ that order, first on a small concrete example, then in general.
 @@@ -/
 
 /- @@@
-## A Concrete Introduction
+## Introduction: Exhibiting a Witness
+
+An existential proof is a pair: a value, and evidence about that
+value. We build up to that rule on a concrete example, state it,
+and then exercise it in other settings.
+@@@ -/
+
+/- @@@
+### A Concrete Setting
 
 Here is a type with three values and two predicates on it, each
 given as an inductive family. Read each constructor as a piece of
@@ -72,7 +80,9 @@ example : Suitable Iris :=
 #check (Furry)
 
 /- @@@
-Now contrast the two quantifiers on this example. Is *every* dog
+### Where ∀ Fails and ∃ Succeeds
+
+Contrast the two quantifiers on this setting. Is *every* dog
 friendly? No: we have no evidence that Sargent is friendly, and
 the attempt gets stuck in exactly that case. The two branches we
 can fill are filled; the hole shows what is missing.
@@ -109,19 +119,23 @@ example : ¬(∀ (d : Dog), Friendly d) :=
 
 /- @@@
 The existential claim, by contrast, is easy. Is *some* dog
-friendly? Yes, and to show it we name one and supply its
-evidence. That pair of things, a value and a proof about that
-value, is all an existential proof ever is.
+friendly? Yes, and to show it we name one and supply its evidence.
+To prove that something exists, produce it, then show that it
+works.
 @@@ -/
 
 example : ∃ (d : Dog), Friendly d :=
   Exists.intro Iris Friendly.irisFriendly
 
 /- @@@
-Where does `Exists.intro` come from? It is just the constructor of
-an inductive type, like every introduction rule we have used. Here
-is Lean's definition of `Exists`, copied under a new name so that
-it compiles here without clashing with the library's.
+### The Rule Behind That Proof
+
+That pair of things, a value and a proof about that value, is all
+an existential proof ever is. So where does `Exists.intro` come
+from? It is just the constructor of an inductive type, like every
+introduction rule we have used. Here is Lean's definition of
+`Exists`, copied under a new name so that it compiles here without
+clashing with the library's.
 @@@ -/
 
 inductive MyExists {α : Sort u} (p : α → Prop) : Prop where
@@ -137,35 +151,38 @@ that p holds of that very w. Note that the type of the second
 argument depends on the first. That is the introduction rule, and
 it is the entire content of an existential proof.
 
-Now match the example above against it. The predicate is `Friendly`
-and so α is `Dog`. We supplied `Iris` for w, and
-`Friendly.irisFriendly` for h, and Lean checked that this really
-is a proof of `Friendly Iris`, which is the predicate applied to
-the witness we chose. Had we offered `Sargent` as the witness, the
-second argument would have had to be a proof of `Friendly Sargent`,
-and we have none to give.
+The library's `Exists` is this same type, and its `intro` has
+exactly the signature just described.
 @@@ -/
 
+#check @Exists
+#check @Exists.intro
+
 /- @@@
-The evidence can be compound. To prove that some dog is suitable,
-exhibit Iris together with a proof of the conjunction.
+Now match our dog proof against the rule. The predicate is
+`Friendly`, so α is `Dog`. We supplied `Iris` for w and
+`Friendly.irisFriendly` for h, and Lean checked that the latter
+really is a proof of `Friendly Iris`, the predicate applied to the
+witness we chose. Had we offered `Sargent` as the witness, the
+second argument would have had to be a proof of `Friendly Sargent`,
+and we have none to give.
+
+The evidence can be compound, since h is only ever required to
+prove `p w`, whatever proposition that turns out to be. To prove
+that some dog is suitable, exhibit Iris together with a proof of
+the conjunction.
 @@@ -/
 
 example : ∃ (d : Dog), Suitable d :=
   Exists.intro Iris (And.intro Friendly.irisFriendly Furry.irisFurry)
 
 /- @@@
-## Introduction: More Examples
+### The Same Rule, More Examples
 
-Now the general rule. `Exists` has exactly one constructor,
-`Exists.intro`. It takes two arguments: a *witness*, `w : α`, and
-a proof, `pf : R w`, that this particular value has the property
-in question. To prove that something exists, produce it, then
-show that it works.
+Nothing about the rule is special to dogs. Here it is on `Nat`,
+where the witness is a number and the evidence is a proof about
+that number.
 @@@ -/
-
-#check @Exists
-#check @Exists.intro
 
 example : ∃ n : Nat, n = 3 :=
   Exists.intro 3 rfl
@@ -176,7 +193,9 @@ example : ∃ n : Nat, n + 1 = 4 := Exists.intro 3 rfl
 The angle-bracket notation `⟨w, pf⟩` is Lean's *anonymous
 constructor*: it means "apply the sole constructor of the expected
 type to these arguments." For an existential it means exactly
-`Exists.intro w pf`.
+`Exists.intro w pf`. We used it for `And.intro` above, and it
+works here for the same reason: one constructor, so there is
+nothing to disambiguate.
 @@@ -/
 
 example : ∃ n : Nat, n + 1 = 4 := ⟨3, rfl⟩
@@ -190,14 +209,22 @@ constructor notation nests to match.
 example : ∃ a : Nat, ∃ b : Nat, a + b = 5 := ⟨2, 3, rfl⟩
 
 /- @@@
-A crucial observation: the *proposition* `∃ n : Nat, n < 10`
-records only that a witness exists. Two proofs can use different
-witnesses and still prove the very same proposition, and nothing
-in the proposition tells us which one was used.
+### Which Witness? The Proposition Does Not Say
+
+One last observation, and it is a crucial one. The *proposition*
+`∃ n : Nat, n < 10` records only that a witness exists. Two proofs
+can use different witnesses and still prove the very same
+proposition, and nothing in the proposition tells us which one was
+used.
 @@@ -/
 
 example : ∃ n : Nat, n < 10 := ⟨0, Nat.zero_lt_succ 9⟩
 example : ∃ n : Nat, n < 10 := ⟨9, Nat.le.refl⟩
+
+/- @@@
+Hold on to that point. It is the reason the elimination rule, the
+subject of the next section, comes with a restriction.
+@@@ -/
 
 /- @@@
 ## Elimination: Unpack the Witness
