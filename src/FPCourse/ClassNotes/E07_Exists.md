@@ -105,6 +105,31 @@ example : ∃ (d : Dog), Friendly d :=
   Exists.intro Iris Friendly.irisFriendly
 ```
 
+Where does `Exists.intro` come from? It is just the constructor of
+an inductive type, like every introduction rule we have used. Here
+is Lean's definition of `Exists`, copied under a new name so that
+it compiles here without clashing with the library's.
+```lean
+inductive MyExists {α : Sort u} (p : α → Prop) : Prop where
+| intro (w : α) (h : p w) : MyExists p
+```
+
+One type, one constructor, so there is exactly one way to build a
+proof. Read the pieces. `MyExists` takes the *predicate* p as a
+parameter, not a value, which is what makes it a claim about some
+value of α rather than about a particular one. Its constructor
+takes two arguments: a *witness* `w : α`, and `h : p w`, evidence
+that p holds of that very w. Note that the type of the second
+argument depends on the first. That is the introduction rule, and
+it is the entire content of an existential proof.
+
+Now match the example above against it. The predicate is `Friendly`
+and so α is `Dog`. We supplied `Iris` for w, and
+`Friendly.irisFriendly` for h, and Lean checked that this really
+is a proof of `Friendly Iris`, which is the predicate applied to
+the witness we chose. Had we offered `Sargent` as the witness, the
+second argument would have had to be a proof of `Friendly Sargent`,
+and we have none to give.
 The evidence can be compound. To prove that some dog is suitable,
 exhibit Iris together with a proof of the conjunction.
 ```lean
