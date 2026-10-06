@@ -59,9 +59,10 @@
 - [Types: Computational and Logical](./FPCourse/ClassNotes/E00_Types.md)
 - [Inference Rules and Derivations](./FPCourse/ClassNotes/E01_Derivations.md)
 - [Deep vs Shallow Embedding](./FPCourse/ClassNotes/E02_PropLogic.md)
-- [Negation, Predicates, and Existence](./FPCourse/ClassNotes/E05_Negation.md)
 - [Classical vs. Constructive Logic](./FPCourse/ClassNotes/E05_ClassicalVsConstructive.md)
-- [More About Types](./FPCourse/ClassNotes/E06_MoreAboutTypes.md)
+- [Negation and Predicates](./FPCourse/ClassNotes/E06_Negation.md)
+- [Existential Quantification](./FPCourse/ClassNotes/E07_Exists.md)
+- [More About Types](./FPCourse/ClassNotes/E08_MoreAboutTypes.md)
 
 ---
 
