@@ -449,14 +449,33 @@ claim they are.
 @@@ -/
 
 -- not perfect numbers
+/-- info: 0 -/
+#guard_msgs in
 #eval sumProperDivisors 1
+
+/-- info: 1 -/
+#guard_msgs in
 #eval sumProperDivisors 2
+
+/-- info: 1 -/
+#guard_msgs in
 #eval sumProperDivisors 3
+
+/-- info: 3 -/
+#guard_msgs in
 #eval sumProperDivisors 4
+
+/-- info: 1 -/
+#guard_msgs in
 #eval sumProperDivisors 5
 
 -- two perfect numbers
+/-- info: 6 -/
+#guard_msgs in
 #eval sumProperDivisors 6
+
+/-- info: 28 -/
+#guard_msgs in
 #eval sumProperDivisors 28
 
 /- @@@
@@ -482,7 +501,8 @@ equally ordinary. 28 is perfect but even, so it fails.
 
 def isOddPerfect (n : Nat) : Bool := n % 2 == 1 && isPerfect n
 
-/- info: false -/
+/-- info: false -/
+#guard_msgs in
 #eval isOddPerfect 28
 
 /- @@@
