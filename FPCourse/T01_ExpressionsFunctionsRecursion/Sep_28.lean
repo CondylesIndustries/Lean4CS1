@@ -13,6 +13,6 @@
 -- conclude not not p.
 -- not not p -> p. True, but can't prove constructively
 
-example {P : Prop} : ¬¬P → P :=
-  fun nnp =>
-  _
+--example {P : Prop} : ¬¬P → P :=
+--  fun nnp =>
+--  _

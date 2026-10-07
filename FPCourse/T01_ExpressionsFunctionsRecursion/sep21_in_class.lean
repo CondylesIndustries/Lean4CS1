@@ -116,6 +116,10 @@ theorem negationOfDisjunction_way_2 {P Q: Prop} : ¬P ∧ ¬Q → ¬(P ∨ Q) :=
     | Or.inl p => np p
     | Or.inr q => nq q
 
+example (P Q : Prop) (em : ∀ (X : Prop), X ∨ ¬X) : ¬(P ∧ Q) → (¬P ∨ ¬Q)
+
+-- axiom of the excluded middle
+
 
 
 -- h : ¬ (P∧Q)
