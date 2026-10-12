@@ -125,7 +125,17 @@ works.
 @@@ -/
 
 example : ∃ (d : Dog), Friendly d :=
-  Exists.intro Iris Friendly.irisFriendly
+  --Exists.intro Iris Friendly.irisFriendly
+  ⟨ Iris, Friendly.irisFriendly ⟩
+
+-- if there's a dog that is suitable, then there exists a dog that is friendly
+
+def simpf : Prop :=
+  (∃ d, Suitable d) → (∃ d, Friendly d)
+
+example : simpf :=
+  fun pfs =>
+    _
 
 /- @@@
 ### The Rule Behind That Proof
