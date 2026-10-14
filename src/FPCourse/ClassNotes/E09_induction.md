@@ -76,10 +76,12 @@ at that!
 #check @Empty.rec
 ```
 
+```lean
 Empty.rec :
   (motive : Empty → Sort u_1) →   -- given a function on non-existent values
   (t : Empty) →                   -- and given any such value in particular
   motive t                        -- the function will compute an answer
+```
 ```lean
 def e2s : Empty → String :=
   fun e =>
@@ -118,10 +120,12 @@ Empty to *any* other type *for free*.
 #check @False.rec
 ```
 
+```lean
 False.rec :
   (motive : False → Sort u_1) →
   (t : False) →
   motive t
+```
 ```lean
 def fromEmpty (e : Empty) : Nat :=
   Empty.rec (fun _ => Nat) e
@@ -155,11 +159,13 @@ polymorphic one-element type, so its recursor is named
 #check @True.rec
 ```
 
+```lean
 @PUnit.rec :
   {motive : PUnit → Sort u_1} →
   motive PUnit.unit →
   (t : PUnit) →
   motive t
+```
 ```lean
 noncomputable def fromUnit (u : Unit) : String :=
   PUnit.rec "the one and only" u
@@ -183,12 +189,14 @@ constructor order.
 #check @Bool.rec
 ```
 
+```lean
 @Bool.rec :
   {motive : Bool → Sort u_1} →
   motive false →
   motive true →
   (t : Bool) →
   motive t
+```
 ```lean
 noncomputable def describe (b : Bool) : String :=
   Bool.rec "it's false" "it's true" b
@@ -225,12 +233,14 @@ def fac : Nat → Nat
 #check @Nat.rec
 ```
 
+```lean
 @Nat.rec :
   {motive : Nat → Sort u_1} →
   motive Nat.zero →
   ((n' : Nat) → motive n' → motive n'.succ) →
   (t : Nat) →
   motive t
+```
 ```lean
 def factorial (n : Nat) : Nat :=
   Nat.rec 1 (fun n ih => (n + 1) * ih) n
@@ -254,6 +264,7 @@ library.
 #check @String.rec
 ```
 
+```lean
 @String.rec :
   {motive : String → Sort u_1} →
   ((toByteArray : ByteArray) →
@@ -261,6 +272,7 @@ library.
     motive { toByteArray := toByteArray, isValidUTF8 := isValidUTF8 }) →
   (t : String) →
   motive t
+```
 ```lean
 noncomputable def byteLength (s : String) : Nat :=
   String.rec (fun toByteArray _ => toByteArray.size) s
