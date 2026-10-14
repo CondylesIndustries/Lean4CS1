@@ -59,7 +59,7 @@ all. Take String, for example. You can for free have a
 total function from Empty to String.
 @@@ -/
 
-example : Empty → String := λ e => nomatch e
+example : Empty → String := fun e => nomatch e
 
 /- @@@
 And it's easy to see that the same principle works for
@@ -215,6 +215,10 @@ noncomputable def describe (b : Bool) : String :=
 #reduce describe true
 #reduce describe false
 
+def deescribe' : Bool → String
+| true => "T"
+| false => "F"
+
 /- @@@
 ## Nat: a recursive constructor
 
@@ -227,6 +231,16 @@ That second piece is what makes it genuine recursion
 rather than a one-step case split -- and it's why
 induction and recursion are, underneath, the same thing.
 @@@ -/
+
+def sumUp : Nat → Nat
+| Nat.zero => 0
+| Nat.succ n' =>(n' + 1) + sumUp n'
+
+def fac : Nat → Nat
+| 0 => 1
+| (n' + 1) => (n' + 1) * fac n'
+
+#eval fac 5
 
 #check @Nat.rec
 
