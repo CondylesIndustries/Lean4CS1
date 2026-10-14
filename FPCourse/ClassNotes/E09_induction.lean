@@ -1,53 +1,14 @@
-#check Empty.rec
-#check PUnit.rec
-#check Bool.rec
-
 /- @@@
-Bool.rec.{u}
-    {motive : Bool → Sort u}
-    (false : motive false)
-    (true : motive true)
-    (t : Bool) :
-motive t
-@@@ -/
+# Induction is Elimination for Inductive Types
 
-#check Nat
+Last class we met induction principles in the
+form of *recursors* in Lean. Recursors tell you
+exactly what you must do to *use* a value/proof
+of a given data or proposition type. For example,
+to use a `Bool` value, you must provide code that
+computes an answer for each possible case or form
+of a `Bool` value.
 
-/- @@@
-inductive Nat where
-  | zero : Nat
-  | succ (n : Nat) : Nat
-@@@ -/
-
-#check Nat.rec
-
-/- @@@
-Nat.rec.{u}
-    {motive : Nat → Sort u}
-    (zero : motive Nat.zero)
-    (succ : (n : Nat) → motive n → motive n.succ)
-    (t : Nat) :
-motive t
-@@@ -/
-
-inductive natTree where
-| empty
-| node (left right : natTree)
-
-#check natTree.rec
-
-/- @@@
-natTree.rec.{u}
-    {motive : natTree → Sort u}
-    (empty : motive natTree.empty)
-    (node : (left right : natTree) → motive left → motive right → motive (left.node right))
-    ---
-    (t : natTree) :
-    motive t
-@@@ -/
-
-/- @@@
-# Recursors
 
 Every inductive type comes with a *recursor*, a function
 Lean generates automatically from the type's constructors.
@@ -56,11 +17,19 @@ the type: give it one case per constructor (a value, or a
 function, matching that constructor's shape) and it tells
 you how to produce a result for *any* value of the type.
 
-`match` and pattern-matching `def`s are just friendlier
-notation that compiles down to a call to the recursor. So
-if you understand the recursor for a type, you understand
-why pattern matching on it is allowed to look the way it
-does, and why it has to cover the cases it covers.
+Here's a key insight: recursors are what ultimately create
+total functionso when given the means of providing a result
+for each possible form/constructor of the given inductively
+defined type. Lean's `match` and pattern-matching `def`s are
+just friendlier notations that compile down to calls to the
+recursor for a given argument type. If you understand the
+recursor for a type, you understand why pattern matching on
+it is allowed to look the way it does, and why it has to
+cover the cases it covers.
+
+Next we look at the recursors for five familiar types,
+from the one with zero constructors up to the ones that
+carry recursive data.
 
 One wrinkle you'll meet below: Lean's compiler knows how
 to turn `match`-notation (and `Nat.rec` itself) into fast
@@ -72,10 +41,6 @@ evaluation in the elaborator) instead of `#eval` (which
 needs compiled code). `Nat.rec` is the exception -- it
 *is* directly computable, which is why `factorial` below
 can use `#eval`.
-
-Below we look at the recursors for five familiar types,
-from the one with zero constructors up to the ones that
-carry recursive data.
 @@@ -/
 
 /- @@@
@@ -130,29 +95,30 @@ def e2s : Empty → String :=
       e
 
 /- @@@
-That `(fun _ => String)` is the *motive* -- it's standing in
-for the `motive : Empty → Sort u_1` argument that `Empty.rec`
-asked for above. Recursors are stated for an arbitrary,
-*type-valued* function of the value being eliminated, rather
-than for one fixed return type, because in general which type
-you land in is allowed to depend on which constructor you
-matched (and, for types with data, on that data too). `Empty`
-has no constructors to depend on, so the motive here just
-ignores its argument (`_`) and names the same type, `String`,
-no matter what. Handing `Empty.rec` that motive is how you
-tell it "produce a `String` for me" -- it's what makes
-`Empty.rec (fun _ => String) e` a term of type `String`,
-exactly as `e2s`'s signature promises.
+There are no possible cases/forms of a value
+of the Empty type, so the recursor does not
+require code for any cases at all in order to
+hand you back a total function from `Empty` to
+any other type.
 @@@ -/
 
 /- @@@
-It says if you want a function (`motive`) from
-Empty to any return type whatsoever, you can
-have it without providing any additional terms,
-and it will take any value `t` of that type to a
-return value of the specified retur type (which
-lives in `Sort u`, which is to say in any type
-universe, even including `Prop`, i.e., `Sort 0`).
+The one potentially mystifying element in the
+definition is that `(fun _ => String)`. That is
+the `motive : Empty → Sort u_1` argument that `Empty.rec`
+asked for above. Recursors are stated for an arbitrary,
+*type-valued* function from the value being eliminated,
+rather than for one fixed return type, because in general
+which type a function returns is allowed, in dependent
+type theory, to depend on which constructor you matched
+(and, for constructors carrying data, on that data too).
+
+`Empty` has no constructors to depend on, so the motive
+here just ignores its argument (`_`) and names the same
+type, `String`, no matter what. Handing `Empty.rec` that
+motive is how you tell it produce a `String`. It makes
+`Empty.rec (fun _ => String) e` a term of type `String`,
+exactly as `e2s`'s signature promises.
 @@@ -/
 
 /- @@@
@@ -171,11 +137,19 @@ False.rec :
   motive t
 @@@ -/
 
-noncomputable def fromEmpty (e : Empty) : Nat :=
+def fromEmpty (e : Empty) : Nat :=
   Empty.rec (fun _ => Nat) e
+
+-- using nicer notation
+def fromEmpty' (e : Empty) : Nat :=
+  nomatch e
 
 theorem fromFalse (h : False) : 3 = 4 :=
   False.rec (fun _ => (3 = 4)) h
+
+-- using nicer notation
+theorem fromFalse' (h : False) : 3 = 4 :=
+  nomatch h
 
 /- @@@
 ## Unit / True: one constructor, no data
@@ -195,10 +169,24 @@ polymorphic one-element type, so its recursor is named
 #check @PUnit.rec
 #check @True.rec
 
+/- @@@
+@PUnit.rec :
+  {motive : PUnit → Sort u_1} →
+  motive PUnit.unit →
+  (t : PUnit) →
+  motive t
+@@@ -/
+
 noncomputable def fromUnit (u : Unit) : String :=
   PUnit.rec "the one and only" u
 
+-- noncomputable means no compiled code; #reduce doesn't need that
 #reduce fromUnit ()   -- "()" is notation for Unit.unit
+
+-- with nicer notation
+noncomputable def fromUnit' (u : Unit) : String :=
+  "the one and only"
+
 
 /- @@@
 ## Bool: two constructors, no data
@@ -211,6 +199,15 @@ constructor order.
 @@@ -/
 
 #check @Bool.rec
+
+/- @@@
+@Bool.rec :
+  {motive : Bool → Sort u_1} →
+  motive false →
+  motive true →
+  (t : Bool) →
+  motive t
+@@@ -/
 
 noncomputable def describe (b : Bool) : String :=
   Bool.rec "it's false" "it's true" b
@@ -232,6 +229,15 @@ induction and recursion are, underneath, the same thing.
 @@@ -/
 
 #check @Nat.rec
+
+/- @@@
+@Nat.rec :
+  {motive : Nat → Sort u_1} →
+  motive Nat.zero →
+  ((n' : Nat) → motive n' → motive n'.succ) →
+  (t : Nat) →
+  motive t
+@@@ -/
 
 def factorial (n : Nat) : Nat :=
   Nat.rec 1 (fun n ih => (n + 1) * ih) n
@@ -255,6 +261,15 @@ library.
 
 #check @String.rec
 
+/- @@@
+@String.rec :
+  {motive : String → Sort u_1} →
+  ((toByteArray : ByteArray) →
+    (isValidUTF8 : toByteArray.IsValidUTF8) →
+    motive { toByteArray := toByteArray, isValidUTF8 := isValidUTF8 }) →
+  (t : String) →
+  motive t
+@@@ -/
 noncomputable def byteLength (s : String) : Nat :=
   String.rec (fun toByteArray _ => toByteArray.size) s
 
