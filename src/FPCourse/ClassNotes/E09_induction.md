@@ -281,6 +281,114 @@ noncomputable def byteLength (s : String) : Nat :=
 #reduce byteLength ""        -- 0
 ```
 
+## Another Example of "Proof" by Induction
+
+As a final reminder, constructing a proof of
+a universal generalization, `∀ (x : P), Q x`,
+works the same way. If there is a proof of it,
+it'll be a total function from any value, `x`
+of type (data or logical type) `T` to a proof
+that *that* `x` in particular *satisfies* `Q`,
+insofar as there is a proof of `Q x`. You need
+a total function from any `x` to proofs of `Q x`,
+Who's your total function buddy? The recursor
+for the input type, here, `T`.
+### Every Dog is Friendly or Not
+Friendly.
+```lean
+-- Our dogs
+inductive Dog : Type where | Iris | Fido | Sargent
+open Dog
+
+-- Property of being Friendly
+inductive Friendly : Dog → Prop where
+| irisIs : Friendly Iris
+| fidoIs : Friendly Fido
+-- Sargent is NOT friendly
+
+-- Any friendly dog is pettable (safe to pet)
+inductive Pettable : Dog → Prop
+| canPet: ∀ (d : Dog), Friendly d → Pettable d
+```
+
+Given any dog, d, if there is a proof that
+d is Friendly, then this constructor gives
+you a proof that d is Pettable. So, if any
+dog is friendly, then *that* dog is pettable.
+```lean
+open  Pettable
+
+-- Iris is pettable
+example : Pettable Iris := canPet Iris Friendly.irisIs
+
+-- Fido is pettable
+example : Pettable Fido := canPet Fido Friendly.fidoIs
+
+-- Sargent is not pettable (proof by negation)
+example : ¬Pettable Sargent :=
+  fun sargIsPettable =>
+    match sargIsPettable with
+    | canPet Sargent sargentIs => nomatch sargentIs
+```
+
+Evidently, every dog that's friendly is pettable. We
+can now state this as a top-level theorem, valid given
+the particular Dog World we've modeled here.
+```lean
+example : ∀ d, Friendly d → Pettable d
+| d, h => Pettable.canPet d h
+```
+
+This theorem proves that *all* dogs have the specified
+property, of being pettable if friendly. Could we just
+as well prove this theorem by induction? What would that
+even mean? Induction on what? There are no Nats here.
+
+Remember, induction is for proving universals or giving
+back total functions. Where is there a universal here?
+It's `∀ (d : Dog)`. So we'd use induction on Dog!
+```lean
+#check Dog.rec
+```
+
+```lean
+Dog.rec.{u}
+  {motive : Dog → Sort u}
+  (Iris : motive Iris)
+  (Fido : motive Fido)
+  (Sargent : motive Sargent)
+  -- what is `motive` here?
+  -- given proofs for each dog individually
+  -- you can now have a total function
+  -- given *any* dog, it satisfies the predicate
+  (t : Dog) :
+  motive t
+```
+Yes. Here we prove the generalization by induction
+on `Dog`, then apply it
+```lean
+theorem fImpP : ∀ d, Friendly d → Pettable d
+| d, h =>
+  Dog.rec
+    (
+      Pettable.canPet d h
+    )
+    (
+       Pettable.canPet d h
+    )
+    (
+       Pettable.canPet d h
+    )
+    Sargent
+```
+
+### Take-Away
+
+You should see here that *a proof by induction on
+`Dog` is really just a proof by finite case analysis.
+More generally, case analysis emerges as just a special
+case of induction, namely on type with a finite number
+of cases.
 
 <div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

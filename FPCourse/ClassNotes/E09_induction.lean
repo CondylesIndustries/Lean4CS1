@@ -412,3 +412,13 @@ theorem fImpP : ∀ d, Friendly d → Pettable d
        Pettable.canPet d h
     )
     Sargent
+
+/- @@@
+### Take-Away
+
+You should see here that *a proof by induction on
+`Dog` is really just a proof by finite case analysis.
+More generally, case analysis emerges as just a special
+case of induction, namely on type with a finite number
+of cases.
+@@@ -/
