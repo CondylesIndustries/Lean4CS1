@@ -229,23 +229,23 @@ to provide notations and more. Use your search
 engine or agent to find the names of the right
 classes in Lean's libraries for these operations.
 
-2. Provide a few examples similar to those
-above, testing and showing that expressions
-using subtraction and negation work with the
-usual precedence and associativity properties.
-
-3. Replace Nat with KNat in the following
+2. Replace Nat with KNat in the following
 definition of the syntax and semantics of
 our little language of arithmetic. Extend
 the language to support the subtraction and
 negation operations you've just defined.
 
-4. Extend your language of arithmetic with
+3. Extend your language of arithmetic with
 *variable* expressions, so you can write not
 just, say, two plus three, but X plus 3. See
 how we handled propositional variables in our
 formalization of propositional logic and use
 the same pattern here.
+
+4. Provide a few examples similar to those
+above, testing and showing that expressions
+using subtraction, negation, and variables
+work with usual precedence and associativity.
 ```lean
 end KNat
 
