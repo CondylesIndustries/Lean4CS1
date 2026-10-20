@@ -38,6 +38,8 @@ inductive ArithExpr where
 | Var (v : Variable)
 -- do the same for variables
 
+#eval 1000000000000000 * 1000000000000000
+
 open ArithExpr
 
 def X : ArithExpr := ArithExpr.Var Variable.Xvar
