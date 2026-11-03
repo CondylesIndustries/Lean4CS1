@@ -11,13 +11,13 @@ Last class we saw that a *torsor* is a set `T` where a group `G` acts
 in two special ways: *freely* (no non-identity element fixes any point)
 and *transitively* (any two points are related by some group element).
 
-An *affine space* is a torsor with a twist: instead of a group acting
-on itself or abstract points, we have a vector space `V` acting on a
-set `P` (the "points"). The group structure on `V` lets us describe
-displacements between points: to move from point `p` to point `q`,
-we add some vector `v` from `V`. The freeness and transitivity of the
-action mean every pair of points has a unique displacement vector,
-and conversely, every vector can translate any point to some other point.
+An *affine space* is a torsor with a specific structure: we have a group `V`
+(the "displacement vectors") acting on a set `P` (the "points") in a torsor fashion.
+The group structure on `V` lets us describe how displacements compose:
+to move from point `p` to point `q` by displacement `v`, we compute `p + v`.
+The freeness and transitivity of the action mean every pair of points has a unique
+displacement vector relating them, and conversely, every vector can translate
+any point to some other point.
 
 Why does this matter? Because it captures *pure geometry* -- the essence
 of space without imposing a choice of origin. In a vector space, there's
