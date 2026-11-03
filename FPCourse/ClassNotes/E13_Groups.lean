@@ -129,14 +129,14 @@ these properties.
 @@@ -/
 
 instance : Group Int where
-  op      := (· + ·)
-  id      := 0
-  assoc   := Int.add_assoc
-  idLeft  := Int.zero_add
-  idRight := Int.add_zero
-  inv     := fun n => -n
-  invLeft := fun n => Int.add_left_neg n
-  invRight:= fun n => Int.add_right_neg n
+  op      : Int → Int → Int := (· + ·)
+  id      : Int := 0
+  assoc   : ∀ a b c : Int, (a + b) + c = a + (b + c) := Int.add_assoc
+  idLeft  : ∀ a : Int, 0 + a = a := Int.zero_add
+  idRight : ∀ a : Int, a + 0 = a := Int.add_zero
+  inv     : Int → Int := fun n => -n
+  invLeft : ∀ a : Int, (-a) + a = 0 := fun n => Int.add_left_neg n
+  invRight: ∀ a : Int, a + (-a) = 0 := fun n => Int.add_right_neg n
 
 #eval (5 : Int) + 3              -- 8
 #eval (-5 : Int)                 -- -5
@@ -158,14 +158,14 @@ think noon (0), four (1), eight (2), then back to noon again (0).
 @@@ -/
 
 instance : Group (Fin 3) where
-  op      := (· + ·)
-  id      := 0
-  assoc   := fun a b c => by ext; simp [Fin.add_def, Nat.add_assoc]
-  idLeft  := fun a => by ext; simp [Fin.add_def]
-  idRight := fun a => by ext; simp [Fin.add_def]
-  inv     := fun a => -a
-  invLeft := fun a => by ext; simp [Fin.add_def, Fin.neg_def]
-  invRight:= fun a => by ext; simp [Fin.add_def, Fin.neg_def]
+  op      : Fin 3 → Fin 3 → Fin 3 := (· + ·)
+  id      : Fin 3 := 0
+  assoc   : ∀ a b c : Fin 3, (a + b) + c = a + (b + c) := fun a b c => by ext; simp [Fin.add_def, Nat.add_assoc]
+  idLeft  : ∀ a : Fin 3, 0 + a = a := fun a => by ext; simp [Fin.add_def]
+  idRight : ∀ a : Fin 3, a + 0 = a := fun a => by ext; simp [Fin.add_def]
+  inv     : Fin 3 → Fin 3 := fun a => -a
+  invLeft : ∀ a : Fin 3, (-a) + a = 0 := fun a => by ext; simp [Fin.add_def, Fin.neg_def]
+  invRight: ∀ a : Fin 3, a + (-a) = 0 := fun a => by ext; simp [Fin.add_def, Fin.neg_def]
 
 #eval (1 : Fin 3) + (1 : Fin 3)  -- 2
 #eval (2 : Fin 3) + (1 : Fin 3)  -- 0 (wraps around)
@@ -196,14 +196,14 @@ from 0 to N-1" with addition wrapping around at N.
 @@@ -/
 
 instance : Group (Fin 5) where
-  op      := (· + ·)
-  id      := 0
-  assoc   := fun a b c => by ext; simp [Fin.add_def, Nat.add_assoc]
-  idLeft  := fun a => by ext; simp [Fin.add_def]
-  idRight := fun a => by ext; simp [Fin.add_def]
-  inv     := fun a => -a
-  invLeft := fun a => by ext; simp [Fin.add_def, Fin.neg_def]
-  invRight:= fun a => by ext; simp [Fin.add_def, Fin.neg_def]
+  op      : Fin 5 → Fin 5 → Fin 5 := (· + ·)
+  id      : Fin 5 := 0
+  assoc   : ∀ a b c : Fin 5, (a + b) + c = a + (b + c) := fun a b c => by ext; simp [Fin.add_def, Nat.add_assoc]
+  idLeft  : ∀ a : Fin 5, 0 + a = a := fun a => by ext; simp [Fin.add_def]
+  idRight : ∀ a : Fin 5, a + 0 = a := fun a => by ext; simp [Fin.add_def]
+  inv     : Fin 5 → Fin 5 := fun a => -a
+  invLeft : ∀ a : Fin 5, (-a) + a = 0 := fun a => by ext; simp [Fin.add_def, Fin.neg_def]
+  invRight: ∀ a : Fin 5, a + (-a) = 0 := fun a => by ext; simp [Fin.add_def, Fin.neg_def]
 
 #eval (3 : Fin 5) + 2           -- 0 (because (3 + 2) mod 5 = 5 mod 5 = 0)
 #eval (4 : Fin 5) + 1           -- 0 (because (4 + 1) mod 5 = 5 mod 5 = 0)
@@ -319,14 +319,14 @@ our `Group Int` instance for integers.
 @@@ -/
 
 instance : Group Rat where
-  op      := (· + ·)
-  id      := 0
-  assoc   := Rat.add_assoc
-  idLeft  := Rat.zero_add
-  idRight := Rat.add_zero
-  inv     := fun q => -q
-  invLeft := Rat.neg_add_cancel
-  invRight:= Rat.add_neg_cancel
+  op      : Rat → Rat → Rat := (· + ·)
+  id      : Rat := 0
+  assoc   : ∀ a b c : Rat, (a + b) + c = a + (b + c) := Rat.add_assoc
+  idLeft  : ∀ a : Rat, 0 + a = a := Rat.zero_add
+  idRight : ∀ a : Rat, a + 0 = a := Rat.add_zero
+  inv     : Rat → Rat := fun q => -q
+  invLeft : ∀ a : Rat, (-a) + a = 0 := Rat.neg_add_cancel
+  invRight: ∀ a : Rat, a + (-a) = 0 := Rat.add_neg_cancel
 
 instance : Torsor Rat Rat where
   groupG    := inferInstance
@@ -379,14 +379,14 @@ is the zero vector (0, 0).
 @@@ -/
 
 instance : Group (Rat × Rat) where
-  op      := fun (a, b) (c, d) => (a + c, b + d)
-  id      := (0, 0)
-  assoc   := fun _ _ _ => sorry
-  idLeft  := fun _ => sorry
-  idRight := fun _ => sorry
-  inv     := fun (a, b) => (-a, -b)
-  invLeft := fun _ => sorry
-  invRight:= fun _ => sorry
+  op      : Rat × Rat → Rat × Rat → Rat × Rat := fun (a, b) (c, d) => (a + c, b + d)
+  id      : Rat × Rat := (0, 0)
+  assoc   : ∀ a b c : Rat × Rat, ((a.1 + b.1) + c.1, (a.2 + b.2) + c.2) = (a.1 + (b.1 + c.1), a.2 + (b.2 + c.2)) := fun _ _ _ => sorry
+  idLeft  : ∀ a : Rat × Rat, (0 + a.1, 0 + a.2) = a := fun _ => sorry
+  idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a := fun _ => sorry
+  inv     : Rat × Rat → Rat × Rat := fun (a, b) => (-a, -b)
+  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) := fun _ => sorry
+  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) := fun _ => sorry
 
 instance : Torsor (Rat × Rat) (Rat × Rat) where
   groupG    := inferInstance
