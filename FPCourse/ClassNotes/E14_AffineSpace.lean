@@ -116,10 +116,8 @@ instance : Group (Rat × Rat) where
   idLeft  := fun _ => by simp
   idRight := fun _ => by simp
   inv     := fun (a, b) => (-a, -b)
-  invLeft := fun _ => by
-    ext <;> simp [Rat.neg_add_cancel]
-  invRight:= fun _ => by
-    ext <;> simp [Rat.add_neg_cancel]
+  invLeft := fun (a, b) => by ext <;> simp [Rat.neg_add_cancel]
+  invRight:= fun (a, b) => by ext <;> simp [Rat.add_neg_cancel]
 
 instance : AffineSpace (Rat × Rat) (Rat × Rat) where
   groupV  := inferInstance
