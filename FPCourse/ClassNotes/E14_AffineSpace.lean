@@ -112,25 +112,25 @@ operation subtracts coordinates to recover the displacement vector.
 @@@ -/
 
 instance : Group (Rat × Rat) where
-  op      := fun (a, b) (c, d) => (a + c, b + d)
-  id      := (0, 0)
-  assoc   := fun _ _ _ => by simp [Rat.add_assoc]
-  idLeft  := fun _ => by simp
-  idRight := fun _ => by simp
-  inv     := fun (a, b) => (-a, -b)
-  invLeft := fun (a, b) => by ext <;> simp [Rat.neg_add_cancel]
-  invRight:= fun (a, b) => by ext <;> simp [Rat.add_neg_cancel]
+  op      : Rat × Rat → Rat × Rat → Rat × Rat := fun (a, b) (c, d) => (a + c, b + d)
+  id      : Rat × Rat := (0, 0)
+  assoc   : ∀ a b c : Rat × Rat, ((a.1 + b.1) + c.1, (a.2 + b.2) + c.2) = (a.1 + (b.1 + c.1), a.2 + (b.2 + c.2)) := fun _ _ _ => by simp [Rat.add_assoc]
+  idLeft  : ∀ a : Rat × Rat, (0 + a.1, 0 + a.2) = a := fun _ => by simp
+  idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a := fun _ => by simp
+  inv     : Rat × Rat → Rat × Rat := fun (a, b) => (-a, -b)
+  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) := fun (a, b) => by ext <;> simp [Rat.neg_add_cancel]
+  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) := fun (a, b) => by ext <;> simp [Rat.add_neg_cancel]
 
 instance : AffineSpace (Rat × Rat) (Rat × Rat) where
   groupV  := inferInstance
-  vadd    := fun (v₁, v₂) (p₁, p₂) => (p₁ + v₁, p₂ + v₂)
-  vsub    := fun (q₁, q₂) (p₁, p₂) => (q₁ - p₁, q₂ - p₂)
-  vaddAssoc := fun (v₁, v₂) (w₁, w₂) (p₁, p₂) => sorry
-  vaddZero := fun (p₁, p₂) => by
+  vadd    : Rat × Rat → Rat × Rat → Rat × Rat := fun (v₁, v₂) (p₁, p₂) => (p₁ + v₁, p₂ + v₂)
+  vsub    : Rat × Rat → Rat × Rat → Rat × Rat := fun (q₁, q₂) (p₁, p₂) => (q₁ - p₁, q₂ - p₂)
+  vaddAssoc : ∀ v w : Rat × Rat, ∀ p : Rat × Rat, _ := fun (v₁, v₂) (w₁, w₂) (p₁, p₂) => sorry
+  vaddZero : ∀ p : Rat × Rat, _ := fun (p₁, p₂) => by
     ext <;> simp [Group.id]
-  vsubAdd := fun (q₁, q₂) (p₁, p₂) => by
+  vsubAdd : ∀ p q : Rat × Rat, _ := fun (q₁, q₂) (p₁, p₂) => by
     ext <;> simp
-  addVsub := fun (v₁, v₂) (p₁, p₂) => by
+  addVsub : ∀ v : Rat × Rat, ∀ p : Rat × Rat, _ := fun (v₁, v₂) (p₁, p₂) => by
     ext <;> simp
 
 /- @@@
