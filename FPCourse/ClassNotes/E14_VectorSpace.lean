@@ -31,6 +31,23 @@ leverage mathlib's `Field` typeclass for scalars and the `Module` typeclass,
 which bundles the vector space operations and laws together in Lean's
 modern typeclass system.
 
+## Why Use Mathlib Here?
+
+Previous lessons (E11–E13) built custom typeclasses to understand structure.
+Here, we shift strategy: Lean's mathlib has mature, battle-tested definitions
+of fields and modules. Rather than re-derive everything, we leverage them.
+
+This is realistic: in practice, you build custom types for *new* problems,
+but reuse standard library abstractions for well-understood mathematics.
+
+The Module typeclass is exactly what we need: a vector space is a module
+over a field. Mathlib's instances automatically handle 1D, 2D, 3D, etc.
+without requiring you to re-prove the axioms for each dimension.
+
+**The payoff**: one theorem about modules instantly applies to ℚ, ℚ², ℚ³,
+spaces of polynomials, and infinite-dimensional Hilbert spaces—anywhere
+the Module structure holds.
+
 ## Why Vector Spaces Matter
 
 Vector spaces unify a hundred different-looking problems into a single
