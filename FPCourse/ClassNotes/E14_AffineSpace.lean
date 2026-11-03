@@ -64,17 +64,19 @@ instance [Group α] : Neg α where neg := Group.inv
 instance [Group α] : Zero α where zero := Group.id
 
 /- @@@
-## `AffineSpace`: A Vector Space Acting on Points
+## `AffineSpace`: A Torsor Structure
 
-An affine space pairs a set of points `P` with a group `V` (the
-"vectors" or "displacements"). The group acts on points via a
-translation operation. The structure enforces that this action is
-both free and transitive, which means vectors are uniquely determined
-by the points they connect.
+An affine space is exactly a torsor: it pairs a set of points `P` with a group `V`
+(the "vectors" or "displacements") where `P` is a torsor for the group action of `V`.
+The group acts on points via a translation operation in a way that is both
+*free* (no non-identity group element fixes any point) and *transitive*
+(any two points are related by some group element). This means:
+- Every pair of points has a unique displacement vector between them
+- Every vector can translate any point to some other point
 
-Here, we bundle the translation operation (`vadd`) and its inverse
-(`vsub`) with proofs that they satisfy the affine axioms. The `VAdd`
-and `VSub` typeclasses provide standard notation: `v +ᵥ p` for translation
+Here, we bundle the translation operation (`vadd`) and its inverse (`vsub`)
+with proofs that they satisfy the affine axioms. The `VAdd` and `VSub`
+typeclasses provide standard notation: `v +ᵥ p` for translation
 and `q -ᵥ p` for vector subtraction.
 @@@ -/
 
