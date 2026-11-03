@@ -76,12 +76,16 @@ ordinary rational addition, and scalar multiplication is ordinary rational
 multiplication. This is the simplest non-trivial example.
 
 In mathlib, this instance is built-in: Lean knows that any field is a vector
-space over itself.
+space over itself via the Module typeclass.
 @@@ -/
 
-#eval (2 : Rat) * (3 : Rat)  -- 6 (multiplication)
-#eval (1 : Rat) * (5 : Rat)  -- 5 (identity element)
-#eval (2 : Rat) + (3 : Rat)  -- 5 (addition)
+/- ℚ is a module over itself (hence a vector space) -/
+#check (inferInstance : Module Rat Rat)
+
+/- Basic operations in the 1D vector space ℚ -/
+#eval (2 : Rat) * (3 : Rat)  -- 6 (scalar multiplication)
+#eval (1 : Rat) * (5 : Rat)  -- 5 (identity element: 1 • v = v)
+#eval (2 : Rat) + (3 : Rat)  -- 5 (vector addition)
 
 /- @@@
 The rational numbers are a concrete representation of a 1-dimensional vector
@@ -105,11 +109,10 @@ Mathlib has a generic instance: if `V` is a module over `R`, then `V × V`
 is also a module over `R` (with componentwise operations).
 @@@ -/
 
-/- @@@
-Let's verify the basic operations work on pairs.
-@@@ -/
+/- ℚ × ℚ is a module over ℚ (the 2D vector space)
+   Mathlib automatically provides this instance for products of modules. -/
 
-/- Vector space structure on pairs: addition and scalar multiplication -/
+/- Basic vector space operations on pairs -/
 #eval let v : Rat × Rat := (2, 3);
       let w : Rat × Rat := (1, -1);
       show Rat × Rat from (v.1 + w.1, v.2 + w.2)
@@ -134,7 +137,10 @@ generic instances for all finite products, so ℚ³ is automatically a vector sp
 over ℚ with componentwise addition and scalar multiplication.
 @@@ -/
 
-/- Vector space structure on triples: addition and scalar multiplication -/
+/- ℚ × ℚ × ℚ is a module over ℚ (the 3D vector space)
+   Mathlib automatically provides this instance for products of modules. -/
+
+/- Vector space operations on triples -/
 #eval let v : Rat × Rat × Rat := (1, 2, 3);
       let w : Rat × Rat × Rat := (1, 1, 1);
       show Rat × Rat × Rat from (v.1 + w.1, v.2.1 + w.2.1, v.2.2 + w.2.2)
