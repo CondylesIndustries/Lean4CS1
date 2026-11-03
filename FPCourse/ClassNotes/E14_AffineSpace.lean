@@ -167,9 +167,30 @@ vector subtraction is a kind of "difference" operation: the vector that
 takes us from one point to another is unique, and going from p to q to r
 is the same as going directly from p to r.
 
-This is captured in the affine space axioms: `vsubAdd` says that translating
-by a difference recovers the target point, and `addVsub` says that the
-difference of a translated point is the translation vector.
+This is captured in the affine space axioms:
+
+  **vsubAdd**: `(q -ᵥ p) +ᵥ p = q`
+  ```
+    Geometric meaning: if we take the vector from p to q, and apply it to p,
+    we get back to q.
+
+    p ──────────(q - p)─────────> q
+            (add to p)
+
+    This says: the displacement from p to q, when added to p, reconstructs q.
+  ```
+
+  **addVsub**: `(v +ᵥ p) -ᵥ p = v`
+  ```
+    Geometric meaning: if we translate p by vector v, the difference between
+    the new point and the original is the vector v.
+
+    p ─────v────> (v + p)
+            (subtract p)
+
+    This says: translating p by v, then computing the vector back to p,
+    recovers the original vector v.
+  ```
 @@@ -/
 
 /- @@@
