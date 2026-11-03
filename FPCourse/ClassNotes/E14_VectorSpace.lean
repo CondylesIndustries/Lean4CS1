@@ -26,9 +26,10 @@ space. The central concept of *linear independence* and *dimension*
 emerge naturally from the structure.
 
 In today's lesson, we formalize vector spaces using Lean's standard library
-definitions. Rather than re-implementing the group and field structures,
-we'll leverage mathlib's `Field` and `Module` typeclasses, which encode
-the same mathematical content using Lean's modern typeclass system.
+definitions. Rather than re-implementing everything from scratch, we'll
+leverage mathlib's `Field` typeclass for scalars and the `Module` typeclass,
+which bundles the vector space operations and laws together in Lean's
+modern typeclass system.
 
 ## Why Vector Spaces Matter
 
