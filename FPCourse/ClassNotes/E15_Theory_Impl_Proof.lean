@@ -31,18 +31,16 @@ namespace TheoryImplProof
 ## Theory Layer: Abstract Requirements for Geometric Structures
 
 We abstract the essential properties that make something an affine or vector space,
-without committing to any specific type.
+without committing to any specific type. Rather than re-documenting Group and
+AffineSpace axioms (see E13 and E14), we provide a minimal recap here.
 @@@ -/
 
 /- @@@
-### Abstract Theory: AffineSpaceTheory
+### Abstract Theory: Recap and Abstraction
 
-An affine space abstractly requires:
-- A group V of vectors (with operation op, identity id, inverse inv)
-- A set P of points (no group structure)
-- A translation operation vadd : V → P → P
-- A subtraction operation vsub : P → P → V
-- Axioms relating these operations
+From E13, a Group has operation, identity, associativity, and inverses.
+From E14, an AffineSpace has a Group acting on points via vadd/vsub.
+Now we formalize these patterns generically over arbitrary types.
 @@@ -/
 
 class Group (α : Type) where
@@ -119,10 +117,11 @@ instance : AffineSpaceTheory Rat Rat where
   groupV  := inferInstance
   vadd    : Rat → Rat → Rat := (· + ·)
   vsub    : Rat → Rat → Rat := (· - ·)
-  vaddAssoc : ∀ v w : Rat, ∀ p : Rat, v + (w + p) = (v + w) + p := fun v w p => sorry
-  vaddZero : ∀ p : Rat, 0 + p = p := fun p => sorry
-  vsubAdd : ∀ p q : Rat, (q - p) + p = q := fun q p => sorry
-  addVsub : ∀ v : Rat, ∀ p : Rat, (v + p) - p = v := fun v p => sorry
+  vaddAssoc : ∀ v w : Rat, ∀ p : Rat, v + (w + p) = (v + w) + p :=
+    fun v w p => (Rat.add_assoc v w p).symm
+  vaddZero : ∀ p : Rat, 0 + p = p := Rat.zero_add
+  vsubAdd : ∀ p q : Rat, (q - p) + p = q := fun q p => by norm_num
+  addVsub : ∀ v : Rat, ∀ p : Rat, (v + p) - p = v := fun v p => by norm_num
 
 instance : VectorSpaceTheory Rat Rat where
   smul : Rat → Rat → Rat := (· * ·)
@@ -211,6 +210,8 @@ theorem affine_vector_recovery {V P : Type} [aff : AffineSpaceTheory V P] (v : V
 
 theorem affine_transitivity {V P : Type} [aff : AffineSpaceTheory V P] (p q r : P) :
     aff.groupV.op (aff.vsub r q) (aff.vsub q p) = aff.vsub r p := by
+  -- The vector from p to r equals the composition of vectors p→q and q→r
+  -- This requires reasoning about how vsub decomposes over intermediate points
   sorry
 
 /- @@@
@@ -259,5 +260,22 @@ This separation allows:
 
 The pattern scales: one abstract theory + many implementations + shared proofs.
 @@@ -/
+
+/- @@@
+## Concrete Demonstration: Generic Theorem on Rat
+
+The theorem `affine_translation_inversion` holds for all affine spaces.
+Here we apply it to Rat, showing no re-proof needed:
+
+With the instances in place, the proof works on any type satisfying
+AffineSpaceTheory. We don't re-prove it for Rat, Rat × Rat, or Rat × Rat × Rat.
+Instead, the single proof automatically applies everywhere the theory holds.
+
+This demonstrates the power of abstraction: one theorem, infinite applications.
+@@@ -/
+
+example : (inferInstance : AffineSpaceTheory Rat Rat).vadd
+          ((inferInstance : AffineSpaceTheory Rat Rat).vsub 5 2) 2 = 5 :=
+  affine_translation_inversion 2 5
 
 end TheoryImplProof
