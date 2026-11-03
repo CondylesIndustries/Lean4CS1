@@ -194,6 +194,102 @@ This is captured in the affine space axioms:
 @@@ -/
 
 /- @@@
+## Concrete Examples: Small Geometric Worlds
+
+Now let's see the affine space in action with concrete geometric worlds.
+The key is that all operations are coordinate-free and don't require choosing
+an origin.
+@@@ -/
+
+/- @@@
+### Example 1: A Triangle in the Rational Plane
+
+Define three vertices of a triangle:
+@@@ -/
+
+def triangle_A : Rat × Rat := (1, 2)
+def triangle_B : Rat × Rat := (4, 2)
+def triangle_C : Rat × Rat := (2, 5)
+
+/- @@@
+Compute the vectors forming the sides of the triangle.
+Note: we use the `-ᵥ` operator to compute displacements.
+@@@ -/
+
+def side_AB : Rat × Rat := triangle_B -ᵥ triangle_A  -- (3, 0)
+def side_BC : Rat × Rat := triangle_C -ᵥ triangle_B  -- (-2, 3)
+def side_CA : Rat × Rat := triangle_A -ᵥ triangle_C  -- (-1, -3)
+
+/- @@@
+Verify the closure property: going around the triangle brings you back home.
+The sum of all displacement vectors around a closed loop is the zero vector.
+@@@ -/
+
+def close_the_loop : Rat × Rat := (side_AB.1 + side_BC.1 + side_CA.1, side_AB.2 + side_BC.2 + side_CA.2)
+
+/- In a closed triangle: AB + BC + CA = (0, 0) -/
+
+/- @@@
+### Example 2: Translation and Reconstruction
+
+Translate a point by a vector, then recover the original vector from the
+difference.
+@@@ -/
+
+def point_P : Rat × Rat := (0, 0)
+def vector_v : Rat × Rat := (3, 4)
+
+/- @@@
+The notation `v +ᵥ p` uses the VAdd instance to translate point p by vector v.
+@@@ -/
+
+def translated_point : Rat × Rat :=
+  let v : Rat × Rat := vector_v
+  let p : Rat × Rat := point_P
+  (v.1 + p.1, v.2 + p.2)  -- (3, 4)
+
+/- @@@
+Now recover the original vector by taking the difference:
+@@@ -/
+
+def recovered_vector : Rat × Rat :=
+  (translated_point.1 - point_P.1, translated_point.2 - point_P.2)  -- (3, 4)
+
+/- Both vector_v and recovered_vector are (3, 4), demonstrating addVsub axiom -/
+
+/- @@@
+### Example 3: Geometric Relationships Without an Origin
+
+Consider a line defined by two points. We can describe all points on the line
+using just the affine structure — no special origin needed.
+@@@ -/
+
+def line_point_1 : Rat × Rat := (1, 1)
+def line_point_2 : Rat × Rat := (2, 3)
+
+def direction : Rat × Rat := line_point_2 -ᵥ line_point_1  -- (1, 2)
+
+/- @@@
+A point at t=2 along this line (2 times the direction vector from point_1):
+@@@ -/
+
+def point_on_line_t2 : Rat × Rat :=
+  let double_direction := (2 * direction.1, 2 * direction.2)
+  (line_point_1.1 + double_direction.1, line_point_1.2 + double_direction.2)
+  -- (1, 1) + (2, 4) = (3, 5)
+
+/- @@@
+The affine space structure lets us:
+  - Define geometric objects (lines, triangles) by their points
+  - Compute displacements between points without a global coordinate system
+  - Verify geometric properties (like closure of a triangle)
+  - Reconstruct vectors from differences
+
+All of this works *purely relationally* — we never need to pick a special point
+as "the origin." The geometry emerges from the group action alone.
+@@@ -/
+
+/- @@@
 The key insight: affine spaces capture *pure geometry* in the sense that
 we can describe the relationships between points without choosing an origin.
 The group action encodes all the geometric information we need.
