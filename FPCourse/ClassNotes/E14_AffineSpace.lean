@@ -20,8 +20,8 @@ displacement vector relating them, and conversely, every vector can translate
 any point to some other point.
 
 Why does this matter? Because it captures *pure geometry* -- the essence
-of space without imposing a choice of origin. In a vector space, there's
-a distinguished point: the zero vector, which is both an algebraic and
+of space without imposing a choice of origin or coordinate system. In a vector space,
+there's a distinguished point: the zero vector, which is both an algebraic and
 geometric identity. In an affine space, there's no such point. All points
 are equivalent, related only through the group action.
 
