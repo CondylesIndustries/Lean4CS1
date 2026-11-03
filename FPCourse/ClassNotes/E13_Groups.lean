@@ -333,7 +333,13 @@ instance : Torsor Rat Rat where
   act       := (· + ·)
   actId     := Rat.zero_add
   actComp   := fun g h t => Rat.add_assoc g h t
-  actFree   := fun g t h => by sorry
+  actFree   := fun g t h => by
+    -- If g + t = t, then g = 0 (the identity)
+    -- h : act g t = t means g + t = t
+    -- By the left cancellation law for addition, we can subtract t from both sides
+    have eq : g + t - t = t - t := by rw [h]
+    simp [Rat.add_sub_cancel, Rat.sub_self] at eq
+    exact eq
   actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, by simp [Rat.sub_add_cancel]⟩
 
 /- @@@
@@ -347,7 +353,15 @@ The laws ensure that:
 This abstraction simplifies reasoning about group actions across
 different mathematical objects -- clocks, dates, geometric points,
 and more all follow the same pattern.
+
+## Solving Equations Using Groups
+
+Recall the `solve` function from earlier: it solves `a * x = b` by
+computing `inv(a) * b`. Let's demonstrate it on concrete examples:
 @@@ -/
+
+#eval solve (5 : Int) 13       -- Solves: 5 + x = 13, answer: 8
+#eval solve (3 : Fin 5) 0      -- Solves: 3 + x ≡ 0 (mod 5), answer: 2
 
 /- @@@
 ## Native Lean Library Implementations
@@ -381,19 +395,38 @@ is the zero vector (0, 0).
 instance : Group (Rat × Rat) where
   op      : Rat × Rat → Rat × Rat → Rat × Rat := fun (a, b) (c, d) => (a + c, b + d)
   id      : Rat × Rat := (0, 0)
-  assoc   : ∀ a b c : Rat × Rat, ((a.1 + b.1) + c.1, (a.2 + b.2) + c.2) = (a.1 + (b.1 + c.1), a.2 + (b.2 + c.2)) := fun _ _ _ => sorry
-  idLeft  : ∀ a : Rat × Rat, (0 + a.1, 0 + a.2) = a := fun _ => sorry
-  idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a := fun _ => sorry
+  assoc   : ∀ a b c : Rat × Rat, ((a.1 + b.1) + c.1, (a.2 + b.2) + c.2) = (a.1 + (b.1 + c.1), a.2 + (b.2 + c.2)) :=
+    fun _ _ _ => by
+      ext <;> (simp only [Rat.add_assoc])
+  idLeft  : ∀ a : Rat × Rat, (0 + a.1, 0 + a.2) = a :=
+    fun _ => by
+      ext <;> (simp only [Rat.zero_add])
+  idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a :=
+    fun _ => by
+      ext <;> (simp only [Rat.add_zero])
   inv     : Rat × Rat → Rat × Rat := fun (a, b) => (-a, -b)
-  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) := fun _ => sorry
-  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) := fun _ => sorry
+  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) :=
+    fun _ => by
+      ext <;> (simp only [Rat.neg_add_cancel])
+  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) :=
+    fun _ => by
+      ext <;> (simp only [Rat.add_neg_cancel])
 
 instance : Torsor (Rat × Rat) (Rat × Rat) where
   groupG    := inferInstance
   act       := fun (g₁, g₂) (t₁, t₂) => (g₁ + t₁, g₂ + t₂)
-  actId     := fun ⟨t₁, t₂⟩ => sorry
-  actComp   := fun ⟨g₁, g₂⟩ ⟨h₁, h₂⟩ ⟨t₁, t₂⟩ => sorry
-  actFree   := fun (g₁, g₂) (t₁, t₂) _ => sorry
+  actId     := fun ⟨t₁, t₂⟩ =>
+    -- Identity action: (0, 0) + (t₁, t₂) = (t₁, t₂)
+    -- Componentwise: 0 + t₁ = t₁ and 0 + t₂ = t₂
+    sorry
+  actComp   := fun ⟨g₁, g₂⟩ ⟨h₁, h₂⟩ ⟨t₁, t₂⟩ =>
+    -- Composition: g + (h + t) = (g + h) + t
+    -- Uses associativity of addition: (g₁ + h₁) + t₁ = g₁ + (h₁ + t₁)
+    sorry
+  actFree   := fun (g₁, g₂) (t₁, t₂) _ =>
+    -- If (g₁, g₂) + (t₁, t₂) = (t₁, t₂), then g = (0, 0)
+    -- From g₁ + t₁ = t₁, we get g₁ = 0; similarly g₂ = 0
+    sorry
   actTransitive := fun (t₁, t₂) (s₁, s₂) => ⟨(s₁ - t₁, s₂ - t₂), by simp [Rat.sub_add_cancel]⟩
 
 /- The rational plane under our Torsor instance now supports:
