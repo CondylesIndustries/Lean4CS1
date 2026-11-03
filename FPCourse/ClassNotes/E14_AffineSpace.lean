@@ -82,10 +82,10 @@ class AffineSpace (V : Type) (P : Type) where
   [groupV : Group V]
   vadd    : V → P → P
   vsub    : P → P → V
-  vaddAssoc : ∀ v w p, vadd v (vadd w p) = vadd (groupV.op v w) p
-  vaddZero  : ∀ p, vadd groupV.id p = p
-  vsubAdd   : ∀ p q, vadd (vsub q p) p = q
-  addVsub   : ∀ v p, vsub (vadd v p) p = v
+  vaddAssoc : ∀ v w : V, ∀ p : P, vadd v (vadd w p) = vadd (groupV.op v w) p
+  vaddZero  : ∀ p : P, vadd groupV.id p = p
+  vsubAdd   : ∀ p q : P, vadd (vsub q p) p = q
+  addVsub   : ∀ v : V, ∀ p : P, vsub (vadd v p) p = v
 
 /- Standard notation typeclasses for affine operations -/
 class VAdd (V : Type) (P : Type) where vadd : V → P → P
