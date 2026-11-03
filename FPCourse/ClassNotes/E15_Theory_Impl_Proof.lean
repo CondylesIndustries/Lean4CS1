@@ -48,12 +48,12 @@ An affine space abstractly requires:
 class Group (α : Type) where
   op      : α → α → α
   id      : α
-  assoc   : ∀ a b c, op (op a b) c = op a (op b c)
-  idLeft  : ∀ a, op id a = a
-  idRight : ∀ a, op a id = a
+  assoc   : ∀ a b c : α, op (op a b) c = op a (op b c)
+  idLeft  : ∀ a : α, op id a = a
+  idRight : ∀ a : α, op a id = a
   inv     : α → α
-  invLeft : ∀ a, op (inv a) a = id
-  invRight: ∀ a, op a (inv a) = id
+  invLeft : ∀ a : α, op (inv a) a = id
+  invRight: ∀ a : α, op a (inv a) = id
 
 instance [Group α] : Add α where add := Group.op
 instance [Group α] : Neg α where neg := Group.inv
@@ -63,10 +63,10 @@ class AffineSpaceTheory (V : Type) (P : Type) where
   [groupV : Group V]
   vadd    : V → P → P
   vsub    : P → P → V
-  vaddAssoc : ∀ v w p, vadd v (vadd w p) = vadd (groupV.op v w) p
-  vaddZero  : ∀ p, vadd groupV.id p = p
-  vsubAdd   : ∀ p q, vadd (vsub q p) p = q
-  addVsub   : ∀ v p, vsub (vadd v p) p = v
+  vaddAssoc : ∀ v w : V, ∀ p : P, vadd v (vadd w p) = vadd (groupV.op v w) p
+  vaddZero  : ∀ p : P, vadd groupV.id p = p
+  vsubAdd   : ∀ p q : P, vadd (vsub q p) p = q
+  addVsub   : ∀ v : V, ∀ p : P, vsub (vadd v p) p = v
 
 /- Standard notation typeclasses -/
 class VAdd (V : Type) (P : Type) where vadd : V → P → P
@@ -106,26 +106,26 @@ Both the affine space and vector space of rational numbers.
 @@@ -/
 
 instance : Group Rat where
-  op      := (· + ·)
-  id      := 0
-  assoc   := Rat.add_assoc
-  idLeft  := Rat.zero_add
-  idRight := Rat.add_zero
-  inv     := fun q => -q
-  invLeft := Rat.neg_add_cancel
-  invRight:= Rat.add_neg_cancel
+  op      : Rat → Rat → Rat := (· + ·)
+  id      : Rat := 0
+  assoc   : ∀ a b c : Rat, (a + b) + c = a + (b + c) := Rat.add_assoc
+  idLeft  : ∀ a : Rat, 0 + a = a := Rat.zero_add
+  idRight : ∀ a : Rat, a + 0 = a := Rat.add_zero
+  inv     : Rat → Rat := fun q => -q
+  invLeft : ∀ a : Rat, (-a) + a = 0 := Rat.neg_add_cancel
+  invRight: ∀ a : Rat, a + (-a) = 0 := Rat.add_neg_cancel
 
 instance : AffineSpaceTheory Rat Rat where
   groupV  := inferInstance
-  vadd    := (· + ·)
-  vsub    := (· - ·)
-  vaddAssoc := fun v w p => sorry
-  vaddZero := fun p => sorry
-  vsubAdd := fun q p => sorry
-  addVsub := fun v p => sorry
+  vadd    : Rat → Rat → Rat := (· + ·)
+  vsub    : Rat → Rat → Rat := (· - ·)
+  vaddAssoc : ∀ v w : Rat, ∀ p : Rat, v + (w + p) = (v + w) + p := fun v w p => sorry
+  vaddZero : ∀ p : Rat, 0 + p = p := fun p => sorry
+  vsubAdd : ∀ p q : Rat, (q - p) + p = q := fun q p => sorry
+  addVsub : ∀ v : Rat, ∀ p : Rat, (v + p) - p = v := fun v p => sorry
 
 instance : VectorSpaceTheory Rat Rat where
-  smul := (· * ·)
+  smul : Rat → Rat → Rat := (· * ·)
 
 /- @@@
 ### Implementation 2: ℚ × ℚ (2-Dimensional)
@@ -134,28 +134,28 @@ Both the affine space and vector space of the rational plane.
 @@@ -/
 
 instance : Group (Rat × Rat) where
-  op      := fun (a, b) (c, d) => (a + c, b + d)
-  id      := (0, 0)
-  assoc   := fun _ _ _ => by ext <;> simp [Rat.add_assoc]
-  idLeft  := fun _ => by simp
-  idRight := fun _ => by simp
-  inv     := fun (a, b) => (-a, -b)
-  invLeft := fun _ => by
+  op      : Rat × Rat → Rat × Rat → Rat × Rat := fun (a, b) (c, d) => (a + c, b + d)
+  id      : Rat × Rat := (0, 0)
+  assoc   : ∀ a b c : Rat × Rat, ((a.1 + b.1) + c.1, (a.2 + b.2) + c.2) = (a.1 + (b.1 + c.1), a.2 + (b.2 + c.2)) := fun _ _ _ => by ext <;> simp [Rat.add_assoc]
+  idLeft  : ∀ a : Rat × Rat, (0 + a.1, 0 + a.2) = a := fun _ => by simp
+  idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a := fun _ => by simp
+  inv     : Rat × Rat → Rat × Rat := fun (a, b) => (-a, -b)
+  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) := fun _ => by
     ext <;> simp [Rat.neg_add_cancel]
-  invRight:= fun _ => by
+  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) := fun _ => by
     ext <;> simp [Rat.add_neg_cancel]
 
 instance : AffineSpaceTheory (Rat × Rat) (Rat × Rat) where
   groupV  := inferInstance
-  vadd    := fun (v₁, v₂) (p₁, p₂) => (p₁ + v₁, p₂ + v₂)
-  vsub    := fun (q₁, q₂) (p₁, p₂) => (q₁ - p₁, q₂ - p₂)
-  vaddAssoc := fun _ _ _ => sorry
-  vaddZero := fun (p₁, p₂) => sorry
-  vsubAdd := fun (q₁, q₂) (p₁, p₂) => sorry
-  addVsub := fun (v₁, v₂) (p₁, p₂) => sorry
+  vadd    : Rat × Rat → Rat × Rat → Rat × Rat := fun (v₁, v₂) (p₁, p₂) => (p₁ + v₁, p₂ + v₂)
+  vsub    : Rat × Rat → Rat × Rat → Rat × Rat := fun (q₁, q₂) (p₁, p₂) => (q₁ - p₁, q₂ - p₂)
+  vaddAssoc : ∀ v w : Rat × Rat, ∀ p : Rat × Rat, _ := fun _ _ _ => sorry
+  vaddZero : ∀ p : Rat × Rat, _ := fun _ => sorry
+  vsubAdd : ∀ p q : Rat × Rat, _ := fun _ _ => sorry
+  addVsub : ∀ v : Rat × Rat, ∀ p : Rat × Rat, _ := fun _ _ => sorry
 
 instance : VectorSpaceTheory Rat (Rat × Rat) where
-  smul := fun a (v₁, v₂) => (a * v₁, a * v₂)
+  smul : Rat → Rat × Rat → Rat × Rat := fun a (v₁, v₂) => (a * v₁, a * v₂)
 
 /- @@@
 ### Implementation 3: ℚ × ℚ × ℚ (3-Dimensional)
@@ -164,28 +164,28 @@ Both the affine space and vector space of 3D rational space.
 @@@ -/
 
 instance : Group (Rat × Rat × Rat) where
-  op      := fun (a, b, c) (d, e, f) => (a + d, b + e, c + f)
-  id      := (0, 0, 0)
-  assoc   := fun _ _ _ => by ext <;> simp [Rat.add_assoc]
-  idLeft  := fun _ => by simp
-  idRight := fun _ => by simp
-  inv     := fun (a, b, c) => (-a, -b, -c)
-  invLeft := fun _ => by
+  op      : Rat × Rat × Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun (a, b, c) (d, e, f) => (a + d, b + e, c + f)
+  id      : Rat × Rat × Rat := (0, 0, 0)
+  assoc   : ∀ a b c : Rat × Rat × Rat, ((a.1 + b.1) + c.1, (a.2.1 + b.2.1) + c.2.1, (a.2.2 + b.2.2) + c.2.2) = (a.1 + (b.1 + c.1), a.2.1 + (b.2.1 + c.2.1), a.2.2 + (b.2.2 + c.2.2)) := fun _ _ _ => by ext <;> simp [Rat.add_assoc]
+  idLeft  : ∀ a : Rat × Rat × Rat, (0 + a.1, 0 + a.2.1, 0 + a.2.2) = a := fun _ => by simp
+  idRight : ∀ a : Rat × Rat × Rat, (a.1 + 0, a.2.1 + 0, a.2.2 + 0) = a := fun _ => by simp
+  inv     : Rat × Rat × Rat → Rat × Rat × Rat := fun (a, b, c) => (-a, -b, -c)
+  invLeft : ∀ a : Rat × Rat × Rat, (-a.1 + a.1, -a.2.1 + a.2.1, -a.2.2 + a.2.2) = (0, 0, 0) := fun _ => by
     ext <;> simp [Rat.neg_add_cancel]
-  invRight:= fun _ => by
+  invRight: ∀ a : Rat × Rat × Rat, (a.1 + (-a.1), a.2.1 + (-a.2.1), a.2.2 + (-a.2.2)) = (0, 0, 0) := fun _ => by
     ext <;> simp [Rat.add_neg_cancel]
 
 instance : AffineSpaceTheory (Rat × Rat × Rat) (Rat × Rat × Rat) where
   groupV  := inferInstance
-  vadd    := fun (v₁, v₂, v₃) (p₁, p₂, p₃) => (p₁ + v₁, p₂ + v₂, p₃ + v₃)
-  vsub    := fun (q₁, q₂, q₃) (p₁, p₂, p₃) => (q₁ - p₁, q₂ - p₂, q₃ - p₃)
-  vaddAssoc := fun _ _ _ => sorry
-  vaddZero := fun (p₁, p₂, p₃) => sorry
-  vsubAdd := fun (q₁, q₂, q₃) (p₁, p₂, p₃) => sorry
-  addVsub := fun (v₁, v₂, v₃) (p₁, p₂, p₃) => sorry
+  vadd    : Rat × Rat × Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun (v₁, v₂, v₃) (p₁, p₂, p₃) => (p₁ + v₁, p₂ + v₂, p₃ + v₃)
+  vsub    : Rat × Rat × Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun (q₁, q₂, q₃) (p₁, p₂, p₃) => (q₁ - p₁, q₂ - p₂, q₃ - p₃)
+  vaddAssoc : ∀ v w : Rat × Rat × Rat, ∀ p : Rat × Rat × Rat, _ := fun _ _ _ => sorry
+  vaddZero : ∀ p : Rat × Rat × Rat, _ := fun _ => sorry
+  vsubAdd : ∀ p q : Rat × Rat × Rat, _ := fun _ _ => sorry
+  addVsub : ∀ v : Rat × Rat × Rat, ∀ p : Rat × Rat × Rat, _ := fun _ _ => sorry
 
 instance : VectorSpaceTheory Rat (Rat × Rat × Rat) where
-  smul := fun a (v₁, v₂, v₃) => (a * v₁, a * v₂, a * v₃)
+  smul : Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun a (v₁, v₂, v₃) => (a * v₁, a * v₂, a * v₃)
 
 /- @@@
 ## Proof Bridge Layer: Theorems About the Abstract Theory
