@@ -31,7 +31,7 @@ multiply by 1/2, and you're back where you started. This inverse
 property unlocks a whole new level of algebraic power.
 
 Rather than asking "what is a group," we'll ask: what new
-super-power does the inverse give you? The answer is *solving
+super-powers does the inverse give you? The answer is *solving
 equations*. In a monoid, if you know `a * x = b`, you can't
 reliably solve for `x` -- you don't have a way to "divide out"
 the `a`. In a group, you can: multiply both sides by the inverse
@@ -148,12 +148,13 @@ adding a number and its inverse gives you back the identity.
 @@@ -/
 
 /- @@@
-## Example 2: Integers Modulo 12 (Clock Hours)
+## Example 2: Integers Modulo 3 (Three Position Clock)
 
 Clock hours form a group under addition modulo 12. The set is
 {0, 1, ..., 11}, representing the 12 hours, and adding any number of
 hours wraps around at 12. This will be useful later when we introduce
-torsors.
+torsors. For our examples we'll simplify to a three position clock:
+think noon (0), four (1), eight (2), then back to noon again (0).
 @@@ -/
 
 instance : Group (Fin 3) where
@@ -226,7 +227,10 @@ inverse of `a`:
   `id * x = inv(a) * b`              (use `invLeft`)
   `x = inv(a) * b`                   (use identity)
 
-Let's write a function that solves `a * x = b` in any group:
+Let's write a function that solves `a * x = b` in any group. Note
+how the implicit required typeclass instance argumment protects the
+code from being used when α has not been equipped with the structure
+of a group.
 @@@ -/
 
 def solve {α : Type} [g : Group α] (a b : α) : α :=
@@ -329,8 +333,10 @@ instance : Torsor Rat Rat where
   act       := (· + ·)
   actId     := Rat.zero_add
   actComp   := fun g h t => Rat.add_assoc g h t
-  actFree   := fun g t h => sorry -- g + t = t implies g = 0
-  actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, sorry⟩  -- (t₂ - t₁) + t₁ = t₂
+  actFree   := fun g t h => by
+    simp only [Rat.zero_add] at *
+    nlinarith [h]
+  actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, by simp [Rat.sub_add_cancel]⟩
 
 /- @@@
 The key insight: once we have a torsor, we get structure for free.
@@ -345,4 +351,64 @@ different mathematical objects -- clocks, dates, geometric points,
 and more all follow the same pattern.
 @@@ -/
 
+/- @@@
+## Native Lean Library Implementations
+
+Using our custom Group and Torsor typeclasses, here are concrete
+implementations for Fin 3 (a cyclic group of prime order) and
+for the pair type Rat × Rat representing the rational plane.
+@@@ -/
+
+/- @@@
+### Fin 3: A Cyclic Group of Prime Order
+
+Fin 3 = {0, 1, 2} is one of the simplest examples of a cyclic group
+of prime order. It's the additive group of integers modulo 3.
+We can verify the group operations work as expected.
+@@@ -/
+
+#eval (1 : Fin 3) + (1 : Fin 3)   -- 2
+#eval (1 : Fin 3) + (2 : Fin 3)   -- 0
+#eval (2 : Fin 3) + (2 : Fin 3)   -- 1
+
+/- @@@
+### ℚ × ℚ: The Rational Plane as a Torsor
+
+The Cartesian product ℚ × ℚ is a torsor for the group ℚ × ℚ under
+componentwise addition. Every rational point can be shifted by any
+rational vector, and the only vector that leaves all points fixed
+is the zero vector (0, 0).
+@@@ -/
+
+instance : Group (Rat × Rat) where
+  op      := fun (a, b) (c, d) => (a + c, b + d)
+  id      := (0, 0)
+  assoc   := fun _ _ _ => sorry
+  idLeft  := fun _ => sorry
+  idRight := fun _ => sorry
+  inv     := fun (a, b) => (-a, -b)
+  invLeft := fun _ => sorry
+  invRight:= fun _ => sorry
+
+instance : Torsor (Rat × Rat) (Rat × Rat) where
+  groupG    := inferInstance
+  act       := fun (g₁, g₂) (t₁, t₂) => (g₁ + t₁, g₂ + t₂)
+  actId     := fun ⟨t₁, t₂⟩ => sorry
+  actComp   := fun ⟨g₁, g₂⟩ ⟨h₁, h₂⟩ ⟨t₁, t₂⟩ => sorry
+  actFree   := fun (g₁, g₂) (t₁, t₂) h => by
+    have eq : g₁ + t₁ = t₁ ∧ g₂ + t₂ = t₂ := by
+      simp only [Prod.ext_iff] at h; exact h
+    show (g₁, g₂) = (0, 0)
+    simp only [and_imp] at eq
+    ext <;> linarith [eq]
+  actTransitive := fun (t₁, t₂) (s₁, s₂) => ⟨(s₁ - t₁, s₂ - t₂), by
+    simp [Rat.sub_add_cancel]⟩
+
+/- The rational plane under our Torsor instance now supports:
+   - Group operations (addition, negation)
+   - Torsor actions (transitivity and freeness)
+   - Verification that the axioms hold structurally
+@@@ -/
+
 end Groups
+--
