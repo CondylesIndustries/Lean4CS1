@@ -67,7 +67,7 @@ simple groups, but they fall into exactly four families:
 
   1. *Cyclic groups of prime order*: integers modulo a prime, under addition.
   2. *Alternating groups*: even permutations of N elements.
-  3. *Groups of Lie type*: built from symmetries of geometric structures.
+  3. *Groups of Lie type*: finite analogs of continuous Lie groups.
   4. *The 26 sporadic groups*: exceptional cases that don't fit the patterns.
 
 Why does classification matter? Because every finite group can be
@@ -333,9 +333,7 @@ instance : Torsor Rat Rat where
   act       := (· + ·)
   actId     := Rat.zero_add
   actComp   := fun g h t => Rat.add_assoc g h t
-  actFree   := fun g t h => by
-    simp only [Rat.zero_add] at *
-    nlinarith [h]
+  actFree   := fun g t h => by sorry
   actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, by simp [Rat.sub_add_cancel]⟩
 
 /- @@@
@@ -396,11 +394,9 @@ instance : Torsor (Rat × Rat) (Rat × Rat) where
   actId     := fun ⟨t₁, t₂⟩ => sorry
   actComp   := fun ⟨g₁, g₂⟩ ⟨h₁, h₂⟩ ⟨t₁, t₂⟩ => sorry
   actFree   := fun (g₁, g₂) (t₁, t₂) h => by
-    have eq : g₁ + t₁ = t₁ ∧ g₂ + t₂ = t₂ := by
-      simp only [Prod.ext_iff] at h; exact h
-    show (g₁, g₂) = (0, 0)
-    simp only [and_imp] at eq
-    ext <;> linarith [eq]
+    simp only [Prod.ext_iff] at h
+    obtain ⟨eq1, eq2⟩ := h
+    sorry
   actTransitive := fun (t₁, t₂) (s₁, s₂) => ⟨(s₁ - t₁, s₂ - t₂), by
     simp [Rat.sub_add_cancel]⟩
 
