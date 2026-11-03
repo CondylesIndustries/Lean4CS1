@@ -160,12 +160,12 @@ think noon (0), four (1), eight (2), then back to noon again (0).
 instance : Group (Fin 3) where
   op      := (· + ·)
   id      := 0
-  assoc   := by intros; ext; simp [Fin.add_def, Nat.add_assoc]
-  idLeft  := by intros; ext; simp [Fin.add_def]
-  idRight := by intros; ext; simp [Fin.add_def]
+  assoc   := fun a b c => by ext; simp [Fin.add_def, Nat.add_assoc]
+  idLeft  := fun a => by ext; simp [Fin.add_def]
+  idRight := fun a => by ext; simp [Fin.add_def]
   inv     := fun a => -a
-  invLeft := by intros; ext; simp [Fin.add_def, Fin.neg_def]
-  invRight:= by intros; ext; simp [Fin.add_def, Fin.neg_def]
+  invLeft := fun a => by ext; simp [Fin.add_def, Fin.neg_def]
+  invRight:= fun a => by ext; simp [Fin.add_def, Fin.neg_def]
 
 #eval (1 : Fin 3) + (1 : Fin 3)  -- 2
 #eval (2 : Fin 3) + (1 : Fin 3)  -- 0 (wraps around)
@@ -198,12 +198,12 @@ from 0 to N-1" with addition wrapping around at N.
 instance : Group (Fin 5) where
   op      := (· + ·)
   id      := 0
-  assoc   := by intros; ext; simp [Fin.add_def, Nat.add_assoc]
-  idLeft  := by intros; ext; simp [Fin.add_def]
-  idRight := by intros; ext; simp [Fin.add_def]
+  assoc   := fun a b c => by ext; simp [Fin.add_def, Nat.add_assoc]
+  idLeft  := fun a => by ext; simp [Fin.add_def]
+  idRight := fun a => by ext; simp [Fin.add_def]
   inv     := fun a => -a
-  invLeft := by intros; ext; simp [Fin.add_def, Fin.neg_def]
-  invRight:= by intros; ext; simp [Fin.add_def, Fin.neg_def]
+  invLeft := fun a => by ext; simp [Fin.add_def, Fin.neg_def]
+  invRight:= fun a => by ext; simp [Fin.add_def, Fin.neg_def]
 
 #eval (3 : Fin 5) + 2           -- 0 (because (3 + 2) mod 5 = 5 mod 5 = 0)
 #eval (4 : Fin 5) + 1           -- 0 (because (4 + 1) mod 5 = 5 mod 5 = 0)
@@ -393,12 +393,8 @@ instance : Torsor (Rat × Rat) (Rat × Rat) where
   act       := fun (g₁, g₂) (t₁, t₂) => (g₁ + t₁, g₂ + t₂)
   actId     := fun ⟨t₁, t₂⟩ => sorry
   actComp   := fun ⟨g₁, g₂⟩ ⟨h₁, h₂⟩ ⟨t₁, t₂⟩ => sorry
-  actFree   := fun (g₁, g₂) (t₁, t₂) h => by
-    simp only [Prod.ext_iff] at h
-    obtain ⟨eq1, eq2⟩ := h
-    sorry
-  actTransitive := fun (t₁, t₂) (s₁, s₂) => ⟨(s₁ - t₁, s₂ - t₂), by
-    simp [Rat.sub_add_cancel]⟩
+  actFree   := fun (g₁, g₂) (t₁, t₂) _ => sorry
+  actTransitive := fun (t₁, t₂) (s₁, s₂) => ⟨(s₁ - t₁, s₂ - t₂), by simp [Rat.sub_add_cancel]⟩
 
 /- The rational plane under our Torsor instance now supports:
    - Group operations (addition, negation)
