@@ -91,9 +91,9 @@ Same as before: associative operation, identity element, two laws.
 class Monoid (α : Type) where
   op      : α → α → α
   id      : α
-  assoc   : ∀ a b c, op (op a b) c = op a (op b c)
-  idLeft  : ∀ a, op id a = a
-  idRight : ∀ a, op a id = a
+  assoc   : ∀ a b c : α, op (op a b) c = op a (op b c)
+  idLeft  : ∀ a : α, op id a = a
+  idRight : ∀ a : α, op a id = a
 
 /- @@@
 ## `Group`: A `Monoid` With Inverses
@@ -113,8 +113,8 @@ definition doesn't assume that.
 
 class Group (α : Type) extends Monoid α where
   inv     : α → α
-  invLeft : ∀ a, op (inv a) a = id
-  invRight: ∀ a, op a (inv a) = id
+  invLeft : ∀ a : α, op (inv a) a = id
+  invRight: ∀ a : α, op a (inv a) = id
 
 /- @@@
 ## Example 1: Integers Under Addition
@@ -279,10 +279,10 @@ points in a plane under translations, directions in space under rotations.
 class Torsor (G T : Type) where
   [groupG : Group G]
   act        : G → T → T
-  actId      : ∀ t, act groupG.id t = t
-  actComp    : ∀ g h t, act (groupG.op g h) t = act g (act h t)
-  actFree    : ∀ g t, act g t = t → g = groupG.id
-  actTransitive : ∀ t₁ t₂ : T, ∃ g, act g t₁ = t₂
+  actId      : ∀ t : T, act groupG.id t = t
+  actComp    : ∀ g h : G, ∀ t : T, act (groupG.op g h) t = act g (act h t)
+  actFree    : ∀ g : G, ∀ t : T, act g t = t → g = groupG.id
+  actTransitive : ∀ t₁ t₂ : T, ∃ g : G, act g t₁ = t₂
 
 /- @@@
 ## Instance 1: Fin k (Integers Modulo k)
