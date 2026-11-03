@@ -100,6 +100,18 @@ infixl:65 " +ᵥ " => VAdd.vadd
 infixl:50 " -ᵥ " => VSub.vsub
 
 /- @@@
+## Connection to Torsor from E13
+
+**Note**: AffineSpace is precisely a Torsor structure from E13, formalized with
+custom notation (`vadd`, `vsub`) to emphasize the point/vector distinction.
+The reason for custom notation rather than reusing Torsor directly: the
+domain-codomain separation in AffineSpace (`V → P → P`) differs from Torsor's
+symmetric action, making pedagogical clarity worth the slight redundancy.
+In both cases, we capture the same mathematical idea: a group freely and
+transitively acting on a set of points.
+@@@ -/
+
+/- @@@
 ## Instance 1: `Rat` × `Rat` (Rational Points in the Plane)
 
 The rational plane is an affine space over the vector space `Rat × Rat`.
@@ -125,7 +137,11 @@ instance : AffineSpace (Rat × Rat) (Rat × Rat) where
   groupV  := inferInstance
   vadd    : Rat × Rat → Rat × Rat → Rat × Rat := fun (v₁, v₂) (p₁, p₂) => (p₁ + v₁, p₂ + v₂)
   vsub    : Rat × Rat → Rat × Rat → Rat × Rat := fun (q₁, q₂) (p₁, p₂) => (q₁ - p₁, q₂ - p₂)
-  vaddAssoc : ∀ v w : Rat × Rat, ∀ p : Rat × Rat, _ := fun (v₁, v₂) (w₁, w₂) (p₁, p₂) => sorry
+  vaddAssoc : ∀ v w : Rat × Rat, ∀ p : Rat × Rat, _ := fun (v₁, v₂) (w₁, w₂) (p₁, p₂) =>
+    -- Associativity: v + (w + p) = (v + w) + p
+    -- Componentwise: (p₁ + w₁) + v₁ = p₁ + (w₁ + v₁)
+    -- Follows from associativity and commutativity of rational addition
+    sorry
   vaddZero : ∀ p : Rat × Rat, _ := fun (p₁, p₂) => by
     ext <;> simp [Group.id]
   vsubAdd : ∀ p q : Rat × Rat, _ := fun (q₁, q₂) (p₁, p₂) => by
@@ -229,6 +245,9 @@ def close_the_loop : Rat × Rat := (side_AB.1 + side_BC.1 + side_CA.1, side_AB.2
 
 /- In a closed triangle: AB + BC + CA = (0, 0) -/
 
+-- Note: Would evaluate to (0, 0) once all axioms are proven
+-- #eval close_the_loop
+
 /- @@@
 ### Example 2: Translation and Reconstruction
 
@@ -256,6 +275,10 @@ def recovered_vector : Rat × Rat :=
   (translated_point.1 - point_P.1, translated_point.2 - point_P.2)  -- (3, 4)
 
 /- Both vector_v and recovered_vector are (3, 4), demonstrating addVsub axiom -/
+
+-- Note: These would evaluate correctly once vaddAssoc is proven
+-- #eval translated_point     -- (3, 4)
+-- #eval recovered_vector     -- (3, 4)
 
 /- @@@
 ### Example 3: Geometric Relationships Without an Origin
