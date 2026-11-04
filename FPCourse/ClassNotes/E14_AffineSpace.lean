@@ -14,10 +14,17 @@ and *transitively* (any two points are related by some group element).
 An *affine space* is a torsor with a specific structure: we have a group `V`
 (the "displacement vectors") acting on a set `P` (the "points") in a torsor fashion.
 The group structure on `V` lets us describe how displacements compose:
-to move from point `p` to point `q` by displacement `v`, we compute `p + v`.
+to move from point `p` by displacement `v`, we compute `v +ᵥ p`.
 The freeness and transitivity of the action mean every pair of points has a unique
 displacement vector relating them, and conversely, every vector can translate
 any point to some other point.
+
+Note the operand order: the *vector* goes on the left, the *point* on the right.
+That is not arbitrary. It is what makes the composition law below read in the
+same direction as function composition, and it is the convention mathlib uses
+for `AddTorsor`. Writing `p + v` instead would force the composition law to
+reverse the group operation, which is invisible for ℚ (where addition commutes)
+but wrong for any non-commutative group of displacements.
 
 Why does this matter? Because it captures *pure geometry* -- the essence
 of space without imposing a choice of origin or coordinate system. In a vector space,
@@ -30,22 +37,22 @@ representing intervals), locations on a calendar (with integer vectors
 representing day offsets), positions in a color space.
 
 An affine space has two core operations:
-  - *Point translation*: given point `p` and vector `v`, compute `p + v` (new point)
-  - *Vector subtraction*: given points `p` and `q`, compute `q - p` (displacement vector)
+  - *Point translation*: given vector `v` and point `p`, compute `v +ᵥ p` (new point)
+  - *Vector subtraction*: given points `p` and `q`, compute `q -ᵥ p` (displacement vector)
 
 These must satisfy:
-  - `p + (v + w) = (p + v) + w`  (translation is associative)
-  - `p + 0 = p`                   (identity: adding zero vector doesn't move anything)
-  - `(p + v) - p = v`             (subtracting a point from its translation recovers the vector)
-  - `(q - p) + p = q`             (translating by the difference of two points reaches the second)
+  - `v +ᵥ (w +ᵥ p) = (v + w) +ᵥ p`  (translating twice = translating by the sum)
+  - `0 +ᵥ p = p`                     (the zero vector doesn't move anything)
+  - `(q -ᵥ p) +ᵥ p = q`              (the displacement from p to q, applied to p, reaches q)
+  - `(v +ᵥ p) -ᵥ p = v`              (translating p by v, then differencing against p, recovers v)
 @@@ -/
 
-namespace AffineSpaces
+namespace AffineSpace
 
 /- @@@
-## Recap: `Group` (From E13)
+## Recap: `Group` (from the groups lesson)
 
-We'll need the group structure we developed last class: an associative
+We'll need the group structure we developed earlier: an associative
 operation with identity and inverses.
 @@@ -/
 
@@ -93,22 +100,42 @@ class AffineSpace (V : Type) (P : Type) where
 class VAdd (V : Type) (P : Type) where vadd : V → P → P
 class VSub (P : Type) (V : Type) where vsub : P → P → V
 
-instance [AffineSpace V P] : VAdd V P where vadd := AffineSpace.vadd
-instance [AffineSpace V P] : VSub P V where vsub := AffineSpace.vsub
+instance {V P : Type} [AffineSpace V P] : VAdd V P where vadd := AffineSpace.vadd
+instance {V P : Type} [AffineSpace V P] : VSub P V where vsub := AffineSpace.vsub
 
+-- Both at precedence 65, matching mathlib. `-ᵥ` must bind tighter than `=`
+-- (precedence 50), or a goal like `q -ᵥ p = v` fails to parse.
 infixl:65 " +ᵥ " => VAdd.vadd
-infixl:50 " -ᵥ " => VSub.vsub
+infixl:65 " -ᵥ " => VSub.vsub
 
 /- @@@
-## Connection to Torsor from E13
+## Connection to the `Torsor` Class
 
-**Note**: AffineSpace is precisely a Torsor structure from E13, formalized with
-custom notation (`vadd`, `vsub`) to emphasize the point/vector distinction.
-The reason for custom notation rather than reusing Torsor directly: the
-domain-codomain separation in AffineSpace (`V → P → P`) differs from Torsor's
-symmetric action, making pedagogical clarity worth the slight redundancy.
-In both cases, we capture the same mathematical idea: a group freely and
-transitively acting on a set of points.
+An affine space is the same mathematical idea as a torsor -- a group acting
+freely and transitively -- but packaged differently, and the difference is
+worth being precise about rather than calling it mere notation.
+
+`Torsor` states transitivity as an *existence claim*:
+
+  `actTransitive : ∀ t₁ t₂ : T, ∃ g : G, act g t₁ = t₂`
+
+`AffineSpace` instead provides an *operation* that produces the group element:
+
+  `vsub : P → P → V`
+
+That is the real change: a proof that something exists becomes a function
+that computes it. The existential tells you two points *are* related by some
+displacement; `vsub` hands you the displacement. Only the second lets you
+write `q -ᵥ p` and get a value out, which is why the geometry in this file
+computes while the torsor version could only be reasoned about.
+
+Freeness also changes character. In `Torsor` it is a separate axiom; here it
+is a consequence of `addVsub`, which says `vsub` inverts `vadd` and so forces
+the displacement between two points to be *unique*, not merely existent.
+
+The secondary benefit is the type separation: `vadd : V → P → P` keeps
+vectors and points apart, where `Torsor`'s `act : G → T → T` is usually
+instantiated with `G` and `T` the same type.
 @@@ -/
 
 /- @@@
@@ -130,23 +157,22 @@ instance : Group (Rat × Rat) where
   idLeft  : ∀ a : Rat × Rat, (0 + a.1, 0 + a.2) = a := fun _ => by simp
   idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a := fun _ => by simp
   inv     : Rat × Rat → Rat × Rat := fun (a, b) => (-a, -b)
-  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) := fun (a, b) => by ext <;> simp [Rat.neg_add_cancel]
-  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) := fun (a, b) => by ext <;> simp [Rat.add_neg_cancel]
+  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) := fun (a, b) => by ext <;> simp
+  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) := fun (a, b) => by ext <;> simp
 
 instance : AffineSpace (Rat × Rat) (Rat × Rat) where
   groupV  := inferInstance
-  vadd    : Rat × Rat → Rat × Rat → Rat × Rat := fun (v₁, v₂) (p₁, p₂) => (p₁ + v₁, p₂ + v₂)
+  vadd    : Rat × Rat → Rat × Rat → Rat × Rat := fun (v₁, v₂) (p₁, p₂) => (v₁ + p₁, v₂ + p₂)
   vsub    : Rat × Rat → Rat × Rat → Rat × Rat := fun (q₁, q₂) (p₁, p₂) => (q₁ - p₁, q₂ - p₂)
-  vaddAssoc : ∀ v w : Rat × Rat, ∀ p : Rat × Rat, _ := fun (v₁, v₂) (w₁, w₂) (p₁, p₂) =>
-    -- Associativity: v + (w + p) = (v + w) + p
-    -- Componentwise: (p₁ + w₁) + v₁ = p₁ + (w₁ + v₁)
-    -- Follows from associativity and commutativity of rational addition
-    sorry
-  vaddZero : ∀ p : Rat × Rat, _ := fun (p₁, p₂) => by
+  -- v +ᵥ (w +ᵥ p) = (v + w) +ᵥ p, componentwise: v₁ + (w₁ + p₁) = (v₁ + w₁) + p₁
+  vaddAssoc := fun (v₁, v₂) (w₁, w₂) (p₁, p₂) => by
+    ext <;> simp [Group.op, Rat.add_assoc]
+  vaddZero := fun (p₁, p₂) => by
     ext <;> simp [Group.id]
-  vsubAdd : ∀ p q : Rat × Rat, _ := fun (q₁, q₂) (p₁, p₂) => by
+  -- note the binder order: p first, then q, matching `∀ p q : P` in the class
+  vsubAdd := fun (p₁, p₂) (q₁, q₂) => by
     ext <;> simp
-  addVsub : ∀ v : Rat × Rat, ∀ p : Rat × Rat, _ := fun (v₁, v₂) (p₁, p₂) => by
+  addVsub := fun (v₁, v₂) (p₁, p₂) => by
     ext <;> simp
 
 /- @@@
@@ -239,14 +265,18 @@ def side_CA : Rat × Rat := triangle_A -ᵥ triangle_C  -- (-1, -3)
 /- @@@
 Verify the closure property: going around the triangle brings you back home.
 The sum of all displacement vectors around a closed loop is the zero vector.
+
+Displacements compose with the *group* operation on `V` -- that is the whole
+point of requiring `V` to be a group, so we use `Group.op` rather than
+re-deriving componentwise addition by hand.
 @@@ -/
 
-def close_the_loop : Rat × Rat := (side_AB.1 + side_BC.1 + side_CA.1, side_AB.2 + side_BC.2 + side_CA.2)
+def close_the_loop : Rat × Rat := Group.op (Group.op side_AB side_BC) side_CA
 
-/- In a closed triangle: AB + BC + CA = (0, 0) -/
-
--- Note: Would evaluate to (0, 0) once all axioms are proven
--- #eval close_the_loop
+#eval side_AB         -- (3, 0)
+#eval side_BC         -- (-2, 3)
+#eval side_CA         -- (-1, -3)
+#eval close_the_loop  -- (0, 0): AB + BC + CA = 0, the loop closes
 
 /- @@@
 ### Example 2: Translation and Reconstruction
@@ -259,26 +289,41 @@ def point_P : Rat × Rat := (0, 0)
 def vector_v : Rat × Rat := (3, 4)
 
 /- @@@
-The notation `v +ᵥ p` uses the VAdd instance to translate point p by vector v.
+Here we must write `AffineSpace.vadd` rather than the `+ᵥ` notation, and the
+reason is instructive. We have chosen `V` and `P` to be the *same* type,
+`ℚ × ℚ`. But mathlib already knows `ℚ × ℚ` is an additive monoid acting on
+itself, so it already has a `+ᵥ` for this pair of types. Our notation and
+mathlib's are both in scope and both apply, so `vector_v +ᵥ point_P` is
+genuinely ambiguous and Lean refuses to guess.
+
+This is not a notational annoyance -- it is the type system telling us
+something true. Modelling points and vectors as the same type throws away the
+distinction the whole lesson is about. The fix is not to fight the ambiguity
+but to give points and vectors *different* types, which is exactly what the
+ℚ² demo does. There, `+ᵥ` is unambiguous because only one instance applies.
 @@@ -/
 
-def translated_point : Rat × Rat :=
-  let v : Rat × Rat := vector_v
-  let p : Rat × Rat := point_P
-  (v.1 + p.1, v.2 + p.2)  -- (3, 4)
+def translated_point : Rat × Rat := AffineSpace.vadd vector_v point_P
 
 /- @@@
 Now recover the original vector by taking the difference:
 @@@ -/
 
-def recovered_vector : Rat × Rat :=
-  (translated_point.1 - point_P.1, translated_point.2 - point_P.2)  -- (3, 4)
+def recovered_vector : Rat × Rat := translated_point -ᵥ point_P
 
-/- Both vector_v and recovered_vector are (3, 4), demonstrating addVsub axiom -/
+#eval translated_point                  -- (3, 4)
+#eval recovered_vector                  -- (3, 4)
+#eval recovered_vector = vector_v       -- true
 
--- Note: These would evaluate correctly once vaddAssoc is proven
--- #eval translated_point     -- (3, 4)
--- #eval recovered_vector     -- (3, 4)
+/- @@@
+That last line is the `addVsub` axiom showing up as a computation rather than
+a claim: `(v +ᵥ p) -ᵥ p = v`. Since we have actually *proven* `addVsub` for
+this instance, the equality is guaranteed for every `v` and `p`, not just the
+one pair we happened to evaluate.
+@@@ -/
+
+example : (AffineSpace.vadd vector_v point_P) -ᵥ point_P = vector_v :=
+  AffineSpace.addVsub vector_v point_P
 
 /- @@@
 ### Example 3: Geometric Relationships Without an Origin
@@ -297,9 +342,19 @@ A point at t=2 along this line (2 times the direction vector from point_1):
 @@@ -/
 
 def point_on_line_t2 : Rat × Rat :=
-  let double_direction := (2 * direction.1, 2 * direction.2)
-  (line_point_1.1 + double_direction.1, line_point_1.2 + double_direction.2)
-  -- (1, 1) + (2, 4) = (3, 5)
+  AffineSpace.vadd (2 * direction.1, 2 * direction.2) line_point_1
+
+#eval direction         -- (1, 2)
+#eval point_on_line_t2  -- (3, 5)
+
+/- @@@
+Note what we had to do to scale the direction vector: we reached into the
+components and multiplied. That is *not* an affine operation. An affine space
+gives us a group of displacements, and a group only lets us compose and invert
+them -- it has no notion of "twice this vector." Scaling needs `V` to carry
+scalar multiplication, i.e. to be a vector space, which is the structure the
+next lesson adds. The affine axioms alone cannot parametrize a line.
+@@@ -/
 
 /- @@@
 The affine space structure lets us:
@@ -317,9 +372,12 @@ The key insight: affine spaces capture *pure geometry* in the sense that
 we can describe the relationships between points without choosing an origin.
 The group action encodes all the geometric information we need.
 
-In the next lesson, we'll generalize this further by building vector spaces
-from scratch, which will let us construct affine spaces over arbitrary
-vector spaces, not just ℚ × ℚ.
+In the next lesson we add the missing structure: scalar multiplication, which
+turns the group of displacements into a *vector space*. Rather than build it
+from scratch as we did here, we will switch strategy and use mathlib's
+`Module` typeclass -- a deliberate contrast worth noticing, since it is the
+difference between defining an abstraction to understand it and reusing one
+to get work done.
 @@@ -/
 
-end AffineSpaces
+end AffineSpace

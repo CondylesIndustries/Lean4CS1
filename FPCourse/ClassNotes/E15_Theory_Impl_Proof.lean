@@ -73,8 +73,10 @@ class VSub (P : Type) (V : Type) where vsub : P → P → V
 instance [AffineSpaceTheory V P] : VAdd V P where vadd := AffineSpaceTheory.vadd
 instance [AffineSpaceTheory V P] : VSub P V where vsub := AffineSpaceTheory.vsub
 
+-- Both at precedence 65, matching mathlib. `-ᵥ` must bind tighter than `=`
+-- (precedence 50), or a goal like `q -ᵥ p = v` fails to parse.
 infixl:65 " +ᵥ " => VAdd.vadd
-infixl:50 " -ᵥ " => VSub.vsub
+infixl:65 " -ᵥ " => VSub.vsub
 
 /- @@@
 ### Abstract Theory: VectorSpaceTheory
@@ -120,7 +122,7 @@ instance : AffineSpaceTheory Rat Rat where
   vaddAssoc : ∀ v w : Rat, ∀ p : Rat, v + (w + p) = (v + w) + p :=
     fun v w p => (Rat.add_assoc v w p).symm
   vaddZero : ∀ p : Rat, 0 + p = p := Rat.zero_add
-  vsubAdd : ∀ p q : Rat, (q - p) + p = q := fun q p => by norm_num
+  vsubAdd : ∀ p q : Rat, (q - p) + p = q := fun p q => by norm_num
   addVsub : ∀ v : Rat, ∀ p : Rat, (v + p) - p = v := fun v p => by norm_num
 
 instance : VectorSpaceTheory Rat Rat where
@@ -140,18 +142,19 @@ instance : Group (Rat × Rat) where
   idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a := fun _ => by simp
   inv     : Rat × Rat → Rat × Rat := fun (a, b) => (-a, -b)
   invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) := fun _ => by
-    ext <;> simp [Rat.neg_add_cancel]
+    ext <;> simp
   invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) := fun _ => by
-    ext <;> simp [Rat.add_neg_cancel]
+    ext <;> simp
 
 instance : AffineSpaceTheory (Rat × Rat) (Rat × Rat) where
   groupV  := inferInstance
-  vadd    : Rat × Rat → Rat × Rat → Rat × Rat := fun (v₁, v₂) (p₁, p₂) => (p₁ + v₁, p₂ + v₂)
+  vadd    : Rat × Rat → Rat × Rat → Rat × Rat := fun (v₁, v₂) (p₁, p₂) => (v₁ + p₁, v₂ + p₂)
   vsub    : Rat × Rat → Rat × Rat → Rat × Rat := fun (q₁, q₂) (p₁, p₂) => (q₁ - p₁, q₂ - p₂)
-  vaddAssoc : ∀ v w : Rat × Rat, ∀ p : Rat × Rat, _ := fun _ _ _ => sorry
-  vaddZero : ∀ p : Rat × Rat, _ := fun _ => sorry
-  vsubAdd : ∀ p q : Rat × Rat, _ := fun _ _ => sorry
-  addVsub : ∀ v : Rat × Rat, ∀ p : Rat × Rat, _ := fun _ _ => sorry
+  vaddAssoc := fun (v₁, v₂) (w₁, w₂) (p₁, p₂) => by
+    ext <;> simp [Group.op, Rat.add_assoc]
+  vaddZero := fun (p₁, p₂) => by ext <;> simp [Group.id]
+  vsubAdd := fun (p₁, p₂) (q₁, q₂) => by ext <;> simp
+  addVsub := fun (v₁, v₂) (p₁, p₂) => by ext <;> simp
 
 instance : VectorSpaceTheory Rat (Rat × Rat) where
   smul : Rat → Rat × Rat → Rat × Rat := fun a (v₁, v₂) => (a * v₁, a * v₂)
@@ -170,18 +173,19 @@ instance : Group (Rat × Rat × Rat) where
   idRight : ∀ a : Rat × Rat × Rat, (a.1 + 0, a.2.1 + 0, a.2.2 + 0) = a := fun _ => by simp
   inv     : Rat × Rat × Rat → Rat × Rat × Rat := fun (a, b, c) => (-a, -b, -c)
   invLeft : ∀ a : Rat × Rat × Rat, (-a.1 + a.1, -a.2.1 + a.2.1, -a.2.2 + a.2.2) = (0, 0, 0) := fun _ => by
-    ext <;> simp [Rat.neg_add_cancel]
+    ext <;> simp
   invRight: ∀ a : Rat × Rat × Rat, (a.1 + (-a.1), a.2.1 + (-a.2.1), a.2.2 + (-a.2.2)) = (0, 0, 0) := fun _ => by
-    ext <;> simp [Rat.add_neg_cancel]
+    ext <;> simp
 
 instance : AffineSpaceTheory (Rat × Rat × Rat) (Rat × Rat × Rat) where
   groupV  := inferInstance
-  vadd    : Rat × Rat × Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun (v₁, v₂, v₃) (p₁, p₂, p₃) => (p₁ + v₁, p₂ + v₂, p₃ + v₃)
+  vadd    : Rat × Rat × Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun (v₁, v₂, v₃) (p₁, p₂, p₃) => (v₁ + p₁, v₂ + p₂, v₃ + p₃)
   vsub    : Rat × Rat × Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun (q₁, q₂, q₃) (p₁, p₂, p₃) => (q₁ - p₁, q₂ - p₂, q₃ - p₃)
-  vaddAssoc : ∀ v w : Rat × Rat × Rat, ∀ p : Rat × Rat × Rat, _ := fun _ _ _ => sorry
-  vaddZero : ∀ p : Rat × Rat × Rat, _ := fun _ => sorry
-  vsubAdd : ∀ p q : Rat × Rat × Rat, _ := fun _ _ => sorry
-  addVsub : ∀ v : Rat × Rat × Rat, ∀ p : Rat × Rat × Rat, _ := fun _ _ => sorry
+  vaddAssoc := fun (v₁, v₂, v₃) (w₁, w₂, w₃) (p₁, p₂, p₃) => by
+    ext <;> simp [Group.op, Rat.add_assoc]
+  vaddZero := fun (p₁, p₂, p₃) => by ext <;> simp [Group.id]
+  vsubAdd := fun (p₁, p₂, p₃) (q₁, q₂, q₃) => by ext <;> simp
+  addVsub := fun (v₁, v₂, v₃) (p₁, p₂, p₃) => by ext <;> simp
 
 instance : VectorSpaceTheory Rat (Rat × Rat × Rat) where
   smul : Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun a (v₁, v₂, v₃) => (a * v₁, a * v₂, a * v₃)
@@ -208,11 +212,24 @@ theorem affine_vector_recovery {V P : Type} [aff : AffineSpaceTheory V P] (v : V
     aff.vsub (aff.vadd v p) p = v :=
   aff.addVsub v p
 
+/- @@@
+This one is the real content: the displacement from `p` to `r` is the
+composition of the displacements `p → q` and `q → r`. It follows from the
+axioms alone, with no appeal to commutativity and no reference to ℚ -- which
+is the whole claim of the theory layer.
+@@@ -/
+
 theorem affine_transitivity {V P : Type} [aff : AffineSpaceTheory V P] (p q r : P) :
     aff.groupV.op (aff.vsub r q) (aff.vsub q p) = aff.vsub r p := by
-  -- The vector from p to r equals the composition of vectors p→q and q→r
-  -- This requires reasoning about how vsub decomposes over intermediate points
-  sorry
+  -- Translating p by the composed displacement lands on r:
+  --   (r-q) ∘ (q-p) applied to p  =  (r-q) applied to ((q-p) applied to p)  =  (r-q) applied to q  =  r
+  have h : aff.vadd (aff.groupV.op (aff.vsub r q) (aff.vsub q p)) p = r := by
+    rw [← aff.vaddAssoc, aff.vsubAdd, aff.vsubAdd]
+  -- and `addVsub` says the displacement that lands on r from p is unique.
+  calc aff.groupV.op (aff.vsub r q) (aff.vsub q p)
+      = aff.vsub (aff.vadd (aff.groupV.op (aff.vsub r q) (aff.vsub q p)) p) p :=
+        (aff.addVsub _ _).symm
+    _ = aff.vsub r p := by rw [h]
 
 /- @@@
 ### General Theorems About Vector Spaces
@@ -262,20 +279,61 @@ The pattern scales: one abstract theory + many implementations + shared proofs.
 @@@ -/
 
 /- @@@
-## Concrete Demonstration: Generic Theorem on Rat
+## Concrete Demonstration: One Proof, Three Implementations
 
-The theorem `affine_translation_inversion` holds for all affine spaces.
-Here we apply it to Rat, showing no re-proof needed:
-
-With the instances in place, the proof works on any type satisfying
-AffineSpaceTheory. We don't re-prove it for Rat, Rat × Rat, or Rat × Rat × Rat.
-Instead, the single proof automatically applies everywhere the theory holds.
-
-This demonstrates the power of abstraction: one theorem, infinite applications.
+`affine_translation_inversion` and `affine_transitivity` were each proven once,
+over an arbitrary `AffineSpaceTheory V P`. Below they are applied at all three
+dimensions. Note what is *absent*: there is no proof in any of these, only the
+name of the generic theorem. That is the payoff the whole lesson is about.
 @@@ -/
 
-example : (inferInstance : AffineSpaceTheory Rat Rat).vadd
-          ((inferInstance : AffineSpaceTheory Rat Rat).vsub 5 2) 2 = 5 :=
-  affine_translation_inversion 2 5
+/- The type ascription on `vsub` is needed because the vector type `V` appears
+   only in that field's *result*, so Lean cannot infer it from `p` and `q`
+   alone. It is a hint to instance search, not an extra assumption. -/
+
+example (p q : Rat) :
+    AffineSpaceTheory.vadd (AffineSpaceTheory.vsub q p : Rat) p = q :=
+  affine_translation_inversion p q
+
+example (p q : Rat × Rat) :
+    AffineSpaceTheory.vadd (AffineSpaceTheory.vsub q p : Rat × Rat) p = q :=
+  affine_translation_inversion p q
+
+example (p q : Rat × Rat × Rat) :
+    AffineSpaceTheory.vadd (AffineSpaceTheory.vsub q p : Rat × Rat × Rat) p = q :=
+  affine_translation_inversion p q
+
+/- The composition law, likewise proven once and reused at each dimension. -/
+
+example (p q r : Rat) :
+    Group.op (AffineSpaceTheory.vsub r q : Rat) (AffineSpaceTheory.vsub q p : Rat)
+      = (AffineSpaceTheory.vsub r p : Rat) :=
+  affine_transitivity p q r
+
+example (p q r : Rat × Rat) :
+    Group.op (AffineSpaceTheory.vsub r q : Rat × Rat) (AffineSpaceTheory.vsub q p : Rat × Rat)
+      = (AffineSpaceTheory.vsub r p : Rat × Rat) :=
+  affine_transitivity p q r
+
+example (p q r : Rat × Rat × Rat) :
+    Group.op (AffineSpaceTheory.vsub r q : Rat × Rat × Rat)
+             (AffineSpaceTheory.vsub q p : Rat × Rat × Rat)
+      = (AffineSpaceTheory.vsub r p : Rat × Rat × Rat) :=
+  affine_transitivity p q r
+
+/- @@@
+And because the axioms are now proven rather than assumed, the instances are
+computable: the operations actually run.
+@@@ -/
+
+#eval (AffineSpaceTheory.vsub ((7 : Rat), (9 : Rat)) ((2 : Rat), (3 : Rat)) : Rat × Rat)
+      -- (5, 6): the displacement from (2,3) to (7,9)
+
+#eval (AffineSpaceTheory.vadd ((5 : Rat), (6 : Rat)) ((2 : Rat), (3 : Rat)) : Rat × Rat)
+      -- (7, 9): applying that displacement to (2,3) returns to (7,9)
+
+#eval (AffineSpaceTheory.vsub ((1 : Rat), (2 : Rat), (3 : Rat)) ((1 : Rat), (1 : Rat), (1 : Rat))
+       : Rat × Rat × Rat)
+      -- (0, 1, 2)
 
 end TheoryImplProof
