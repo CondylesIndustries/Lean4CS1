@@ -93,13 +93,42 @@ We reuse our own `Group` class for the additive structure of *both* `F` and
 on scalars and `groupF.id` is the scalar `0`; likewise for vectors. Scalar
 multiplication and `1` come from Lean's `Mul` and `One`.
 
-One honest qualification about the name. These four axioms are exactly the
-*module* axioms. A module becomes a vector space when the scalars form a
-field, i.e. when every non-zero scalar has a multiplicative inverse -- and we
-do not state that requirement here, because none of the theorems below need
-it. So `VectorSpaceTheory F V` really says "`V` is a module over `F`", which
-is the right notion for everything we prove; it is a vector space exactly
-when `F` happens to be a field, as ℚ is in all three implementations.
+### Module or Vector Space? The Precise Difference
+
+A qualification about the name, since these four axioms are exactly the
+*module* axioms. The two notions have **identical axioms**; the difference is
+entirely a condition on the scalars:
+
+  - a **module** over `R` needs `R` to be a ring: scalars have `+`, `*`, `0`, `1`
+  - a **vector space** over `K` needs `K` to be a *field*: additionally every
+    non-zero scalar has a multiplicative inverse
+
+So a vector space is not a different structure. It is a module whose scalars
+can be divided by. Nothing in the axioms changes, which is exactly why every
+theorem below holds in both settings.
+
+What invertible scalars buy is the ability to *undo* a scaling. Over a field,
+if `a ≠ 0` then `a⁻¹ • (a • v) = (a⁻¹ * a) • v = 1 • v = v`, by `mulSmul`
+then `oneSmul`. Over a mere ring there is no `a⁻¹` to apply: working over ℤ
+you can double a vector but not halve it.
+
+The sharpest symptom of that gap is *torsion*. In a module, `a • v = 0` can
+happen with `a ≠ 0` and `v ≠ 0` -- take ℤ/6 as a module over ℤ, where
+`2 • 3 = 6 = 0` though neither factor is zero. In a vector space this is
+impossible: scale by `a⁻¹` and `v = a⁻¹ • 0 = 0`, using `vector_scalar_zero`
+proven later in this file. Torsion is in turn why a module need not have a
+basis or a well-defined dimension, while every vector space has both; ℤ/6 has
+no ℤ-basis at all.
+
+Modules over ℤ are precisely the abelian groups, so this is a genuinely wider
+notion rather than a technicality. Mathlib reflects all of this: it provides
+`Module R M` for a semiring `R`, and a vector space is just `Module K V` with
+`K` a field -- there is no separate `VectorSpace` class.
+
+We do not state the field requirement here, because none of the theorems
+below need it. So `VectorSpaceTheory F V` says "`V` is a module over `F`",
+and it is a vector space exactly when `F` is a field, as ℚ is in all three
+implementations.
 @@@ -/
 
 class VectorSpaceTheory (F V : Type) [Mul F] [One F] where
