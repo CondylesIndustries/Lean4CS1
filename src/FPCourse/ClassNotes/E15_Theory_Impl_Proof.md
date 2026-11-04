@@ -2,6 +2,7 @@
 import Mathlib.Algebra.Group.Defs
 import Mathlib.Algebra.Module.Defs
 import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.Ring
 ```
 
 # E15: Theory, Implementation, and Proof
@@ -77,16 +78,42 @@ infixl:65 " -ᵥ " => VSub.vsub
 
 ### Abstract Theory: VectorSpaceTheory
 
-A vector space abstractly requires:
-- A field F (for scalars)
-- An abelian group V (for vectors)
-- A scalar multiplication smul : F → V → V
-- Axioms relating field operations to vector operations
-```lean
-class VectorSpaceTheory (F V : Type) where
-  smul : F → V → V
+A vector space requires:
+- scalars `F`, carrying multiplication, a `1`, and an additive group structure
+- vectors `V`, carrying an additive group structure
+- a scalar multiplication `smul : F → V → V`
+- four axioms relating the scalar operations to the vector ones
 
-instance [VectorSpaceTheory F V] : SMul F V where smul := VectorSpaceTheory.smul
+We reuse our own `Group` class for the additive structure of *both* `F` and
+`V`, which is why `groupF` and `groupV` appear below. `groupF.op` is addition
+on scalars and `groupF.id` is the scalar `0`; likewise for vectors. Scalar
+multiplication and `1` come from Lean's `Mul` and `One`.
+
+One honest qualification about the name. These four axioms are exactly the
+*module* axioms. A module becomes a vector space when the scalars form a
+field, i.e. when every non-zero scalar has a multiplicative inverse -- and we
+do not state that requirement here, because none of the theorems below need
+it. So `VectorSpaceTheory F V` really says "`V` is a module over `F`", which
+is the right notion for everything we prove; it is a vector space exactly
+when `F` happens to be a field, as ℚ is in all three implementations.
+```lean
+class VectorSpaceTheory (F V : Type) [Mul F] [One F] where
+  [groupF : Group F]
+  [groupV : Group V]
+  smul    : F → V → V
+  -- Scaling by 1 does nothing.
+  oneSmul : ∀ v : V, smul 1 v = v
+  -- Scaling by a product is scaling twice.
+  mulSmul : ∀ a b : F, ∀ v : V, smul (a * b) v = smul a (smul b v)
+  -- Scalar multiplication distributes over vector addition.
+  smulAdd : ∀ a : F, ∀ v w : V,
+    smul a (groupV.op v w) = groupV.op (smul a v) (smul a w)
+  -- ...and over scalar addition.
+  addSmul : ∀ a b : F, ∀ v : V,
+    smul (groupF.op a b) v = groupV.op (smul a v) (smul b v)
+
+instance [Mul F] [One F] [VectorSpaceTheory F V] : SMul F V where
+  smul := VectorSpaceTheory.smul
 ```
 
 ## Implementation Layer: Three Concrete Instances
@@ -117,7 +144,13 @@ instance : AffineSpaceTheory Rat Rat where
   addVsub : ∀ v : Rat, ∀ p : Rat, (v + p) - p = v := fun v p => by norm_num
 
 instance : VectorSpaceTheory Rat Rat where
-  smul : Rat → Rat → Rat := (· * ·)
+  groupF  := inferInstance
+  groupV  := inferInstance
+  smul    : Rat → Rat → Rat := (· * ·)
+  oneSmul := fun v => by show (1 : Rat) * v = v; ring
+  mulSmul := fun a b v => by show (a * b) * v = a * (b * v); ring
+  smulAdd := fun a v w => by show a * (v + w) = a * v + a * w; ring
+  addSmul := fun a b v => by show (a + b) * v = a * v + b * v; ring
 ```
 
 ### Implementation 2: ℚ × ℚ (2-Dimensional)
@@ -147,7 +180,13 @@ instance : AffineSpaceTheory (Rat × Rat) (Rat × Rat) where
   addVsub := fun (v₁, v₂) (p₁, p₂) => by ext <;> simp
 
 instance : VectorSpaceTheory Rat (Rat × Rat) where
-  smul : Rat → Rat × Rat → Rat × Rat := fun a (v₁, v₂) => (a * v₁, a * v₂)
+  groupF  := inferInstance
+  groupV  := inferInstance
+  smul    : Rat → Rat × Rat → Rat × Rat := fun a (v₁, v₂) => (a * v₁, a * v₂)
+  oneSmul := fun (v₁, v₂) => by ext <;> simp
+  mulSmul := fun a b (v₁, v₂) => by ext <;> simp [mul_assoc]
+  smulAdd := fun a (v₁, v₂) (w₁, w₂) => by ext <;> simp [Group.op, mul_add]
+  addSmul := fun a b (v₁, v₂) => by ext <;> simp [Group.op, add_mul]
 ```
 
 ### Implementation 3: ℚ × ℚ × ℚ (3-Dimensional)
@@ -177,7 +216,13 @@ instance : AffineSpaceTheory (Rat × Rat × Rat) (Rat × Rat × Rat) where
   addVsub := fun (v₁, v₂, v₃) (p₁, p₂, p₃) => by ext <;> simp
 
 instance : VectorSpaceTheory Rat (Rat × Rat × Rat) where
-  smul : Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun a (v₁, v₂, v₃) => (a * v₁, a * v₂, a * v₃)
+  groupF  := inferInstance
+  groupV  := inferInstance
+  smul    : Rat → Rat × Rat × Rat → Rat × Rat × Rat := fun a (v₁, v₂, v₃) => (a * v₁, a * v₂, a * v₃)
+  oneSmul := fun (v₁, v₂, v₃) => by ext <;> simp
+  mulSmul := fun a b (v₁, v₂, v₃) => by ext <;> simp [mul_assoc]
+  smulAdd := fun a (v₁, v₂, v₃) (w₁, w₂, w₃) => by ext <;> simp [Group.op, mul_add]
+  addSmul := fun a b (v₁, v₂, v₃) => by ext <;> simp [Group.op, add_mul]
 ```
 
 ## Proof Bridge Layer: Theorems About the Abstract Theory
@@ -220,32 +265,68 @@ theorem affine_transitivity {V P : Type} [aff : AffineSpaceTheory V P] (p q r : 
 
 These theorems hold for *any* vector space satisfying `VectorSpaceTheory` (with appropriate type constraints).
 The pattern demonstrates reusable proofs: write once over the abstract theory, apply to all implementations.
+First, two small facts about any group. Both vector space theorems below need
+them, so we prove them once rather than twice.
 ```lean
-/- Proofs of properties like scalar zero, zero vector, distributivity would go here.
-   They would apply to Rat, Rat×Rat, Rat×Rat×Rat without redoing the proofs. -/
+theorem Group.eq_id_of_idem {α : Type} (g : Group α) {a : α}
+    (h : g.op a a = a) : a = g.id := by
+  -- An idempotent element of a group is the identity: cancel one copy of `a`.
+  have h' := congrArg (g.op (g.inv a)) h
+  rwa [← g.assoc, g.invLeft, g.idLeft] at h'
+
+theorem Group.inv_eq_of_op_eq_id {α : Type} (g : Group α) {a b : α}
+    (h : g.op a b = g.id) : b = g.inv a := by
+  -- Inverses in a group are unique.
+  have h' := congrArg (g.op (g.inv a)) h
+  rwa [← g.assoc, g.invLeft, g.idLeft, g.idRight] at h'
 ```
 
-## Concrete Application: Using Generic Theorems on Implementations
+Now the vector space theorems. Note that `0 • v = 0` and `a • 0 = 0` are
+*not* axioms -- they are consequences, and the derivation is the same trick
+in both cases: show the thing is idempotent, then invoke the group fact above.
 
-Because we've proven theorems about the abstract theory, they automatically
-apply to each concrete implementation without additional proof.
-With the implementations in place, abstract theorems automatically work on concrete types.
-The theorems like `affine_translation_inversion` and `vector_zero_scalar` are proven once
-in the abstract theory but apply to Rat, Rat × Rat, and Rat × Rat × Rat automatically
-without additional proofs needed.
+For `0 • v`: distributing `(0 + 0) • v` gives `0 • v + 0 • v`, but `0 + 0 = 0`,
+so `0 • v` equals its own double and must therefore be the zero vector.
+```lean
+theorem vector_zero_scalar {F V : Type} [Mul F] [One F] [vs : VectorSpaceTheory F V]
+    (v : V) : vs.smul vs.groupF.id v = vs.groupV.id := by
+  apply Group.eq_id_of_idem vs.groupV
+  rw [← vs.addSmul, vs.groupF.idLeft]
+
+theorem vector_scalar_zero {F V : Type} [Mul F] [One F] [vs : VectorSpaceTheory F V]
+    (a : F) : vs.smul a vs.groupV.id = vs.groupV.id := by
+  apply Group.eq_id_of_idem vs.groupV
+  rw [← vs.smulAdd, vs.groupV.idLeft]
+```
+
+And scaling a negated vector negates the result, because `a • v` and
+`a • (-v)` sum to `a • 0 = 0`, so the second is the inverse of the first.
+```lean
+theorem vector_neg_scalar {F V : Type} [Mul F] [One F] [vs : VectorSpaceTheory F V]
+    (a : F) (v : V) :
+    vs.smul a (vs.groupV.inv v) = vs.groupV.inv (vs.smul a v) := by
+  apply Group.inv_eq_of_op_eq_id vs.groupV
+  rw [← vs.smulAdd, vs.groupV.invRight]
+  exact vector_scalar_zero a
+```
+
 ## Summary: The Theory-Implementation-Proof Pattern
 
 **Theory Layer**: Abstract axioms define what properties a structure must have.
 - `AffineSpaceTheory V P`: what axioms make something an affine space
-- `VectorSpaceTheory F V`: what axioms make something a vector space
+- `VectorSpaceTheory F V`: what axioms make `V` a module over the scalars `F`
+  (a vector space when `F` is a field)
 
 **Implementation Layer**: Concrete types satisfy the theory.
 - Rat, Rat × Rat, Rat × Rat × Rat are implementations
 - Proofs that they satisfy the abstract axioms
 
 **Proof Bridge Layer**: Generic theorems about the theory apply to all implementations.
-- `affine_translation_inversion`: true for any affine space
-- `vector_zero_scalar`: true for any vector space
+- `affine_translation_inversion` and `affine_transitivity`: true for any
+  affine space
+- `vector_zero_scalar`, `vector_scalar_zero` and `vector_neg_scalar`: true for
+  any module, hence for any vector space. None of these is an axiom; each is
+  derived from the four scalar axioms plus two facts about groups.
 
 This separation allows:
 1. Reasoning abstractly (proving once for all implementations)
@@ -307,6 +388,54 @@ computable: the operations actually run.
 #eval (AffineSpaceTheory.vsub ((1 : Rat), (2 : Rat), (3 : Rat)) ((1 : Rat), (1 : Rat), (1 : Rat))
        : Rat × Rat × Rat)
       -- (0, 1, 2)
+```
+
+## The Same Pattern on the Vector Space Side
+
+`vector_zero_scalar`, `vector_scalar_zero` and `vector_neg_scalar` were each
+proven once over an arbitrary `VectorSpaceTheory F V`. Here they are at all
+three dimensions -- again with no proof, only the theorem's name.
+
+Recall that `Group.id` *is* the zero: it is `0` for ℚ, `(0, 0)` for ℚ², and
+`(0, 0, 0)` for ℚ³.
+```lean
+/- `0 • v = 0`, for every vector in every one of the three spaces. -/
+
+example (v : Rat) :
+    VectorSpaceTheory.smul (Group.id : Rat) v = (Group.id : Rat) :=
+  vector_zero_scalar v
+
+example (v : Rat × Rat) :
+    VectorSpaceTheory.smul (Group.id : Rat) v = (Group.id : Rat × Rat) :=
+  vector_zero_scalar v
+
+example (v : Rat × Rat × Rat) :
+    VectorSpaceTheory.smul (Group.id : Rat) v = (Group.id : Rat × Rat × Rat) :=
+  vector_zero_scalar v
+
+/- `a • 0 = 0`, for every scalar. -/
+
+example (a : Rat) :
+    VectorSpaceTheory.smul a (Group.id : Rat × Rat) = (Group.id : Rat × Rat) :=
+  vector_scalar_zero a
+
+/- `a • (-v) = -(a • v)`. -/
+
+example (a : Rat) (v : Rat × Rat) :
+    VectorSpaceTheory.smul a (Group.inv v) = Group.inv (VectorSpaceTheory.smul a v) :=
+  vector_neg_scalar a v
+```
+
+And the scalar multiplications compute, too.
+```lean
+#eval (VectorSpaceTheory.smul (2 : Rat) ((3 : Rat), (4 : Rat)) : Rat × Rat)
+      -- (6, 8)
+#eval (VectorSpaceTheory.smul (0 : Rat) ((3 : Rat), (4 : Rat)) : Rat × Rat)
+      -- (0, 0), as vector_zero_scalar guarantees
+#eval (VectorSpaceTheory.smul (1 : Rat) ((3 : Rat), (4 : Rat)) : Rat × Rat)
+      -- (3, 4), as the oneSmul axiom requires
+#eval (VectorSpaceTheory.smul (1/2 : Rat) ((1 : Rat), (2 : Rat), (3 : Rat)) : Rat × Rat × Rat)
+      -- (1/2, 1, 3/2)
 
 end TheoryImplProof
 ```
