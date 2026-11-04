@@ -57,10 +57,70 @@ Think of simple groups as the *atoms* of group theory: they're the
 indivisible building blocks.
 
 For contrast, the integers modulo 6 form a *non-simple* group. Why?
-Because we can extract a smaller group from it: the integers modulo 2.
-Every element of mod-2 lives inside mod-6, and the operations preserve
-that structure. We call this relationship a "subgroup." A group that
-has no such non-trivial subgroups is simple -- it can't be broken down.
+Because we can extract a smaller group sitting inside it. Be careful about
+*which* smaller group, though: it is not the set `{0, 1}`. That set is not
+closed under addition mod 6, since `1 + 1 = 2` escapes it, so it is not a
+subgroup at all. The order-2 subgroup of mod-6 is `{0, 3}`:
+
+  `0 + 0 = 0`,  `0 + 3 = 3`,  `3 + 3 = 6 ≡ 0 (mod 6)`
+
+Nothing escapes, and every element has an inverse inside, so `{0, 3}` really
+is a group in its own right. It is *isomorphic* to the integers mod 2 -- same
+structure, relabelled -- but it is not literally a subset of mod-2's elements.
+That distinction between "is isomorphic to" and "is a subset of" matters
+constantly once you start formalizing, so it is worth getting right here.
+
+Mod-6 has exactly four subgroups: `{0}`, `{0, 3}`, `{0, 2, 4}`, and all of
+mod-6. The middle two are the interesting ones, isomorphic to mod-2 and
+mod-3 respectively.
+
+## Normal Subgroups and Composition Series
+
+Now the correction to the naive definition. A group is simple when it has no
+non-trivial **normal** subgroup -- not merely no non-trivial subgroup. A
+subgroup `N ⊆ G` is *normal* when conjugating any of its elements by anything
+in `G` lands you back in `N`: for all `g : G` and `n : N`, `g * n * inv g ∈ N`.
+Normality is exactly the condition that lets you form a *quotient* group
+`G / N`, which is what "breaking `G` down" actually means.
+
+The word "normal" is not a technicality we can drop. The alternating groups
+in family 2 below are simple, yet they have plenty of non-trivial subgroups --
+`A₅` has order 60 and contains subgroups of orders 2, 3, 4, 5, 6, 10 and 12.
+What `A₅` has none of is a *normal* subgroup, which is why it is simple and
+why it cannot be taken apart.
+
+For mod-6 the distinction happens to be invisible, and for a reason worth
+naming: mod-6 is *abelian*, and in an abelian group every subgroup is
+automatically normal (`g + n - g = n`, since the `g`s cancel). So all four
+subgroups above are normal, and we may quotient by any of them.
+
+That lets us decompose mod-6 into simple pieces. Build a chain, each step a
+normal subgroup of the next, until the successive quotients are all simple:
+
+  `{0}  ◁  {0, 3}  ◁  ℤ/6`
+
+The two quotients along this chain are `{0,3} / {0} ≅ ℤ/2` and
+`ℤ/6 / {0,3} ≅ ℤ/3`. Both are cyclic of prime order, hence simple -- they are
+atoms, and the chain terminates. Such a chain is called a *composition
+series*, and its quotients are the *composition factors*. So mod-6 is built
+from the atoms `ℤ/2` and `ℤ/3`.
+
+We could equally have gone through the other subgroup:
+
+  `{0}  ◁  {0, 2, 4}  ◁  ℤ/6`
+
+giving factors `ℤ/3` and then `ℤ/2`. Different route, same two atoms in the
+other order. That is not a coincidence: the *Jordan-Hölder theorem* says any
+two composition series of a finite group have the same multiset of
+composition factors, up to reordering and isomorphism. The atoms of a finite
+group are well defined, exactly as the prime factorization of an integer is.
+
+The analogy with `6 = 2 × 3` is close enough to be useful, and in this
+particular case even exact: because 2 and 3 are coprime, `ℤ/6 ≅ ℤ/2 × ℤ/3`.
+But do not over-trust it. A composition series records the factors, not how
+they were glued, and in general the gluing carries real information --
+`ℤ/4` and `ℤ/2 × ℤ/2` have the same composition factors (`ℤ/2` twice) and are
+not isomorphic. Knowing a group's atoms does not by itself tell you the group.
 
 The classification theorem says: there are *infinitely many* finite
 simple groups, but they fall into exactly four families:
@@ -152,9 +212,17 @@ adding a number and its inverse gives you back the identity.
 
 Clock hours form a group under addition modulo 12. The set is
 {0, 1, ..., 11}, representing the 12 hours, and adding any number of
-hours wraps around at 12. This will be useful later when we introduce
-torsors. For our examples we'll simplify to a three position clock:
-think noon (0), four (1), eight (2), then back to noon again (0).
+hours wraps around at 12. We return to the 12-hour clock in the next
+lesson, where it becomes our first torsor. For our examples here we'll
+simplify to a three position clock: think noon (0), four (1), eight (2),
+then back to noon again (0). Each step is a four-hour shift, so the three
+positions are the hours 12, 4 and 8.
+
+`Fin 3` is worth a second look given the classification discussion above.
+Three is prime, so this is a cyclic group of prime order -- a member of
+family 1, and therefore one of the *simple* groups, an atom of group
+theory. Its only subgroups are the trivial one and itself. Composition
+series do not get shorter than this: `{0} ◁ ℤ/3` already terminates.
 @@@ -/
 
 instance : Group (Fin 3) where
@@ -256,66 +324,19 @@ one `solve` function, and it works everywhere the group laws hold.
 @@@ -/
 
 /- @@@
-## Torsors: Free and Transitive Group Actions
+## Example 4: The Rational Numbers
 
-So far we've studied groups as abstract algebraic objects. But groups
-are most interesting when they *act* on something: a rotation acts on
-the corners of a square, a permutation acts on a sequence of elements,
-a translation acts on the points of a plane.
+ℚ is a group under addition, exactly parallel to `Int`: the operation is
+`+`, the identity is `0`, and the inverse of `q` is `-q`. Unlike `Fin n`
+there is no wrapping, and unlike `Int` the elements are dense -- but the
+group structure is indifferent to both facts. That indifference is the
+point of the abstraction.
 
-A *torsor* for a group `G` is a set `T` where `G` acts on elements of
-`T` in two special ways:
-  - *Free*: no non-identity element of `G` leaves any point of `T` fixed
-  - *Transitive*: any two points of `T` are related by some element of `G`
-
-Together, these properties mean that `T` has no intrinsic identity or
-structure -- all points are equivalent, and they're only distinguished
-by the group action. A torsor is "a group without a distinguished element."
-
-Examples: clock hours under time shifts, calendar dates under day shifts,
-points in a plane under translations, directions in space under rotations.
-@@@ -/
-
-class Torsor (G T : Type) where
-  [groupG : Group G]
-  act        : G → T → T
-  actId      : ∀ t : T, act groupG.id t = t
-  actComp    : ∀ g h : G, ∀ t : T, act (groupG.op g h) t = act g (act h t)
-  actFree    : ∀ g : G, ∀ t : T, act g t = t → g = groupG.id
-  actTransitive : ∀ t₁ t₂ : T, ∃ g : G, act g t₁ = t₂
-
-/- @@@
-## Instance 1: Fin k (Integers Modulo k)
-
-The simplest torsor: a group acting on itself. `Fin k` is a torsor for
-the group (Fin k, +) where the action is addition. Every element can be
-shifted to every other element by adding the right value, and only the
-identity (0) leaves any position unchanged.
-@@@ -/
-
-/- We'll implement the full Torsor instance for Rat below, which is simpler
-and more illustrative than the modular arithmetic case. -/
-
-/- @@@
-## Instance 2: Integers Modulo 12 (Clock Hours)
-
-A concrete example: the hours on a 12-hour clock. Adding an hour offset
-to any current hour gives you the new hour, wrapping at midnight.
-@@@ -/
-
-#eval (3 : Fin 12) + (5 : Fin 12)   -- 8
-#eval (10 : Fin 12) + (5 : Fin 12)  -- 3 (wraps around)
-#eval (0 : Fin 12) + (7 : Fin 12)   -- 7
-
-/- @@@
-## Instance 3: ℚ (Rational Numbers)
-
-The rational numbers form a torsor under themselves via addition.
-Every rational can be shifted to every other rational by adding an
-appropriate rational offset, and only 0 leaves any rational unchanged.
-
-This requires a `Group ℚ` instance for rational addition, parallel to
-our `Group Int` instance for integers.
+A warning while we are here. ℚ is a group under *addition*, not under
+multiplication: `0` has no multiplicative inverse. Even dropping `0`, the
+integers under multiplication are not a group either, since `2` has no
+integer inverse. "Multiply by 2, then by 1/2" is a fine intuition for
+inverses but a bad example of a group, so be careful with it.
 @@@ -/
 
 instance : Group Rat where
@@ -328,68 +349,19 @@ instance : Group Rat where
   invLeft : ∀ a : Rat, (-a) + a = 0 := Rat.neg_add_cancel
   invRight: ∀ a : Rat, a + (-a) = 0 := Rat.add_neg_cancel
 
-instance : Torsor Rat Rat where
-  groupG    := inferInstance
-  act       := (· + ·)
-  actId     := Rat.zero_add
-  actComp   := fun g h t => Rat.add_assoc g h t
-  actFree   := fun g t h => by
-    -- If g + t = t, then g = 0 (the identity)
-    -- h : act g t = t means g + t = t
-    -- By the left cancellation law for addition, we can subtract t from both sides
-    have eq : g + t - t = t - t := by rw [h]
-    simp [Rat.add_sub_cancel, Rat.sub_self] at eq
-    exact eq
-  actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, by simp [Rat.sub_add_cancel]⟩
+#eval (1/2 : Rat) + (1/3 : Rat)        -- 5/6
+#eval (1/2 : Rat) + (-(1/2) : Rat)     -- 0 (an element plus its inverse)
 
 /- @@@
-The key insight: once we have a torsor, we get structure for free.
-The laws ensure that:
-  - Applying the identity doesn't move anything
-  - Actions compose consistently
-  - Every point can reach every other point
-  - No non-identity element fixes any point
+## Example 5: The Rational Plane ℚ × ℚ
 
-This abstraction simplifies reasoning about group actions across
-different mathematical objects -- clocks, dates, geometric points,
-and more all follow the same pattern.
+Groups compose. If `α` and `β` are groups then so is `α × β`, with the
+operation applied componentwise and the identity being the pair of
+identities. Below is that construction for ℚ × ℚ.
 
-## Solving Equations Using Groups
-
-Recall the `solve` function from earlier: it solves `a * x = b` by
-computing `inv(a) * b`. Let's demonstrate it on concrete examples:
-@@@ -/
-
-#eval solve (5 : Int) 13       -- Solves: 5 + x = 13, answer: 8
-#eval solve (3 : Fin 5) 0      -- Solves: 3 + x ≡ 0 (mod 5), answer: 2
-
-/- @@@
-## Native Lean Library Implementations
-
-Using our custom Group and Torsor typeclasses, here are concrete
-implementations for Fin 3 (a cyclic group of prime order) and
-for the pair type Rat × Rat representing the rational plane.
-@@@ -/
-
-/- @@@
-### Fin 3: A Cyclic Group of Prime Order
-
-Fin 3 = {0, 1, 2} is one of the simplest examples of a cyclic group
-of prime order. It's the additive group of integers modulo 3.
-We can verify the group operations work as expected.
-@@@ -/
-
-#eval (1 : Fin 3) + (1 : Fin 3)   -- 2
-#eval (1 : Fin 3) + (2 : Fin 3)   -- 0
-#eval (2 : Fin 3) + (2 : Fin 3)   -- 1
-
-/- @@@
-### ℚ × ℚ: The Rational Plane as a Torsor
-
-The Cartesian product ℚ × ℚ is a torsor for the group ℚ × ℚ under
-componentwise addition. Every rational point can be shifted by any
-rational vector, and the only vector that leaves all points fixed
-is the zero vector (0, 0).
+This instance earns its keep in the next two lessons, where ℚ × ℚ becomes
+the group of *translations* of the plane -- the first case where thinking of
+group elements as actions rather than as numbers really pays.
 @@@ -/
 
 instance : Group (Rat × Rat) where
@@ -412,28 +384,36 @@ instance : Group (Rat × Rat) where
     fun _ => by
       ext <;> (simp only [Rat.add_neg_cancel])
 
-instance : Torsor (Rat × Rat) (Rat × Rat) where
-  groupG    := inferInstance
-  act       := fun (g₁, g₂) (t₁, t₂) => (g₁ + t₁, g₂ + t₂)
-  actId     := fun ⟨t₁, t₂⟩ =>
-    -- Identity action: (0, 0) + (t₁, t₂) = (t₁, t₂)
-    -- Componentwise: 0 + t₁ = t₁ and 0 + t₂ = t₂
-    sorry
-  actComp   := fun ⟨g₁, g₂⟩ ⟨h₁, h₂⟩ ⟨t₁, t₂⟩ =>
-    -- Composition: g + (h + t) = (g + h) + t
-    -- Uses associativity of addition: (g₁ + h₁) + t₁ = g₁ + (h₁ + t₁)
-    sorry
-  actFree   := fun (g₁, g₂) (t₁, t₂) _ =>
-    -- If (g₁, g₂) + (t₁, t₂) = (t₁, t₂), then g = (0, 0)
-    -- From g₁ + t₁ = t₁, we get g₁ = 0; similarly g₂ = 0
-    sorry
-  actTransitive := fun (t₁, t₂) (s₁, s₂) => ⟨(s₁ - t₁, s₂ - t₂), by simp [Rat.sub_add_cancel]⟩
+/- @@@
+## Solving Equations: Worked Examples
 
-/- The rational plane under our Torsor instance now supports:
-   - Group operations (addition, negation)
-   - Torsor actions (transitivity and freeness)
-   - Verification that the axioms hold structurally
+Recall the `solve` function from earlier: it solves `a * x = b` by computing
+`inv(a) * b`. Let's run it on concrete examples.
+
+One notational caution. The prose above writes the group operation
+multiplicatively, as `a * x = b`, because that is the conventional way to
+discuss groups in the abstract. But every instance in this file is
+*additive*: `op` is `+` and `inv` is negation. So `solve (5 : Int) 13` is
+solving `5 + x = 13`, not `5 * x = 13`. The abstract operation has no
+intrinsic notation; `*` and `+` are both just `op`.
+@@@ -/
+
+#eval solve (5 : Int) 13       -- Solves: 5 + x = 13, answer: 8
+#eval solve (3 : Fin 5) 0      -- Solves: 3 + x ≡ 0 (mod 5), answer: 2
+#eval solve (1/2 : Rat) 2      -- Solves: 1/2 + x = 2, answer: 3/2
+
+/- @@@
+## Where This Goes Next
+
+Everything so far has treated a group as a self-contained algebraic object:
+a set with an operation. But the opening section described groups as
+*symmetry-preserving actions* -- rotations of a square, shifts of a clock --
+and we have not yet formalized what it means for a group to act *on*
+something distinct from itself.
+
+That is the subject of the next lesson, on **torsors**: sets on which a
+group acts freely and transitively. It imports this file and reuses the
+`Group` class and the instances above rather than redefining them.
 @@@ -/
 
 end Groups
---
