@@ -67,13 +67,25 @@ namespace VectorSpaces
 
 ## Vector Space Instances in Lean's Mathlib
 
-Lean's mathlib already has mature definitions of vector spaces through the
-`Module` and `VectorSpace` typeclasses. A `Module R M` says that `M` is a
-module over the semiring `R` (a generalization of `R`-scalar multiplication).
+Mathlib has a mature definition of this structure, but it pays to be precise
+about what it is *called*, because a reasonable expectation turns out to be
+wrong: **mathlib has no `VectorSpace` typeclass.** Looking for one is a dead
+end. There is only `Module`.
 
-When `R` is a field, `Module R V` is exactly the structure of a vector space.
-Lean automatically instantiates vector space structure whenever it sees modules
-over fields, so we can work directly with those instances.
+`Module R M` says that `M` is a module over the semiring `R`: `M` is an
+additive commutative group, and `R` acts on it by a scalar multiplication
+satisfying the usual compatibility laws.
+
+A vector space is then not a separate structure but a *special case* of that
+one: `Module K V` where the scalars `K` form a field. "Vector space" is
+vocabulary for that situation rather than a class to instantiate, so there is
+nothing additional to declare. If you have a `Module` and your scalars are a
+field, you already have a vector space, and every `Module` lemma applies to
+it unchanged.
+
+What the field assumption adds is that non-zero scalars become invertible, so
+a scaling can be undone. That is what gives vector spaces bases and a
+well-defined dimension, which modules in general may lack.
 
 The key operations are:
   - `+ : V → V → V` (addition)
@@ -89,11 +101,19 @@ The rational numbers ℚ form a vector space over themselves. Addition is
 ordinary rational addition, and scalar multiplication is ordinary rational
 multiplication. This is the simplest non-trivial example.
 
-In mathlib, this instance is built-in: Lean knows that any field is a vector
-space over itself via the Module typeclass.
+In mathlib this instance is built-in: any field is a module over itself, and
+being a field, it is therefore a vector space over itself.
+
+Rather than assert that, we can ask Lean. The two `#check`s below are the
+whole content of "ℚ is a ℚ-vector space" -- a `Module` instance plus the fact
+that the scalars are a field. There is no third `VectorSpace` instance to
+look for, which is the point made above.
 ```lean
-/- ℚ is a module over itself (hence a vector space) -/
+/- ℚ is a module over itself... -/
 #check (inferInstance : Module Rat Rat)
+
+/- ...and ℚ is a field. Together: ℚ is a vector space over ℚ. -/
+#check (inferInstance : Field Rat)
 
 /- Basic operations in the 1D vector space ℚ -/
 #eval (2 : Rat) * (3 : Rat)  -- 6 (scalar multiplication)
