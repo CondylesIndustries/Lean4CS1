@@ -140,46 +140,141 @@ instance : Torsor Rat Rat where
   actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, by simp [Rat.sub_add_cancel]⟩
 
 /- @@@
-## Instance 3: ℚ × ℚ, the Rational Plane
+## Instance 3: The Rational Plane, With Points and Vectors as Distinct Types
 
-The Cartesian product ℚ × ℚ is a torsor for the group ℚ × ℚ under
-componentwise addition. Every point can be shifted by any vector, and the
-only vector fixing any point is the zero vector `(0, 0)`.
+The two instances above both use *the same type* for the group and for the
+set it acts on: `Torsor (Fin 12) (Fin 12)` and `Torsor Rat Rat`. That is
+convenient, and it is also exactly the thing a torsor is supposed to rule
+out. If positions and shifts are the same type, then `t₁ + t₂` typechecks --
+and "the sum of 3 o'clock and 5 o'clock" is not a thing. Nothing in the
+*axioms* is wrong; the *types* are simply too permissive to stop us writing
+nonsense.
 
-This is the example that matters most for what follows: it is the first
-time we see *points* being acted on by *translations*, which is exactly the
-structure an affine space formalizes. The group instance again comes from
-the groups lesson.
+So for the plane we do it properly. We give the positions and the shifts
+distinct types, `Point2` and `Vector2`, even though both are *implemented*
+as a pair of rationals. A `structure` with one field is the standard way to
+say "same representation, different type":
 @@@ -/
 
-instance : Torsor (Rat × Rat) (Rat × Rat) where
-  groupG    := inferInstance
-  act       := fun (g₁, g₂) (t₁, t₂) => (g₁ + t₁, g₂ + t₂)
-  -- Identity action: (0, 0) + (t₁, t₂) = (t₁, t₂), componentwise 0 + tᵢ = tᵢ
-  actId     := fun ⟨t₁, t₂⟩ => by
-    show ((0 : Rat) + t₁, (0 : Rat) + t₂) = (t₁, t₂)
-    simp [Rat.zero_add]
-  -- Composition: (g + h) + t = g + (h + t), by associativity in each component
-  actComp   := fun ⟨g₁, g₂⟩ ⟨h₁, h₂⟩ ⟨t₁, t₂⟩ => by
-    show ((g₁ + h₁) + t₁, (g₂ + h₂) + t₂) = (g₁ + (h₁ + t₁), g₂ + (h₂ + t₂))
-    simp [Rat.add_assoc]
-  -- Freeness: if (g₁, g₂) + (t₁, t₂) = (t₁, t₂) then g = (0, 0).
-  -- Same cancellation argument as the ℚ case, applied in each component.
-  actFree   := fun ⟨g₁, g₂⟩ ⟨t₁, t₂⟩ h => by
-    have h' : (g₁ + t₁, g₂ + t₂) = (t₁, t₂) := h
-    have e₁ : g₁ + t₁ = t₁ := congrArg Prod.fst h'
-    have e₂ : g₂ + t₂ = t₂ := congrArg Prod.snd h'
-    have f₁ : g₁ = 0 := by
-      have c : g₁ + t₁ - t₁ = t₁ - t₁ := by rw [e₁]
-      simp [Rat.add_sub_cancel, Rat.sub_self] at c
-      exact c
-    have f₂ : g₂ = 0 := by
-      have c : g₂ + t₂ - t₂ = t₂ - t₂ := by rw [e₂]
-      simp [Rat.add_sub_cancel, Rat.sub_self] at c
-      exact c
-    show ((g₁, g₂) : Rat × Rat) = ((0 : Rat), (0 : Rat))
-    rw [f₁, f₂]
-  actTransitive := fun (t₁, t₂) (s₁, s₂) => ⟨(s₁ - t₁, s₂ - t₂), by simp [Rat.sub_add_cancel]⟩
+structure Vector2 where
+  ofPair ::
+  toPair : Rat × Rat
+deriving DecidableEq
+
+structure Point2 where
+  ofPair ::
+  toPair : Rat × Rat
+deriving DecidableEq
+
+/- @@@
+Printing the underlying pair, tagged with which type it came from, so that
+the `#eval`s below say what they mean.
+@@@ -/
+
+instance : Repr Vector2 where reprPrec v _ := "Vector2 " ++ repr v.toPair
+instance : Repr Point2  where reprPrec p _ := "Point2 "  ++ repr p.toPair
+
+/- @@@
+These are genuinely different types now, and the type checker enforces the
+distinction. Points cannot be added to each other, and a point cannot be
+used where a displacement is expected -- both are type errors rather than
+silently meaningful expressions.
+
+### The Group of Displacements
+
+`Vector2` needs to be a group, since that is what acts. Rather than redo the
+componentwise arithmetic, we *transport* the `Group (ℚ × ℚ)` instance from the
+previous lesson across the wrapper: each operation unwraps, defers to the pair
+instance, and wraps the result. Every law then follows from the corresponding
+law on pairs by `congrArg`, which says "equal arguments give equal results"
+and here lifts an equation on pairs to an equation on `Vector2`.
+
+Recall that `op`, `id`, `assoc`, `idLeft` and `idRight` live in `Monoid`,
+which `Group` extends; only `inv`, `invLeft` and `invRight` are `Group`'s own.
+@@@ -/
+
+instance : Group Vector2 where
+  op v w      := ⟨Monoid.op v.toPair w.toPair⟩
+  id          := ⟨Monoid.id⟩
+  inv v       := ⟨Group.inv v.toPair⟩
+  assoc a b c := congrArg Vector2.ofPair (Monoid.assoc a.toPair b.toPair c.toPair)
+  idLeft a    := congrArg Vector2.ofPair (Monoid.idLeft a.toPair)
+  idRight a   := congrArg Vector2.ofPair (Monoid.idRight a.toPair)
+  invLeft a   := congrArg Vector2.ofPair (Group.invLeft a.toPair)
+  invRight a  := congrArg Vector2.ofPair (Group.invRight a.toPair)
+
+/- @@@
+### The Torsor of Points
+
+Now the action: a displacement applied to a point yields a point. Note the
+type of `act` for this instance -- `Vector2 → Point2 → Point2`. The two
+argument types are different, so the operands cannot be swapped and two
+points cannot be combined. That is the improvement over the instances above.
+
+The `actId` and `actComp` proofs again just lift the pair laws. The two
+interesting proofs are below them.
+@@@ -/
+
+instance : Torsor Vector2 Point2 where
+  groupG        := inferInstance
+  act v p       := ⟨Monoid.op v.toPair p.toPair⟩
+  actId p       := congrArg Point2.ofPair (Monoid.idLeft p.toPair)
+  actComp v w p := congrArg Point2.ofPair (Monoid.assoc v.toPair w.toPair p.toPair)
+  -- Freeness: if a displacement fixes a point, it is the zero displacement.
+  -- Unwrap to an equation on pairs, cancel `p` on the right, wrap back up.
+  -- Note that the cancellation uses only the group axioms -- associativity
+  -- and inverses -- and never the fact that the entries are rationals.
+  actFree := fun v p h => by
+    have hp : Monoid.op v.toPair p.toPair = p.toPair := congrArg Point2.toPair h
+    have hv : v.toPair = (Monoid.id : Rat × Rat) :=
+      calc v.toPair
+          = Monoid.op v.toPair Monoid.id := (Monoid.idRight _).symm
+        _ = Monoid.op v.toPair (Monoid.op p.toPair (Group.inv p.toPair)) := by
+              rw [Group.invRight]
+        _ = Monoid.op (Monoid.op v.toPair p.toPair) (Group.inv p.toPair) :=
+              (Monoid.assoc _ _ _).symm
+        _ = Monoid.op p.toPair (Group.inv p.toPair) := by rw [hp]
+        _ = Monoid.id := Group.invRight _
+    exact congrArg Vector2.ofPair hv
+  -- Transitivity: the displacement from `p` to `q` is `q` composed with the
+  -- inverse of `p`. Applying it to `p` cancels the `p` and lands on `q`.
+  actTransitive := fun p q =>
+    ⟨⟨Monoid.op q.toPair (Group.inv p.toPair)⟩, by
+      show Point2.ofPair
+        (Monoid.op (Monoid.op q.toPair (Group.inv p.toPair)) p.toPair) = q
+      rw [Monoid.assoc, Group.invLeft, Monoid.idRight]⟩
+
+/- @@@
+The operations compute. Below, a displacement moves a point, and the
+displacement between two points is recovered -- with the types in the output
+showing which role each value plays.
+@@@ -/
+
+#eval Torsor.act (Vector2.ofPair (3, 4)) (Point2.ofPair (1, 1))
+      -- Point2 (4, 5)
+
+#eval Monoid.op (Vector2.ofPair (3, 0)) (Vector2.ofPair (-2, 3))
+      -- Vector2 (1, 3): displacements compose, because they form a group
+
+/- @@@
+And the type distinction really is enforced. Each of these is a type error:
+
+  `Monoid.op (Point2.ofPair (1, 1)) (Point2.ofPair (2, 2))`
+      -- no `Monoid Point2` instance: points do not add
+
+  `Torsor.act (Point2.ofPair (1, 1)) (Point2.ofPair (2, 2))`
+      -- no `Torsor Point2 Point2` instance: a point is not a displacement
+
+  `Torsor.act (Vector2.ofPair (3, 4)) (Vector2.ofPair (1, 1))`
+      -- no `Torsor Vector2 Vector2` instance: the operands cannot be swapped
+
+Lean reports each of these as a failure to synthesize the instance that
+would be needed to make the expression mean anything -- which is the type
+checker saying, correctly, that there is no such operation.
+
+This is what we gained by paying for two wrapper types: the geometry that is
+meaningless is now unwritable rather than merely unintended.
+@@@ -/
 
 /- @@@
 ## What the Torsor Abstraction Buys
@@ -195,21 +290,29 @@ The laws ensure that:
 
 One abstraction, and clocks, rationals, and the plane all satisfy it. That
 is the payoff: reasoning done once about `Torsor G T` applies to every
-instance, whether the underlying set is finite or infinite.
+instance, whether the underlying set is finite or infinite, and whether or
+not the group and the set it acts on are the same type.
 
 ## Where This Goes Next
 
-Notice what the ℚ × ℚ instance does *not* express. We wrote `Torsor (ℚ × ℚ)
-(ℚ × ℚ)`, using the same type for shifts and for positions, so nothing stops
-us from adding two positions together -- an operation with no geometric
-meaning. The action is also given as a bare function with an existence proof
-for transitivity, rather than an operation that *computes* the displacement
-between two points.
+Separating `Point2` from `Vector2` fixed one of the two problems with the
+plane example. The other one remains, and it is in the class itself.
+Transitivity is stated as an *existence claim*:
 
-The next lesson addresses both: it gives points and vectors distinct types,
-and replaces "there exists a group element relating these points" with a
-`vsub` operation that produces it. That structure is an *affine space*, and
-it is a torsor with better ergonomics.
+  `actTransitive : ∀ t₁ t₂ : T, ∃ g : G, act g t₁ = t₂`
+
+Read that carefully: it says a displacement relating any two points *exists*.
+It does not give you one. The witness is buried inside a proof, so there is
+no operation to call, nothing to `#eval`, and no way to write "the vector from
+`p` to `q`" as an expression. Our instance happens to construct the witness
+explicitly, but the class cannot oblige an instance to, and cannot hand the
+witness back to a caller.
+
+The next lesson replaces that existential with an operation, `vsub : P → P → V`,
+which *computes* the displacement between two points. A proof that something
+exists becomes a function that produces it. That structure -- distinct types
+for points and vectors, plus `vsub` -- is an *affine space*, and it is a
+torsor with better ergonomics.
 @@@ -/
 
 end Torsors
