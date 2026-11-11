@@ -127,17 +127,21 @@ on. Only `inv`, `invLeft` and `invRight` belong to `Group` itself. Mixing the
 two prefixes in one proof looks odd until you remember the `extends`.
 ```lean
 theorem eq_id_of_op_eq_self {α : Type} [Group α] {g t : α}
-    (h : Monoid.op g t = t) : g = Monoid.id := by
-  -- Compose both sides of `h` with `inv t` on the right. This is `congrArg`
-  -- with `f = fun x => Monoid.op x (Group.inv t)`.
-  have h' : Monoid.op (Monoid.op g t) (Group.inv t)
-          = Monoid.op t (Group.inv t) :=
-    congrArg (fun x => Monoid.op x (Group.inv t)) h
-  -- Regroup the left side (`assoc`), cancel `t` against `inv t` on both
-  -- sides (`invRight`), and drop the identity (`idRight`). What is left is
-  -- the goal.
-  rw [Monoid.assoc, Group.invRight, Monoid.idRight] at h'
-  exact h'
+    (h : Monoid.op g t = t) : g = Monoid.id :=
+  calc g
+      -- Pad `g` out with the identity, so there is something to work on.
+      = Monoid.op g Monoid.id                    := (Monoid.idRight g).symm
+      -- The identity is `t` composed with its inverse.
+    _ = Monoid.op g (Monoid.op t (Group.inv t))  :=
+          congrArg (Monoid.op g) (Group.invRight t).symm
+      -- Regroup, so that `g` and `t` sit together.
+    _ = Monoid.op (Monoid.op g t) (Group.inv t)  :=
+          (Monoid.assoc g t (Group.inv t)).symm
+      -- That is exactly the hypothesis, applied under a function.
+    _ = Monoid.op t (Group.inv t)                :=
+          congrArg (fun x => Monoid.op x (Group.inv t)) h
+      -- And `t` cancels against its own inverse.
+    _ = Monoid.id                                := Group.invRight t
 ```
 
 The second fact is the computation we will need for transitivity: composing
@@ -145,8 +149,11 @@ The second fact is the computation we will need for transitivity: composing
 cancels. Read it as "go to `a` the long way round, via `b`."
 ```lean
 theorem op_inv_op_cancel {α : Type} [Group α] (a b : α) :
-    Monoid.op (Monoid.op a (Group.inv b)) b = a := by
-  rw [Monoid.assoc, Group.invLeft, Monoid.idRight]
+    Monoid.op (Monoid.op a (Group.inv b)) b = a :=
+  calc Monoid.op (Monoid.op a (Group.inv b)) b
+      = Monoid.op a (Monoid.op (Group.inv b) b) := Monoid.assoc a (Group.inv b) b
+    _ = Monoid.op a Monoid.id                   := congrArg (Monoid.op a) (Group.invLeft b)
+    _ = a                                       := Monoid.idRight a
 ```
 
 ## Instance 1: Clock Hours (Integers Modulo 12)
@@ -158,25 +165,36 @@ Adding an hour offset to a current hour gives the new hour, wrapping at 12.
 First the group of shifts. Note that `op` is *defined to be* `Fin 12`'s own
 `+`, and `inv` its own negation, so the group's abstract operation and the
 arithmetic you can type at the keyboard are the same function here.
+
+Every law is proved by `of_decide_eq_true rfl`, which deserves unpacking
+since it recurs below and is the first genuinely new idiom in this file.
+`Fin 12` is finite, so each law is a *decidable* proposition: there is a
+procedure that checks it. `decide p` runs that procedure and returns a
+`Bool`. The library theorem
+
+  `of_decide_eq_true : decide p = true → p`
+
+turns a successful run into a proof of `p`. And `rfl` proves
+`decide p = true` whenever Lean can evaluate `decide p` and get `true` --
+which it can, by checking every case. So the three words
+`of_decide_eq_true rfl` mean "I checked all of them, and they all held."
 ```lean
 instance : Group (Fin 12) where
   op      : Fin 12 → Fin 12 → Fin 12 := (· + ·)
   id      : Fin 12 := 0
-  assoc   : ∀ a b c : Fin 12, (a + b) + c = a + (b + c) :=
-    fun a b c => by ext; simp [Fin.add_def, Nat.add_assoc]
-  idLeft  : ∀ a : Fin 12, 0 + a = a := fun a => by ext; simp [Fin.add_def]
-  idRight : ∀ a : Fin 12, a + 0 = a := fun a => by ext; simp [Fin.add_def]
+  assoc   : ∀ a b c : Fin 12, (a + b) + c = a + (b + c) := of_decide_eq_true rfl
+  idLeft  : ∀ a : Fin 12, 0 + a = a := of_decide_eq_true rfl
+  idRight : ∀ a : Fin 12, a + 0 = a := of_decide_eq_true rfl
   inv     : Fin 12 → Fin 12 := fun a => -a
-  invLeft : ∀ a : Fin 12, (-a) + a = 0 :=
-    fun a => by ext; simp [Fin.add_def, Fin.neg_def]
-  invRight: ∀ a : Fin 12, a + (-a) = 0 :=
-    fun a => by ext; simp [Fin.add_def, Fin.neg_def]
+  invLeft : ∀ a : Fin 12, (-a) + a = 0 := of_decide_eq_true rfl
+  invRight: ∀ a : Fin 12, a + (-a) = 0 := of_decide_eq_true rfl
 ```
 
-The `Fin.add_def` and `Fin.neg_def` in those proofs are the library lemmas
-that unfold `Fin` arithmetic to arithmetic on the underlying `Nat` together
-with a `% 12`. You are not expected to have guessed those names; `exact?`
-and `simp?` find them for you.
+Nothing in those five proofs mentions how `Fin` arithmetic works -- no
+unfolding to `Nat` and a `% 12`, no lemma names to look up. Exhaustive
+checking does not need to know *why* a law holds, only that it holds in
+every case. That is the bargain finiteness offers, and the rest of this file
+shows what you do when it is not on the table.
 
 Negation deserves a second look, because `Fin 12` contains no negative
 numbers and yet `-a` is perfectly well defined. The inverse of a shift is
@@ -191,19 +209,19 @@ the way around.
 #eval ((3 : Fin 12) + (-(3 : Fin 12)))   -- predict from invRight
 ```
 
-And now the torsor. Because `Fin 12` is *finite*, we get to prove all four
-axioms by a method unavailable for ℚ: exhaustive case analysis. `decide`
-checks every one of the 12, 144, or 1728 cases and reports back. This is
-worth seeing once -- for finite structures, "is this a theorem?" can be a
-decidable question, and Lean will simply answer it.
+And now the torsor, by the same method -- unavailable for ℚ -- of exhaustive
+case analysis. `of_decide_eq_true rfl` checks every one of the 12, 144, or
+1728 cases and reports back. This is worth seeing once: for finite
+structures, "is this a theorem?" can be a decidable question, and Lean will
+simply answer it.
 ```lean
 instance : Torsor (Fin 12) (Fin 12) where
   groupG        := inferInstance
   act           := (· + ·)
-  actId         := by decide
-  actComp       := by decide
-  actFree       := by decide
-  actTransitive := by decide
+  actId         := of_decide_eq_true rfl
+  actComp       := of_decide_eq_true rfl
+  actFree       := of_decide_eq_true rfl
+  actTransitive := of_decide_eq_true rfl
 
 #eval (3 : Fin 12) + (5 : Fin 12)   -- 8
 #eval (10 : Fin 12) + (5 : Fin 12)  -- 3 (wraps around)
@@ -217,8 +235,8 @@ together: the twelve positions are interchangeable, and all the structure
 lives in the shifts.
 
 Note that `eq_id_of_op_eq_self` would also have discharged `actFree` here,
-since the action *is* the group operation. We used `decide` instead to show
-the decidable route while we have a finite type to show it on.
+since the action *is* the group operation. We checked exhaustively instead,
+to show the decidable route while we have a finite type to show it on.
 ## Instance 2: ℚ (Rational Numbers)
 
 The rational numbers form a torsor under themselves via addition.
@@ -239,7 +257,7 @@ instance : Torsor Rat Rat where
   actId     := Rat.zero_add
   actComp   := fun g h t => Rat.add_assoc g h t
   actFree   := fun _ _ h => eq_id_of_op_eq_self h
-  actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, by simp [Rat.sub_add_cancel]⟩
+  actTransitive := fun t₁ t₂ => ⟨t₂ - t₁, Rat.sub_add_cancel⟩
 ```
 
 ## Instance 3: The Rational Plane, With Points and Vectors as Distinct Types
@@ -425,15 +443,23 @@ four axioms, so it holds for all three instances below and for any torsor
 anyone writes later.
 ```lean
 theorem act_left_cancel {G T : Type} [tor : Torsor G T] (g : G) {t₁ t₂ : T}
-    (h : tor.act g t₁ = tor.act g t₂) : t₁ = t₂ := by
-  -- Act by `inv g` on both sides of `h`.
-  have h1 : tor.act (tor.groupG.inv g) (tor.act g t₁)
-          = tor.act (tor.groupG.inv g) (tor.act g t₂) :=
-    congrArg (tor.act (tor.groupG.inv g)) h
-  -- Regroup both sides (`actComp`, used right-to-left), cancel (`invLeft`),
-  -- and drop the identity action (`actId`).
-  rw [← tor.actComp, ← tor.actComp, tor.groupG.invLeft, tor.actId, tor.actId] at h1
-  exact h1
+    (h : tor.act g t₁ = tor.act g t₂) : t₁ = t₂ :=
+  calc t₁
+      -- Pad with the identity action, which moves nothing.
+      = tor.act tor.groupG.id t₁                          := (tor.actId t₁).symm
+      -- The identity is `inv g` composed with `g`.
+    _ = tor.act (tor.groupG.op (tor.groupG.inv g) g) t₁   :=
+          congrArg (fun x => tor.act x t₁) (tor.groupG.invLeft g).symm
+      -- Split the composite action into two actions.
+    _ = tor.act (tor.groupG.inv g) (tor.act g t₁)         := tor.actComp _ _ _
+      -- Here is the hypothesis, under `act (inv g)`.
+    _ = tor.act (tor.groupG.inv g) (tor.act g t₂)         :=
+          congrArg (tor.act (tor.groupG.inv g)) h
+      -- Now run the same three steps backwards on `t₂`.
+    _ = tor.act (tor.groupG.op (tor.groupG.inv g) g) t₂   := (tor.actComp _ _ _).symm
+    _ = tor.act tor.groupG.id t₂                          :=
+          congrArg (fun x => tor.act x t₂) (tor.groupG.invLeft g)
+    _ = t₂                                                := tor.actId t₂
 ```
 
 And now the payoff, which is the point of the whole lesson. Below, the same
@@ -500,8 +526,9 @@ silent on success and errors on failure, so the compiler is your grader. See
 
 **[E13.1]** · *decidability identification* · tier 1 · **core**
 
-Instance 1 closed all four axioms with `decide`; Instance 2 could not. For
-each proposition below, say **whether `decide` can close it and why** --
+Instance 1 closed all four axioms by exhaustive checking; Instance 2 could
+not. For each proposition below, say **whether `decide` can close it and
+why** --
 is the domain finite, is the predicate decidable? -- *before* checking. The
 judgment is the point, not the tool-use.
 
@@ -525,8 +552,9 @@ In one line each: what is `(a)` the freeness axiom *for*, and what is `(b)`?
 Days of the week are a torsor for the group of day-shifts. Build
 `instance : Group (Fin 7)` and `instance : Torsor (Fin 7) (Fin 7)`, following
 the `Fin 12` pattern in Instance 1. *First-step hint:* the group fields are
-`(· + ·)`, `0` and negation, and all four torsor axioms are `by decide`
-because the type is finite. Effort: ~12 lines, no hand-written proof.
+`(· + ·)`, `0` and negation, and all four torsor axioms are
+`of_decide_eq_true rfl` because the type is finite. Effort: ~12 lines, no
+hand-written proof.
 
 ```lean
 #guard (3 : Fin 7) + 5 = 1

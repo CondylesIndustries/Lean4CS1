@@ -1,12 +1,11 @@
-```lean
 import Mathlib.Algebra.Group.Defs
 import Mathlib.Algebra.Module.Defs
 import Mathlib.Algebra.Module.Prod
 import Mathlib.Algebra.Module.LinearMap.Defs
 import Mathlib.Tactic.Ring
 import Mathlib.Data.Real.Basic
-```
 
+/- @@@
 # Vector Spaces: Modules Over a Field
 
 ## What Vector Spaces Are: Linear Combinations and Dimension
@@ -64,10 +63,11 @@ framework:
 
 The structure is so fundamental that once you understand one vector space,
 you understand them all.
-```lean
-namespace VectorSpaces
-```
+@@@ -/
 
+namespace VectorSpaces
+
+/- @@@
 ## Vector Space Instances in Lean's Mathlib
 
 Mathlib has a mature definition of this structure, but it pays to be precise
@@ -98,6 +98,9 @@ The key operations are:
 
 These come with laws bundled into the typeclasses `Add`, `SMul`, `Zero`, `Neg`,
 and the full `Module` structure.
+@@@ -/
+
+/- @@@
 ## Instance 1: ℚ as a Vector Space Over Itself
 
 The rational numbers ℚ form a vector space over themselves. Addition is
@@ -111,7 +114,8 @@ Rather than assert that, we can ask Lean. The two `#check`s below are the
 whole content of "ℚ is a ℚ-vector space" -- a `Module` instance plus the fact
 that the scalars are a field. There is no third `VectorSpace` instance to
 look for, which is the point made above.
-```lean
+@@@ -/
+
 /- ℚ is a module over itself... -/
 #check (inferInstance : Module Rat Rat)
 
@@ -122,11 +126,14 @@ look for, which is the point made above.
 #eval (2 : Rat) * (3 : Rat)  -- 6 (scalar multiplication)
 #eval (1 : Rat) * (5 : Rat)  -- 5 (identity element: 1 • v = v)
 #eval (2 : Rat) + (3 : Rat)  -- 5 (vector addition)
-```
 
+/- @@@
 In a 1-dimensional space, any two vectors are linearly *dependent*: one is a
 scalar multiple of the other (or one is zero). This is true for ℚ: any rational
 q₁ can be expressed as `c * q₂` for some c, as long as q₂ ≠ 0.
+@@@ -/
+
+/- @@@
 ## Naming Our Vector Types
 
 Before the next two instances, a change of representation that matters for
@@ -184,13 +191,14 @@ prevent, not by reflex.
 
 The canonical 2-dimensional vector space over ℚ: the type, and the two
 instances pulled across from `ℚ × ℚ`.
-```lean
+@@@ -/
+
 def Vector2 := Rat × Rat
 
 instance : AddCommGroup Vector2 := inferInstanceAs (AddCommGroup (Rat × Rat))
 instance : Module Rat Vector2   := inferInstanceAs (Module Rat (Rat × Rat))
-```
 
+/- @@@
 `inferInstanceAs T` means "run instance search for `T`, and accept the result
 here." The two types involved are definitionally equal, so the instance found
 for `ℚ × ℚ` *is* an instance for `Vector2`; all `inferInstanceAs` does is
@@ -208,7 +216,8 @@ does not survive it. `Vector2` is a label for the reader and a signpost for
 instance search; it is not a thing Lean carries around. Contrast the affine
 space lesson, where `#eval` prints `Vector2 (3, 0)` because there the name
 belongs to a real type with a real constructor.
-```lean
+@@@ -/
+
 #check (inferInstance : Module Rat Vector2)
 
 #eval ((2, 3) : Vector2) + ((1, -1) : Vector2)
@@ -216,25 +225,31 @@ belongs to a real type with a real constructor.
 
 #eval (1/2 : Rat) • ((2, 3) : Vector2)
       -- (1, 3 / 2) -- scalar multiplication
-```
 
+/- @@@
 Compare this with the affine space lesson, which hand-wrote componentwise
 arithmetic and proved each law. Here we wrote no operations and no proofs at
 all. The rational plane is our first "true" vector space: it has dimension 2,
 and linear combinations of two independent vectors (say `(1, 0)` and `(0, 1)`)
 span all of it.
 
-There is one bill to pay later, and it comes due in the `shear` example below.
-Tactics do not see through a `def` any more than instance search does, so a
-goal stated at `Vector2` has to be restated at `ℚ × ℚ` -- with `show` -- before
-`simp` and `ring` will engage with it.
+One caveat for later, when you write proofs about these types. Tactics do not
+see through a `def` any more than instance search does, so a `simp` aimed at a
+goal stated at `Vector2` reports no progress and needs the goal restated at
+`ℚ × ℚ` first. Term-mode proofs are unaffected -- the elaborator unfolds
+definitions freely when checking a term against its type -- which is one
+reason the proofs in this file are terms.
+@@@ -/
+
+/- @@@
 ## Instance 3: `Vector3`, 3D Rational Space
 
 The pattern extends to three dimensions without a new idea -- which is the
 point of showing it. The representation is `ℚ × ℚ × ℚ`, mathlib's product
 instances make that a module over ℚ, and the same two lines carry the
 structure across.
-```lean
+@@@ -/
+
 def Vector3 := Rat × Rat × Rat
 
 instance : AddCommGroup Vector3 := inferInstanceAs (AddCommGroup (Rat × Rat × Rat))
@@ -245,8 +260,8 @@ instance : Module Rat Vector3   := inferInstanceAs (Module Rat (Rat × Rat × Ra
 
 #eval (1/2 : Rat) • ((2, 4, 6) : Vector3)
       -- (1, 2, 3) -- scalar multiplication
-```
 
+/- @@@
 In 3D space, three linearly independent vectors (such as the standard basis
 `(1, 0, 0)`, `(0, 1, 0)`, `(0, 0, 1)`) span the whole space. This is the
 geometric foundation of 3D computer graphics, physics simulations, and much of
@@ -260,6 +275,9 @@ above: separation between the dimensions, none between a vector and its
 representation -- indeed, as the `#check` above showed, not even a name that
 survives elaboration. In this lesson nothing needs the second kind, and the affine
 lessons, which do, pay for it with a `structure`.
+@@@ -/
+
+/- @@@
 ## Vector Space Properties from Mathlib
 
 Once we have the vector space structure in place, mathlib provides powerful
@@ -279,6 +297,9 @@ the boilerplate, and we get the theorems "for free" as long as we build our
 instances from mathlib's building blocks -- which is exactly what the two
 `inferInstanceAs` lines above did. Naming our vector types cost us nothing at
 all here, because we chose the naming device that keeps the instances.
+@@@ -/
+
+/- @@@
 ## Linear Maps (Preview)
 
 In the full theory of vector spaces, we're interested not just in the spaces
@@ -309,32 +330,34 @@ it respects addition and scalar multiplication. So defining one is not just
 giving the function, `toFun`; it also means discharging those two obligations,
 here called `map_add'` and `map_smul'`.
 
-Here is where the `def` route sends its bill. Both obligations are equations
-at `Vector2`, and `simp` will not unfold a `def` to work on one -- it reports
-making no progress. The fix is to restate the goal at the representation with
-`show`, after which we are back to ordinary rational arithmetic and
-`simp`/`ring` finish it. The restatement is mechanical but it is not free, and
-it is the honest counterweight to the three-line instance declarations above.
-```lean
+Each obligation is an equation between pairs, so `Prod.ext` reduces it to one
+equation per component. `map_add'` needs
+`(v₁ + w₁) + (v₂ + w₂) = (v₁ + v₂) + (w₁ + w₂)`, which is mathlib's
+`add_add_add_comm`; its second component is `rfl`. `map_smul'` needs
+`s * v₁ + s * v₂ = s * (v₁ + v₂)`, which is `mul_add` read backwards.
+
+A remark on the `def` choice above, since this is where you would expect to
+pay for it. Tactics decline to unfold a `def`: a `simp` aimed at these goals
+reports making no progress, and would need the goal restated at `ℚ × ℚ` with
+`show` first. Term-mode proofs have no such trouble, because the *elaborator*
+does unfold definitions when it checks that a term has the required type. The
+bill arrives only if you reach for tactics.
+@@@ -/
+
 def shear : Vector2 →ₗ[Rat] Vector2 where
   toFun v := ((v.1 + v.2, v.2) : Rat × Rat)
-  map_add' v w := by
-    show (((v.1 + w.1) + (v.2 + w.2), v.2 + w.2) : Rat × Rat)
-       = ((v.1 + v.2, v.2) : Rat × Rat) + ((w.1 + w.2, w.2) : Rat × Rat)
-    simp [Prod.ext_iff]; ring
-  map_smul' s v := by
-    show ((s * v.1 + s * v.2, s * v.2) : Rat × Rat)
-       = s • ((v.1 + v.2, v.2) : Rat × Rat)
-    simp [Prod.ext_iff]; ring
+  map_add' _ _  := Prod.ext (add_add_add_comm _ _ _ _) rfl
+  map_smul' s v := Prod.ext (mul_add s v.1 v.2).symm rfl
 
 /- The map in action: the vector (3, 4) slides right by 4. -/
 #eval shear ((3, 4) : Vector2)                                 -- (7, 4)
-```
 
+/- @@@
 Because the linearity proofs are part of the value, the two laws are not
 claims we have to check input by input; they hold for *all* inputs, and we can
 ask Lean for them by name. The `#eval`s illustrate; the `example`s prove.
-```lean
+@@@ -/
+
 #eval shear (((1, 2) : Vector2) + ((3, 4) : Vector2))          -- (10, 6)
 #eval shear ((1, 2) : Vector2) + shear ((3, 4) : Vector2)      -- (10, 6)
 
@@ -346,19 +369,23 @@ example (v w : Vector2) : shear (v + w) = shear v + shear w :=
 
 example (s : Rat) (v : Vector2) : shear (s • v) = s • shear v :=
   shear.map_smul s v
-```
 
+/- @@@
 One consequence of linearity worth noticing: every linear map must send `0` to
 `0`, since `f 0 = f (0 • 0) = 0 • f 0 = 0`. Mathlib has this as `map_zero`.
-```lean
-example : shear 0 = 0 := shear.map_zero
-```
+@@@ -/
 
+example : shear 0 = 0 := shear.map_zero
+
+/- @@@
 That rules out maps you might otherwise call "linear" from school algebra. The
 translation `(x, y) ↦ (x + 1, y)` sends `(0, 0)` to `(1, 0)`, so no amount of
 cleverness will produce the `map_add'` and `map_smul'` proofs for it: it is
 *affine*, not linear, which is exactly the distinction the affine space lesson
 was drawing. Lines through the origin are linear; lines in general are not.
+@@@ -/
+
+/- @@@
 ## From Concrete to Abstract
 
 What we've done here is take concrete types (ℚ itself, and our own `Vector2`
@@ -390,10 +417,6 @@ By formalizing vector spaces, we're equipping ourselves to reason rigorously
 about all of these domains. The structure is so universal that understanding
 it well pays off across the entire landscape of mathematical and computational
 practice.
-```lean
+@@@ -/
+
 end VectorSpaces
-```
-
-
-<div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-
