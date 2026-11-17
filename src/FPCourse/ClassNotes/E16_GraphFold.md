@@ -182,7 +182,7 @@ The quick start in `GraphFold/README.md` also covers VS Code port forwarding.
 
 ```sh
 cd GraphFold
-lake build && node web/server.mjs
+lake build && python3 web/server.py
 ```
 
 Open the tool at [http://127.0.0.1:8787](http://127.0.0.1:8787).

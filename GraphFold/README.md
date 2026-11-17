@@ -107,7 +107,8 @@ Enjoy!
 
 ## Quick start
 
-You need Lean 4 with Lake (via Elan) and **Node.js 20 or newer**.
+You need Lean 4 with Lake (via Elan) and **Python 3.8 or newer**. The web
+server uses only the Python standard library, so there is nothing to install.
 
 1. Open a terminal in the GraphFold project root, the folder with `lakefile.toml`
    and `web/`. From the CS1 course checkout, run `cd GraphFold` first.
@@ -115,12 +116,13 @@ You need Lean 4 with Lake (via Elan) and **Node.js 20 or newer**.
 2. Build the Lean executables and start the web server from that folder.
 
    ```sh
-   lake build && node web/server.mjs
+   lake build && python3 web/server.py
    ```
 
 3. Open the graphical tool in your browser at [http://127.0.0.1:8787](http://127.0.0.1:8787).
    In a VS Code Dev Container or Remote SSH window, forward port `8787` in the
    **Ports** tab and open the forwarded address.
+   
 4. Choose **Shortest paths**, **Count paths**, or **Optimal routes**. Click
    **Load trace**, then **Play** or **Next** below the graph to animate the fold. Edit the edge
    list to try a different graph, or click **Reset example** to restore it.
@@ -167,22 +169,22 @@ heart, but it shouldn't.
 
 ## 1. Project organization
 
-| File | Purpose |
-|---|---|
-| `GraphFold/Abstract/Core.lean` | Algebra and semiring-law interfaces, graph rows, right-fold recurrence, relational `Derives` specification, generic fold lemma |
-| `GraphFold/Implementations/Shortest.lean` | Min-plus shortest-cost implementation and source/weight adapter |
-| `GraphFold/Implementations/Paths.lean` | Natural-number path-count implementation and source/edge adapter |
-| `GraphFold/Implementations/Optimal.lean` | Cost-spectrum interpreter and minimum-cost/tie-count summarizer |
-| `GraphFold/Bridges/Shortest.lean` | Term-mode proof that shortest-cost implementation satisfies `Derives` |
-| `GraphFold/Bridges/Paths.lean` | Independent term-mode proof for path counts |
-| `GraphFold/Bridges/Optimal.lean` | Independent term-mode proof for the full path-cost spectrum |
-| `GraphFold/IO/Format.lean` | One shared edge-list parser, validation, conversion to graph rows |
-| `GraphFold/Trace.lean`, `TraceMain.lean` | Lean-level trace events, algebraic fold replay, runtime result agreement check, CLI transport |
-| `ShortestMain.lean`, `PathsMain.lean`, `OptimalMain.lean` | Original command-line executable entry points |
-| `Tests/Main.lean`, `test-cli.sh` | Library examples, parser checks, executable integration tests |
-| `examples/` | Example input files, including deliberately invalid input |
-| `web/server.mjs`, `web/public/` | Local HTTP server and interactive HTML/SVG interface |
-| `web/test/` | HTTP integration tests independent of the Lean toolchain |
+| File                                                      | Purpose                                                                                                                        |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `GraphFold/Abstract/Core.lean`                            | Algebra and semiring-law interfaces, graph rows, right-fold recurrence, relational `Derives` specification, generic fold lemma |
+| `GraphFold/Implementations/Shortest.lean`                 | Min-plus shortest-cost implementation and source/weight adapter                                                                |
+| `GraphFold/Implementations/Paths.lean`                    | Natural-number path-count implementation and source/edge adapter                                                               |
+| `GraphFold/Implementations/Optimal.lean`                  | Cost-spectrum interpreter and minimum-cost/tie-count summarizer                                                                |
+| `GraphFold/Bridges/Shortest.lean`                         | Term-mode proof that shortest-cost implementation satisfies `Derives`                                                          |
+| `GraphFold/Bridges/Paths.lean`                            | Independent term-mode proof for path counts                                                                                    |
+| `GraphFold/Bridges/Optimal.lean`                          | Independent term-mode proof for the full path-cost spectrum                                                                    |
+| `GraphFold/IO/Format.lean`                                | One shared edge-list parser, validation, conversion to graph rows                                                              |
+| `GraphFold/Trace.lean`, `TraceMain.lean`                  | Lean-level trace events, algebraic fold replay, runtime result agreement check, CLI transport                                  |
+| `ShortestMain.lean`, `PathsMain.lean`, `OptimalMain.lean` | Original command-line executable entry points                                                                                  |
+| `Tests/Main.lean`, `test-cli.sh`                          | Library examples, parser checks, executable integration tests                                                                  |
+| `examples/`                                               | Example input files, including deliberately invalid input                                                                      |
+| `web/server.py`, `web/public/`                            | Local HTTP server and interactive HTML/SVG interface                                                                           |
+| `web/test/`                                               | HTTP integration tests independent of the Lean toolchain                                                                       |
 
 The parser and the algebraic interpretation are **separate**. The input graph
 contains vertex identifiers, a designated source, and directed edges with
@@ -334,11 +336,11 @@ route's **total cost**, with duplicates intentionally retained.
 For the diamond input, the complete spectra are:
 
 | Vertex | All route costs (`Optimal.run`) | Minimum | Cheapest routes |
-|---|---|---:|---:|
-| 0 | `[0]` | 0 | 1 |
-| 1 | `[2]` | 2 | 1 |
-| 2 | `[5, 5]` | 5 | 2 |
-| 3 | `[3, 6, 6]` | 3 | 1 |
+| ------ | ------------------------------- | ------: | --------------: |
+| 0      | `[0]`                           |       0 |               1 |
+| 1      | `[2]`                           |       2 |               1 |
+| 2      | `[5, 5]`                        |       5 |               2 |
+| 3      | `[3, 6, 6]`                     |       3 |               1 |
 
 ```sh
 lake exe optimal examples/diamond.txt
@@ -442,18 +444,18 @@ blocks or tactics), with annotated argument and important intermediate types.
 
 Types you will see:
 
-| Lean syntax | Meaning |
-|---|---|
-| `Nat` | Nonnegative integers, also used for vertex IDs |
-| `Option Nat` | `some n` is a finite cost; `none` is infinity |
-| `Optimal.Spectrum` | `List Nat`: all path costs, including duplicates |
+| Lean syntax          | Meaning                                                     |
+| -------------------- | ----------------------------------------------------------- |
+| `Nat`                | Nonnegative integers, also used for vertex IDs              |
+| `Option Nat`         | `some n` is a finite cost; `none` is infinity               |
+| `Optimal.Spectrum`   | `List Nat`: all path costs, including duplicates            |
 | `Option (Nat × Nat)` | Minimum cost and number of cheapest routes (or unreachable) |
-| `List α` | List of elements having type `α` |
-| `Nat × α` | Incoming edge: predecessor index and algebraic edge weight |
-| `Graph α` | List of `Row α`, in vertex-number order |
-| `Algebra α` | Operations `plus`, `times`, and required aggregate laws |
-| `Satisfies A g out` | Proposition that output has a recurrence derivation |
-| `List.rec` | Structural recursion constructing data or proof terms |
+| `List α`             | List of elements having type `α`                            |
+| `Nat × α`            | Incoming edge: predecessor index and algebraic edge weight  |
+| `Graph α`            | List of `Row α`, in vertex-number order                     |
+| `Algebra α`          | Operations `plus`, `times`, and required aggregate laws     |
+| `Satisfies A g out`  | Proposition that output has a recurrence derivation         |
+| `List.rec`           | Structural recursion constructing data or proof terms       |
 
 For instance, the path-count bridge contains an explicitly typed induction
 hypothesis of the following mathematical shape:
@@ -497,7 +499,8 @@ a *fixed-point* semantics for cycles.
 
 ## 7. Interactive local HTML interface
 
-A zero-dependency **Node.js 20+** HTTP server serves the graphical interface.
+A zero-dependency **Python 3** HTTP server, built on the standard library's
+`http.server`, serves the graphical interface.
 The browser provides **live graph rendering** with native SVG (a small,
 self-contained alternative to D3). It does **not** implement any graph
 algorithm: each of the three Run buttons invokes its corresponding compiled
@@ -509,7 +512,7 @@ For the build and launch commands, see [Quick start](#quick-start).
 The server listens on **127.0.0.1 only** by default. To choose a different port:
 
 ```sh
-PORT=9090 node web/server.mjs
+PORT=9090 python3 web/server.py
 ```
 
 An explicit `HOST` environment variable can change the bind address. Do not
@@ -545,14 +548,16 @@ than silently producing a JavaScript-computed result.
 ### Web interface tests
 
 ```sh
-node --test web/test/*.test.mjs
+python3 -m unittest discover -s web/test
 ```
 
 These test static HTML delivery, endpoint input validation, Lean-runner
 invocation boundaries, output, and error propagation. They use a **fake runner**
-to exercise the HTTP layer independently of Lean. For true end-to-end Lean
-checks, first execute `bash test-cli.sh`, and then use the browser buttons.
-No web assets are loaded from a CDN and no `npm install` is necessary.
+to exercise the HTTP layer independently of Lean, and the Python interpreter
+itself stands in for a Lean executable when checking the process layer's
+output bound and timeout. For true end-to-end Lean checks, first execute
+`bash test-cli.sh`, and then use the browser buttons. No web assets are loaded
+from a CDN and no packages need to be installed.
 
 ## 8. Animated execution traces
 
@@ -605,7 +610,7 @@ it deliberately enumerates every path cost.
 The HTTP tests cover the trace endpoint's delegation to the injected runner:
 
 ```sh
-node --test web/test/*.test.mjs
+python3 -m unittest discover -s web/test
 ```
 
 A Chromium visual inspection was performed with a controlled synthetic trace,
