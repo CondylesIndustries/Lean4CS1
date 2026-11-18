@@ -82,23 +82,37 @@ multiplies to extend a path along an edge and adds to combine alternative
 paths. The choice of semiring determines what the answer tells you.
 [Mohri, *Semiring Frameworks and Algorithms for Shortest-Distance Problems*](https://cs.nyu.edu/~mohri/pub/jalc.pdf)
 
-| Semiring | Combine alternatives | Extend a path | Zero / one | Graph result |
+| Algebra | Combine alternatives | Extend a path | Zero / one | Graph result |
 | --- | --- | --- | --- | --- |
-| Boolean (`Bool`) | OR | AND | `false` / `true` | Is there a path? |
+| Boolean (`Bool`) | OR | AND | `false` / `true` | Is there a path at all? |
 | Natural numbers (`Nat`) | Add counts | Multiply counts | `0` / `1` | How many paths are there? |
 | Tropical (`Option Nat`) | Minimum | Add costs | `none` (infinity) / `some 0` | What is the minimum cost? |
+| Cost spectrum (`List Nat`) | Append | Add costs pairwise | `[]` / `[0]` | What does every route cost? |
 
-The source starts with one empty path, whose annotation is the semiring's
+The first three are genuine semirings. The fourth is not: list append is not
+commutative, so the cost spectrum satisfies only the weaker `Algebra` laws the
+fold proof actually needs. That is the point of including it.
+
+**Be careful which three you mean.** The GUI offers the tropical,
+natural-number, and cost-spectrum algebras, as **Shortest paths**, **Count
+paths**, and **Optimal routes**. Boolean reachability is not one of its
+buttons; it appears only in the Lean code below. So the shortest-path button is
+the tropical instance, never the Boolean one, and the optimal-routes button is
+the cost spectrum, not the tropical one.
+
+The source starts with one empty path, whose annotation is the algebra's
 multiplicative identity. The other vertices start with the additive identity.
-In the tropical semiring, an unreachable vertex has infinite cost, and an
+In the tropical algebra, an unreachable vertex has infinite cost, and an
 empty path costs zero.
 
-## One fold, three graph algorithms
+## One fold, four algebras
 
 `foldGraph` runs the project's `specStep` at every vertex. The same function
-handles all three cases. GraphFold's `Algebra` interface carries the operations
-and the laws used by the fold proofs. The remaining semiring axioms are stated
-separately in `SemiringLaws`.
+handles all four cases, the cost spectrum included. GraphFold's `Algebra`
+interface carries the operations and the laws used by the fold proofs. It has
+no `one` field: the multiplicative identity in the table above is what each
+adapter places at the source. The remaining semiring axioms are stated
+separately in `SemiringLaws`, which nothing in the project instantiates.
 ```lean
 def foldGraph {α : Type} (algebra : Algebra α) (graph : Graph α) : List α :=
   graph.foldl (fun done row => done ++ [specStep algebra done row]) []
@@ -131,11 +145,15 @@ def tiedRoutes : Graph Nat :=
 #eval foldGraph reachabilityAlgebra (asReachability 0 tiedRoutes)       -- [true, true, true, true]
 #eval foldGraph Paths.algebra (Paths.fromRaw 0 tiedRoutes)              -- [1, 1, 1, 2]
 #eval foldGraph Shortest.algebra (Shortest.fromRaw 0 tiedRoutes)          -- [some 0, some 2, some 1, some 5]
+#eval foldGraph Optimal.algebra (Optimal.fromRaw 0 tiedRoutes)          -- [[0], [2], [1], [5, 5]]
 ```
 
-GraphFold's optimal-routes demo also keeps a list of all path costs. The
-list preserves both copies of 5 because they come from different routes,
-so the summary can report the number of tied minimum-cost paths.
+The cost spectrum keeps every path cost instead of collapsing to one number.
+The list preserves both copies of 5 because they come from different routes,
+so the summary can report the number of tied minimum-cost paths. Tropical
+aggregation would have discarded that evidence at the moment the two routes
+met. `Optimal.run` below is the implementation's own left fold, and it agrees
+with the `foldGraph` line above.
 ```lean
 #eval Optimal.run (Optimal.fromRaw 0 tiedRoutes)      -- [[0], [2], [1], [5, 5]]
 #eval Optimal.runSummary (Optimal.fromRaw 0 tiedRoutes)
