@@ -4,7 +4,7 @@ TLDR: verification ≠ validation. Lean 4 nails one. You need both.
 A small case study of a *seemingly* good formalization verified by
 the Lean 4 kernel.
 
-## Overview
+## Verification is *Not* All You Need
 
 The prominent researcher into autoformalization of mathematics in
 Lean, Kevin Buzzard, has written a non-technical [blog
@@ -30,10 +30,11 @@ concrete instance of a *semiring* yields diverse graph algorithms that
 otherwise appear only loosely related, as though not grounded in a shared
 foundation. The intended lesson was: you've seen folds parameterized
 by polymorphic container type (list, tree, option, etc.). Now you see
-parameterization by a concrete instance of an abstract semiring. The core algorithm
-is defined against abstract semiring + and * operations and identity
-values, with a choice of, e.g., a semiring structure on Bool, Nat,
-or on paths equipped with a so-called min-plus algebra. The results
+parameterization by a concrete instance of an abstract algebra, of which a
+semiring is the archetype. The core algorithm is defined against abstract `⊕`
+and `⊗` operations and a single identity value, the one for `⊕`, with a choice
+of, e.g., the min-plus algebra on `Option Nat`, the plus-times semiring on
+`Nat`, or a cost-spectrum algebra on `List Nat`. The results
 are respectively graph algorithms for (1) computing shortest paths,
 (2) counting the total number of paths regardless of cost, and
 (3) computing the complete multiset of path costs, from which the
@@ -45,7 +46,7 @@ reveal deep commonalities among seemingly diverse algorithms, and supports
 an architectural style for verified code that separately specifies the
 abstract theory (often uncomputable), diverse concrete, computable
 implementations, and modular proofs that the implementations satisfy
-the formal specifications.
+the abstract formal specifications.
 
 What this effort turned into fortuitously was a pretty accessible
 case study illustrating what I'd consider the most threatening
@@ -57,74 +58,44 @@ as a natural result of the AI methods used to produce it, to teach
 my students with a reasonably accessible example from real-world work.
 
 The repo, and most of the rest of this document, are thus written as
-if they presented a *validated* (1) Lean-verified auto-formalization
-of abstract graph folds; (2) three different graph algorithms, each
-a specialization by choice of an actual concrete semiring instance,
-formally verified against the abstract theory; and (3) its compilation
-into (a) three executables, one for each algorithm, and (b) a Lean library
-that makes this work easily usable by other clients; and (4) a fun
-interactive, animated, pedagogical, web-based user interface for (a)
-giving graph inputs as text, (b) selecting and running one of the
-algorithms on the given graph, and (c) stepping through an animation
-to see the algorithm working step by step as it folds a graph down
-to a single answer from a given node, recursively, one outgoing edge
-at a time, down to a final result, e.g., shortest path, number of
-paths, etc. I found the animation helped me to check my
-understanding of how each of the particular algorithms works.
+if they presented a *valid* (1) Lean-verified auto-formalization
+of semiring-parameterizd graph folds; (2) three different graph algorithms, each a specialization by choice of an actual `Algebra` instance parameter, by definition verified against the abstract theory; and (3) its compilation into (a) three executables, one for each algorithm, to support th graphical explorer I vibe-coded for you, and (b) a Lean library that makes this work usable by other clients via Lean imports; and (4) the
+interactive, animated, pedagogical, web-based GUI itself. This GUI lets you (a) write graph inputs as text, (b) select on of three `Algebra` instances and run the algorithm specialized to it on the given graph, and (c) step through an animation to see the algorithm fold your graph step by step down to a final answer. I found the animation helped me to better grasp how each of the specialized algorithms works.
 
 I vibe-coded this whole project in Lean 4 and HTML in about two
 hours, starting by having my AI auto-formalize an original work,
 the paper by Mehryar Mohri, "Semiring Frameworks and Algorithms
 for Shortest-Distance Problems" (2002).
 
-I did *not* hand-check the generated code but Lean accepts all the
-proofs and (pretending) I trusted it implicitly. Also graphical
-animations of the algorithms are really cool and I'm sure people
-will love it. So am I done? Can I ship it to production now?
+I did not hand-check the generated code but Lean accepted all the proofs and my testing showed that it worked. In particular, through the GUI, I tested it to be sure it would reject inputs that failed satisfy the algorithm's crucial precondition: that the input graph be acyclic. Cyclic graphs require a different approach based on so-called fixed points. So was I done? Can I ship it to production (which here meant sending it as a working example to my students)?
 
-At this point, it's time to put on your engineer's hard hat, start
-to think like a real engineer, and ask the most vital question of
-all: *what else could go wrong?* This project presents an unedited
-case of what *did* go wrong and what I might have just let slide if
-I didn't actually know better.
+At this point, it's time to put on your engineer's hard hat, start to think like a real engineer, and ask the most vital question of all: *what else could go wrong?* This project presents an unedited case of what *did* go wrong, even though Lean verified the code and when I tested it using the GUI it worked for both valid and invalid inputs, the latter of which it rejected explicitly. To help explain what still went wrong, it will help to see the system in action first.
 
-To proceed, follow the easy Quick Start instructions below to bring
-up our systems. Open the browser tool. It gives you a small graph to
-start with, which you can edit directly. When ready, push one of the
-three buttons to run one of the algorithms to produce an answer for
-your graph, then step through the stored trace of that execution to
-see visually how the algorithm works at each step to reduce a whole
-graph to the required result.
+## Quick Start
 
-Once you've done all that, come back here, be seduced by the magic
-of AI + Lean, and then have eyes opened by seeing exactly what can
-and did go wrong even on a small-scale auto-formalization and verified
-implementation effort. The walk-away message: verification of code
-against a specification is only half the battle. The other half is
-the *validation* of the specification itself.
+You need Lean 4 with Lake (via Elan) and **Python 3.8 or newer**. The local web
+server that serves the GUI uses only the Python standard library, so there is
+nothing to install and no `pip` step.
 
-Enjoy!
-
-## Quick start
-
-You need Lean 4 with Lake (via Elan) and **Python 3.8 or newer**. The web
-server uses only the Python standard library, so there is nothing to install.
-
-1. Open a terminal in the GraphFold project root, the folder with `lakefile.toml`
-   and `web/`. From the CS1 course checkout, run `cd GraphFold` first.
-   If you use VS Code, the project recommends the **Lean 4** extension.
-2. Build the Lean executables and start the web server from that folder.
+1. Open a terminal and `cd` into the `GraphFold` directory, the folder holding
+   `lakefile.toml` and `web/`.
+2. Build the Lean executables, then start the web server.
 
    ```sh
    lake build && python3 web/server.py
    ```
 
+   Let `lake build` finish before you click anything on the page. The server
+   runs the compiled binaries from `.lake/build/bin/`, and falls back to
+   building on demand through `lake exe` when they are missing. That fallback
+   takes longer than the server's twenty-second limit on a single request, so a
+   button pressed against an unbuilt project reports a timeout rather than a
+   result. Once built, each run answers in milliseconds.
+
 3. Open the graphical tool in your browser at [http://127.0.0.1:8787](http://127.0.0.1:8787).
    In a VS Code Dev Container or Remote SSH window, forward port `8787` in the
    **Ports** tab and open the forwarded address.
-   
-4. Choose **Shortest paths**, **Count paths**, or **Optimal routes**. Click
-   **Load trace**, then **Play** or **Next** below the graph to animate the fold. Edit the edge
+4. Choose **Shortest paths**, **Count paths**, or **Optimal routes**. These choices select the tropical (min-plus), plus-times `Nat`, and cost-spectrum instances, respectively. Click **Load trace**, then **Play** or **Next** below the graph to animate the fold. Edit the edge
    list to try a different graph, or click **Reset example** to restore it.
 
 Press **Ctrl+C** in the server terminal to stop the tool.
@@ -135,14 +106,14 @@ or send a pull request.
 
 ## Overview
 
-GraphFold presents a formalized **theory of generalized folds over directed acyclic graphs (DAGs)**, parameterized by the choice of an algebra—typically a semiring. A GUI lets you enter graph specifications and animate execution traces for three distinct graph algorithms, each selected just by choosing a concrete `Algebra` instance. Rather than treating shortest-path calculation, path counting, and path-cost enumeration as unrelated programs, it reveals their shared mathematical structure: values propagated along edges are combined at each vertex according to algebraic operations chosen for the particular problem. A single graph-recursion pattern consequently yields several notably different graph algorithms.
+GraphFold presents a formalized **theory of generalized folds over directed acyclic graphs (DAGs)**, parameterized by the choice of an algebra—typically a semiring. A GUI lets you enter graph specifications and animate execution traces for three distinct graph algorithms, each selected by choosing a spceific, concrete `Algebra` instance. Rather than treating shortest-path calculation, path counting, and path-cost enumeration as unrelated programs, it reveals their shared mathematical structure: values propagated along edges are combined at each vertex according to algebraic operations chosen for the particular problem. A single graph-recursion pattern consequently yields several notably different graph algorithms.
 
 The project also illustrates a broader role for dependent type theory. **Beyond enabling verification of individual programs, an expressive type system allows the common mathematical foundations of distinct computations to be represented explicitly as reusable definitions, specifications, and proofs.** In Lean 4, the algebra and graph dependency structure can be separated from implementations, while independently developed *proof bridges* establish how each concrete implementation realizes the abstract recurrence. The objective is not merely to verify three algorithms but to understand, in a precise and reusable way, *why they are instances of the same theory*.
 
 For a vertex `v`, the governing equation is
 
 $$
-F(v)=b(v)\oplus\bigoplus_{u\to v}\bigl(F(u)\otimes w(u,v)\bigr).
+F(v)=b(v)\oplus\sum_{u\to v}\bigl(F(u)\otimes w(u,v)\bigr).
 $$
 
 - `F(v)` is the value computed at `v`: the quantity the fold produces (e.g., shortest-path cost, number of paths, or the multiset of all path costs to `v`, depending on the algebra chosen).
@@ -151,8 +122,34 @@ $$
 - `F(u)` is the already-computed value at predecessor `u`; a topological evaluation order guarantees it is known before `F(v)` is needed.
 - `w(u,v)` is the weight on the edge from `u` to `v`.
 - `⊗` *extends* a predecessor's value across an edge, combining `F(u)` with `w(u,v)` into that edge's contribution to `v`.
-- the inner `⊕` (over all `u → v`) *aggregates* the contributions of all incoming edges into a single combined value.
-- the outer `⊕` combines that aggregated value with the base contribution `b(v)` to produce `F(v)`.
+- `Σ` (over all `u → v`) *aggregates* the contributions of all incoming edges into a single combined value.
+- `⊕` then combines that aggregated value with the base contribution `b(v)` to produce `F(v)`.
+
+**Why the equation uses both `⊕` and `Σ`.** They are the same operation at two
+different arities. The small `⊕` is the binary operation the algebra supplies:
+hand it two values and it combines them. The capital `Σ` is that operation's
+*indexed* form, the result of applying it across a whole family of values, here
+the contribution of every incoming edge `u → v`. The difference in arity is not
+decoration. A vertex may have any number of incoming edges, so the aggregation
+cannot be written as a single binary application, and the subscript `u → v` is
+what ties it to the graph's shape.
+
+**Read `Σ` as iterated `⊕`, not as ordinary addition.** The symbol is borrowed
+from arithmetic, where `Σ` abbreviates repeated `+`. Here it abbreviates
+repeated `⊕`, and `⊕` means whatever the chosen algebra says it means. In the
+shortest-path instance `⊕` is `min`, so `Σ` takes a minimum over the incoming
+edges. In the cost-spectrum instance `⊕` is list append, so `Σ` concatenates.
+Only in the path-counting instance, where `⊕` genuinely is `+`, does `Σ` carry
+its arithmetic meaning.
+
+The case of **no** incoming edges is why the algebra must also supply an
+identity. An empty `Σ` is the algebra's `zero`, so the equation collapses to
+`F(v) = b(v) ⊕ zero`, which is `b(v)` by the `plus_zero` law. In the Lean
+source this reading is literal rather than notional: `specStep` in
+`GraphFold/Abstract/Core.lean` computes the `Σ` as
+`r.incoming.foldr combine A.zero` and then applies the outer `⊕` as
+`A.plus r.base incomingTotal`. Read the two together and the notation and the
+code line up field for field.
 
 Different choices of `⊕`, `⊗`, and `b` give different meanings to the same graph computation. GraphFold implements three examples: minimum path cost, number of paths, and the multiset of all path costs (from which minima and counts of optimal paths can be extracted). For finite DAGs, a topological evaluation order makes the recurrence a well-founded fold; cyclic graphs require a separate fixed-point or closure treatment and are outside the present executables' scope.
 
@@ -162,8 +159,6 @@ fail in ways that contribute to (or substantially risk) unacceptably harmful out
 It's impressive-sounding when an AI reports, as mine did (and I quote it), that the system
 is *fully tested, with no `sorry` anywhere.* That might warm the cockles of a programmer's
 heart, but it shouldn't.
-
-**Historical context.** This repo provides an abstract formalization and three verified instances of it, applying the established *algebraic path problem*. B. A. Carré's 1971 paper, [“An Algebra for Network Routing Problems”](https://doi.org/10.1093/imamat/7.3.273), is a direct early articulation of the common algebra underlying different routing computations. Related developments include R. C. Backhouse and Carré's *Regular Algebra Applied to Path-Finding Problems* (1975), [Michel Minoux's generalization of algebraic path structures](https://www.numdam.org/item/RO_1976__10_2_33_0/) (1976), and [Daniel J. Lehmann's closed-semiring treatment of transitive closure](https://doi.org/10.1016/0304-3975(77)90056-1) (1977). These developments built on earlier path, automata, and dynamic-programming algorithms. Mehryar Mohri's [“Semiring Frameworks and Algorithms for Shortest-Distance Problems”](https://cs.nyu.edu/~mohri/pub/jalc.pdf), *Journal of Automata, Languages and Combinatorics*, vol. 7, no. 3, pp. 321–350, 2002, gives the modern statement of this correctness pattern: the shortest distance is defined independently of any algorithm, as a sum over the actual set of paths, and an algorithm's output is only equated to it under an explicit hypothesis (acyclicity, or more generally k-closedness). For a recent treatment connecting semiring algebras to dynamic programming more broadly — including a new operation for counting minimal-cost solutions — see A. Baril, M. Couceiro, and V. Lagerkvist, [“New Perspectives on Semiring Applications to Dynamic Programming”](https://doi.org/10.1016/j.dam.2025.12.035), *Discrete Applied Mathematics*, vol. 383, pp. 243–279, 2026.
 
 **Formalization scope.** GraphFold uses **Lean 4 / Lake, without Mathlib**, and term-mode proofs with explicit types. Its core `Algebra α` asks only for the two laws on `⊕` that the implemented recurrence and fold proofs actually use — associativity and a right identity (`zero`) — and imposes no laws on `⊗` at all; a separate `SemiringLaws` record states the stronger axioms of a full semiring (commutativity of `⊕`, associativity of `⊗`, an identity `one` for `⊗`, etc.). Consequently, the implementation bridges certify the recurrence at the abstraction level actually used; they should not be mistaken for proofs of every semiring law or for graph-theoretic correctness over arbitrary cyclic graphs. The source code and tests are intended as a pedagogical formalization, and building them with Lean remains necessary to check kernel acceptance.
 
@@ -312,7 +307,7 @@ Unlike the executable file adapter, the lower-level `Paths.run` library
 function still accepts arbitrary natural-number edge multiplicities and base
 values. This is useful for illustrating the general algebra.
 
-### Optimal-route specialization
+### Optimal-route specialization (cost-spectrum append-plus)
 
 The third interpretation answers **two questions simultaneously**: what is the
 cheapest route, and *how many different routes attain that cost*? This is a
@@ -370,7 +365,7 @@ lake exe optimal examples/tied-optima.txt
 # Vertex 3: min=5,count=2
 ```
 
-**Algebraic nuance:** Lists form an associative monoid under concatenation,
+**Algebraic nuance (advanced):** Lists form an associative monoid under concatenation,
 which is *all the abstract `Algebra` interface and the fold proof require*.
 But concatenation is not commutative, so this concrete list carrier is **not**
 a full commutative-addition semiring. Mathematically, the spectrum represents

@@ -155,7 +155,14 @@ class GraphFoldHandler(BaseHTTPRequestHandler):
                 for name, header in SECURITY_HEADERS.items():
                     self.send_header(name, header)
                 self.send_header("Content-Type", content_type)
-                self.send_header("Cache-Control", "no-cache")
+                # no-store, not no-cache: these files are edited while a page
+                # is open, and `no-cache` only asks the browser to revalidate.
+                # With no ETag to revalidate against, a browser or an
+                # intermediary such as the VS Code port-forwarding proxy can
+                # keep serving a stale script, so an edit appears to have had
+                # no effect. Refusing storage entirely is correct for a local
+                # teaching server and costs nothing at this scale.
+                self.send_header("Cache-Control", "no-store")
                 self.send_header("Content-Length", str(len(contents)))
                 self.end_headers()
                 self.wfile.write(contents)
