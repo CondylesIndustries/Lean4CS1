@@ -93,10 +93,10 @@ $$
 (R ; S)(a,c) = \sum_b \bigl(R(a,b) \otimes S(b,c)\bigr)
 $$
 
-If two matches use input tuples tagged `p` and `q` for one match and `r`
-and `s` for the other, provenance records `p * q + r * s`. Setting each
-annotation to `true` in the Boolean semiring gives `true`. Setting each
-to `1` in the natural-number semiring gives `2`.
+Suppose one match joins input tuples tagged `p` and `q`, and a second match
+joins tuples tagged `r` and `s`. Provenance then records `p * q + r * s`.
+Setting every annotation to `true` in the Boolean semiring gives `true`.
+Setting every annotation to `1` in the natural-number semiring gives `2`.
 
 The graph fold uses the same two operations for the same reasons. It
 multiplies to extend a path along an edge and adds to combine alternative
