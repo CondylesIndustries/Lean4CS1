@@ -17,13 +17,32 @@ GraphFold stores each vertex as a `Row` with a base contribution and a list of
 `v` has already been processed when we reach `v`.
 
 $$
-F(v) = b(v) \oplus \bigoplus_{u \to v} \bigl(F(u) \otimes w(u,v)\bigr)
+F(v) = b(v) \oplus \sum_{u \to v} \bigl(F(u) \otimes w(u,v)\bigr)
 $$
 
 `times` extends a result along one edge. `plus` combines alternatives arriving
 at the same vertex. `zero` represents the empty collection of alternatives.
 The `Algebra` structure supplies these operations, associativity of `plus`,
 and its right identity law. Read the fields with `#print`.
+
+The equation writes the same operation twice, at two arities. The small `⊕` is
+the binary `plus`: give it two values and it combines them. The capital `Σ` is
+its indexed form, `plus` applied across a whole family of values, here one
+contribution per incoming edge `u → v`. A vertex can have any number of
+incoming edges, so that aggregation is not a single binary application, and the
+subscript is what ties the recurrence to the graph.
+
+Read `Σ` as iterated `⊕`, not as ordinary addition. The symbol comes from
+arithmetic, where it abbreviates repeated `+`, but here it abbreviates repeated
+`plus`, whatever the instance makes `plus` mean. For shortest paths `plus` is
+`min`, so `Σ` minimizes; for cost spectra it is list append, so `Σ`
+concatenates. Only for path counting is it ordinary addition.
+
+The empty family is why `zero` has to exist. Aggregate over no edges and you
+get `zero`, so the equation reduces to `F(v) = b(v) ⊕ zero`, which `plus_zero`
+turns into `b(v)`. That is literally how `specStep` is written: the `Σ` is
+`r.incoming.foldr combine A.zero`, and the outer `⊕` is the final
+`A.plus r.base incomingTotal`. Compare the two `#print` outputs below.
 ```lean
 namespace E16
 
@@ -50,7 +69,7 @@ in a later lecture. A join on the intermediate `b` followed by projection
 onto `(a, c)` gives an annotated version of the same operation.
 
 $$
-(R ; S)(a,c) = \bigoplus_b \bigl(R(a,b) \otimes S(b,c)\bigr)
+(R ; S)(a,c) = \sum_b \bigl(R(a,b) \otimes S(b,c)\bigr)
 $$
 
 If two matches use input tuples tagged `p` and `q` for one match and `r`
@@ -182,7 +201,7 @@ The quick start in `GraphFold/README.md` also covers VS Code port forwarding.
 
 ```sh
 cd GraphFold
-lake build && node web/server.mjs
+lake build && python3 web/server.py
 ```
 
 Open the tool at [http://127.0.0.1:8787](http://127.0.0.1:8787).
