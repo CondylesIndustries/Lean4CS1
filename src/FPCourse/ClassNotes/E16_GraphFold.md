@@ -73,7 +73,7 @@ open GraphFold
 #print specStep
 ```
 
-## The same semirings in databases and graphs
+## The same two operations in databases and graphs
 
 Recall our in-class example of parameterizing positive relational algebra
 over a commutative semiring. A tuple carries an annotation. A join multiplies
