@@ -84,14 +84,50 @@ That is the reduction the rest of this chapter relies on.
 #print Set         -- def Set (α : Type u) := α → Prop
 
 /-! @@@
-The brace notation `{1, 2, 3}` builds a `Set` out of `insert` and a singleton —
-`{1, 2, 3} = insert 1 (insert 2 {3})` — and unfolds to exactly the predicate you'd
-expect: `x ∈ {1, 2, 3} ↔ x = 1 ∨ x = 2 ∨ x = 3`. So the literal is still "a function
-to `Prop`"; it is just built up one element at a time rather than written as a `fun`.
+The brace notation `{1, 2, 3}` is built from two more primitive set operations,
+`insert` and the singleton `{·}` — `{1, 2, 3} = insert 1 (insert 2 {3})`. Both are
+still just predicates:
+@@@ -/
+
+-- insert a s adds a to s: x belongs iff x = a, or x was already in s
+theorem mem_insert_iff (x a : α) (s : Set α) :
+    x ∈ insert a s ↔ x = a ∨ x ∈ s :=
+  Set.mem_insert_iff
+
+-- {a} is the set containing exactly a
+theorem mem_singleton_iff (x a : α) :
+    x ∈ ({a} : Set α) ↔ x = a :=
+  Set.mem_singleton_iff
+
+/-! @@@
+Chaining those two unfolds `{1, 2, 3}` to exactly the predicate you'd expect:
+`x ∈ {1, 2, 3} ↔ x = 1 ∨ x = 2 ∨ x = 3`. So the literal is still "a function to
+`Prop`"; it is just built up one element at a time rather than written as a `fun`.
+
+### Reminder: tactic mode
+
+Every proof so far in this chapter has been a single term, written directly
+after `:=`. Lean's other proof style, *tactic mode* — introduced back in
+`E05_Exists` — writes the proof as a script of tactics instead: subroutines,
+entered with `by`, that each transform the remaining goal and build the
+term for you.
+
+The tactic below is `simp only [lemmas...]`: it rewrites the goal using
+*only* the listed `↔`/`=` lemmas, left to right, as many times as any of
+them applies. Here it rewrites `x ∈ {1, 2, 3}` by `mem_insert_iff` and then
+`mem_singleton_iff` until the goal reads `x = 1 ∨ x = 2 ∨ x = 3` — exactly
+the statement being proved, so the tactic script ends there.
 @@@ -/
 
 example (x : Nat) : x ∈ ({1, 2, 3} : Set Nat) ↔ x = 1 ∨ x = 2 ∨ x = 3 := by
-  simp [Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [mem_insert_iff, mem_singleton_iff]
+
+/-! @@@
+The next tactic is `decide`: it evaluates a *decidable* proposition to
+`true` or `false` by direct computation, and closes the goal when the
+result is `true`. Membership in a finite literal set like `{1, 2, 3}` is
+decidable, so `decide` settles both claims below by just computing.
+@@@ -/
 
 -- Membership: x ∈ s is notation for s x
 example : (3 : Nat) ∈ ({1, 2, 3} : Set Nat) := by decide
@@ -131,10 +167,15 @@ theorem not_mem_empty (x : α) : x ∉ (∅ : Set α) :=
 ## Set operations as proposition operations
 
 Because sets are predicates, every set operation corresponds to a
-propositional connective.
+propositional connective — some *construct* a set from scratch (the first
+four rows, already met above), the rest *combine* sets that already exist.
 
 | Set operation | Logical meaning | Notation |
 |--------------|----------------|---------|
+| `∅` (empty set) | `False` | `∅` |
+| `Set.univ` (universal set) | `True` | `Set.univ` |
+| `insert a s` (insert) | `x = a ∨ s x` | `insert` |
+| `{a}` (singleton) | `x = a` | `{a}` |
 | `s ∩ t` (intersection) | `s x ∧ t x` | `∩` |
 | `s ∪ t` (union) | `s x ∨ t x` | `∪` |
 | `sᶜ` (complement) | `¬ s x` | `ᶜ` |
