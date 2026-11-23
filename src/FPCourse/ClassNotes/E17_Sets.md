@@ -6,30 +6,65 @@ import Mathlib.Order.BooleanAlgebra.Set
 
 ## Sets as predicates
 
-In Lean (and in Mathlib), a *set* over type `α` is simply a predicate:
+A set is usually treated as a primitive notion, with its own membership
+relation governed by its own axioms. Lean and Mathlib make a different
+choice: a *set* over type `α` is **represented as** a predicate on `α`.
 
 ```lean
 def Set (α : Type u) : Type u := α → Prop
 ```
 
-A set `s : Set α` is a function that takes an element `x : α` and
-returns a proposition `s x : Prop` — the claim that `x` belongs to `s`.
+A set `s : Set α` is a function that takes an element `x : α` and returns a
+proposition `s x : Prop` — the claim that `x` belongs to `s`. Membership
+`x ∈ s` is *defined to be* `s x`; there is no independent membership
+relation to reason about.
 
-This definition is mathematically natural and computationally illuminating:
-membership is a proposition, and propositions are types.  A proof that
-`x ∈ s` is a term of type `s x`.
-
-The connection to the course themes: sets are logical types indexed by
-their elements.  Every operation on sets is an operation on propositions.
+This representation choice is the single most important idea in this
+chapter: **because a set is a predicate, every claim about sets is already a
+claim about propositions, and every proof about sets reduces to a proof in
+predicate logic.** To show `x ∈ s`, unfold `s` at `x` and you are holding an
+ordinary proposition built from `∧`, `∨`, `¬`, `→`, `∀`, `∃` — the same
+connectives and quantifiers from earlier chapters. Nothing new has to be
+invented for sets: `∩`, `∪`, `ᶜ`, `⊆`, and the rest each unfold to a familiar
+connective, and every theorem about them is just the matching fact of
+predicate logic, imported rather than reproved.
 ```lean
 namespace E17
 ```
 
+### The reduction, worked by hand
+
+Here is that reduction in miniature, with no library notation in the way.
+Define a set directly as a predicate — no `{...}` literal, no Mathlib lemma:
+```lean
+def Small : Set Nat := fun x => x = 3 ∨ x = 5
+```
+
+By that `def`, `x ∈ Small` *is* `x = 3 ∨ x = 5` — definitionally, with no
+unfolding lemma needed. So the set-membership claim `3 ∈ Small` has exactly
+the proof of the proposition `3 = 3 ∨ 3 = 5`: pick the left disjunct, and
+`rfl` settles the equation.
+```lean
+example : (3 : Nat) ∈ Small := Or.inl rfl
+```
+
+`Or.inl` and `rfl` are moves of predicate logic, not of set theory — nothing
+about `Small` being a *set* was used beyond unfolding it to its predicate.
+That is the reduction the rest of this chapter relies on.
 ## Set membership and basic notation
 ```lean
 -- Set α is defined in Mathlib as α → Prop
 #check @Set        -- (α : Type u) → Type u
 #print Set         -- def Set (α : Type u) := α → Prop
+```
+
+The brace notation `{1, 2, 3}` builds a `Set` out of `insert` and a singleton —
+`{1, 2, 3} = insert 1 (insert 2 {3})` — and unfolds to exactly the predicate you'd
+expect: `x ∈ {1, 2, 3} ↔ x = 1 ∨ x = 2 ∨ x = 3`. So the literal is still "a function
+to `Prop`"; it is just built up one element at a time rather than written as a `fun`.
+```lean
+example (x : Nat) : x ∈ ({1, 2, 3} : Set Nat) ↔ x = 1 ∨ x = 2 ∨ x = 3 := by
+  simp [Set.mem_insert_iff, Set.mem_singleton_iff]
 
 -- Membership: x ∈ s is notation for s x
 example : (3 : Nat) ∈ ({1, 2, 3} : Set Nat) := by decide
@@ -76,11 +111,23 @@ propositional connective.
 | `sᶜ` (complement) | `¬ s x` | `ᶜ` |
 | `s \ t` (difference) | `s x ∧ ¬ t x` | `\` |
 | `s ⊆ t` (subset) | `∀ x, s x → t x` | `⊆` |
+| `s ⊇ t` (superset) | `∀ x, t x → s x`, i.e. `t ⊆ s` | `⊇` |
+| `s ⊂ t` (strict subset) | `(∀ x, s x → t x) ∧ s ≠ t` | `⊂` |
+| `s ⊃ t` (strict superset) | `(∀ x, t x → s x) ∧ s ≠ t` | `⊃` |
+| `s = t` (equality) | `∀ x, s x ↔ t x` | `=` |
+| `s ×ˢ t` (product) | `fun (a, b) => s a ∧ t b` | `×ˢ` |
+| `𝒫 s` (powerset) | `fun x => x ⊆ s` | `𝒫` |
 
 Read `s ⊆ t` aloud: "for every `x`, if `x` belongs to `s` then `x` belongs to `t`."
 `s ∩ t = s ∪ t` would mean that for every `x`, `x ∈ s ∧ x ∈ t` iff
 `x ∈ s ∨ x ∈ t`. An element that belongs to exactly one of the two sets
 refutes that equality.
+
+The last two rows change what kind of thing the elements are. `s ×ˢ t : Set (α × β)`
+is a predicate on *pairs*: `(a, b)` belongs iff `a` belongs to `s` and `b` belongs to
+`t`. `𝒫 s : Set (Set α)` is a predicate on *sets*: `x` (itself a `Set α`) belongs to
+`𝒫 s` iff `x ⊆ s`. Both are still just functions to `Prop` — only the input type
+changed, from `α` to `α × β` or to `Set α`.
 
 Notice the pattern: **every set statement reduces to a statement about propositions,
 quantified over elements.** When you prove something about sets, you are doing
@@ -114,23 +161,59 @@ theorem subset_def (s t : Set α) :
   Iff.intro (fun h _x hx => h hx) (fun h x hx => h x hx)
 ```
 
-> **Checkpoint — complement `ᶜ`.** `x ∈ sᶜ` means `¬ (x ∈ s)`. **Predict** whether `5`,
-> which is not listed, belongs to the complement below, then check.
+> **Checkpoint — subset `⊆`.** By `subset_def`, `s ⊆ t` is `∀ x, x ∈ s → x ∈ t` — one
+> implication *per element*. Here Lean can decide an individual implication at a concrete
+> `Nat`. **Predict** that implication at `x = 2` (is `2 ∈ {1,2} → 2 ∈ {1,2,3}` true?), then
+> check.
 ```lean
-#eval decide ((5 : Nat) ∈ (({1, 2, 3} : Set Nat)ᶜ))   -- predict first
+#eval decide ((2 : Nat) ∈ ({1, 2} : Set Nat) → (2 : Nat) ∈ ({1, 2, 3} : Set Nat))   -- predict first
+
+-- Complement is ¬:
+theorem mem_compl_iff (x : α) (s : Set α) :
+    x ∈ sᶜ ↔ ¬ x ∈ s :=
+  Set.mem_compl_iff s x
 ```
 
-> **Checkpoint — difference `\`.** `x ∈ s \ t` means `x ∈ s ∧ ¬ (x ∈ t)`. **Predict**
-> whether `1` survives removing `{3, 4}` from `{1, 2, 3}`, then check.
+> **Checkpoint — complement `ᶜ`.** By `mem_compl_iff`, `x ∈ sᶜ` means `¬ (x ∈ s)`.
+> **Predict** whether `5`, which is not listed, belongs to the complement below, then check.
+```lean
+#eval decide ((5 : Nat) ∈ (({1, 2, 3} : Set Nat)ᶜ))   -- predict first
+
+-- Difference is ∧ ¬:
+theorem mem_diff_iff (x : α) (s t : Set α) :
+    x ∈ s \ t ↔ x ∈ s ∧ ¬ x ∈ t :=
+  Set.mem_sdiff x
+```
+
+> **Checkpoint — difference `\`.** By `mem_diff_iff`, `x ∈ s \ t` means `x ∈ s ∧ ¬ (x ∈ t)`.
+> **Predict** whether `1` survives removing `{3, 4}` from `{1, 2, 3}`, then check.
 ```lean
 #eval decide ((1 : Nat) ∈ (({1, 2, 3} \ {3, 4}) : Set Nat))   -- predict first
 ```
 
-> **Checkpoint — subset `⊆`.** `s ⊆ t` is `∀ x, x ∈ s → x ∈ t` — one implication *per
-> element*. Here Lean can decide an individual implication at a concrete `Nat`. **Predict**
-> that implication at `x = 2` (is `2 ∈ {1,2} → 2 ∈ {1,2,3}` true?), then check.
+### Beyond the core five
+
+`⊇`, `⊂`, `⊃` are `⊆` flipped or sharpened with `≠`; `=` is the finest-grained way
+to compare two sets; and `×ˢ`/`𝒫` build sets whose *elements* are pairs or sets,
+rather than elements of `α` — but all of them, per the table above, are still just
+predicates.
 ```lean
-#eval decide ((2 : Nat) ∈ ({1, 2} : Set Nat) → (2 : Nat) ∈ ({1, 2, 3} : Set Nat))   -- predict first
+example (s t : Set α) : s ⊇ t ↔ t ⊆ s := Iff.rfl
+
+example (s t : Set α) : s ⊂ t ↔ s ⊆ t ∧ s ≠ t :=
+  Set.ssubset_iff_subset_ne
+
+example (s t : Set α) : s = t ↔ ∀ x, x ∈ s ↔ x ∈ t :=
+  Set.ext_iff
+
+-- Product: pairs whose first component is in s and second is in t
+example (s : Set α) (t : Set β) (p : α × β) :
+    p ∈ s ×ˢ t ↔ p.1 ∈ s ∧ p.2 ∈ t :=
+  Set.mem_prod
+
+-- Powerset: the set of all subsets of s — its elements are themselves sets
+example (s x : Set α) : x ∈ 𝒫 s ↔ x ⊆ s :=
+  Set.mem_powerset_iff x s
 ```
 
 ## Set algebraic laws as propositions
