@@ -32,6 +32,26 @@ predicate logic, imported rather than reproved.
 namespace E17
 
 /-! @@@
+### Reminder: what a predicate is
+
+A *predicate* on a type `α` is just a function `p : α → Prop`: hand it a
+subject `x : α`, and `p x` is the proposition it asserts about `x`. Nothing
+set-specific yet — this is the same notion of predicate from earlier
+chapters, applied to one concrete subject at a time.
+
+Take `p := fun x => x = 1 ∨ x = 2`. Applying `p` to `2` gives the proposition
+`2 = 1 ∨ 2 = 2`: true, via its right disjunct and `rfl`. Applying `p` to `0`
+gives `0 = 1 ∨ 0 = 2`: false, since `0` is neither — and that, too, has a
+term-mode proof, of the negation.
+@@@ -/
+
+def P : Nat → Prop := fun x => x = 1 ∨ x = 2
+
+example : P 2 := Or.inr rfl
+
+example : ¬ P 0 := fun h => h.elim nofun nofun
+
+/-! @@@
 ### The reduction, worked by hand
 
 Here is that reduction in miniature, with no library notation in the way.
