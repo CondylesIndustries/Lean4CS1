@@ -83,12 +83,12 @@ The brace notation `{1, 2, 3}` is built from two more primitive set operations,
 `insert` and the singleton `{·}` — `{1, 2, 3} = insert 1 (insert 2 {3})`. Both are
 still just membership predicates:
 ```lean
--- insert a s adds a to s: x belongs iff x = a, or x was already in s
+-- insert a s : Set α  (= fun x => x = a ∨ s x) -- adds a to s
 theorem mem_insert_iff (x a : α) (s : Set α) :
     x ∈ insert a s ↔ x = a ∨ x ∈ s :=
   Set.mem_insert_iff
 
--- {a} is the set containing exactly a
+-- {a} : Set α  (= fun x => x = a) -- the set containing exactly a
 theorem mem_singleton_iff (x a : α) :
     x ∈ ({a} : Set α) ↔ x = a :=
   Set.mem_singleton_iff
